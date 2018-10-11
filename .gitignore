@@ -1,2 +1,2 @@
 # Hiding the following from git.
-./data/*
+/data/*
