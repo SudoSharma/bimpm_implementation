@@ -53,23 +53,26 @@ class WordRepresentationLayer(nn.Module):
 
         return self.dropout(sentence)
 
-
 class ContextRepresentationLayer(nn.Module):
     def __init__(self, args):
         super(ContextRepresentationLayer, self).__init__()
 
-        self.input_size = args.word_dim + args.
+        self.input_size = args.word_dim + args.char_hidden_size
 
         self.lstm = nn.LSTM(
-                input_size=args.char_input_size,
-                hidden_size=args.char_hidden_size,
+                input_size=self.input_size,
+                hidden_size=args.hidden_size,
                 num_layers=1,
-                bidirectional=False,
+                bidirectional=True,
                 batch_first=True)
 
+    def droput(self, V):
+        return F.droput(V, p=self.args.dropout, training=self.training)
 
-    def forward(self):
-        pass
+    def forward(self, sentence):
+        sentence, _ = self.lstm(sentence)
+
+        return self.dropout(sentence)
 
 
 class MatchingLayer(nn.Module):
