@@ -53,6 +53,7 @@ class WordRepresentationLayer(nn.Module):
 
         return self.dropout(sentence)
 
+
 class ContextRepresentationLayer(nn.Module):
     def __init__(self, args):
         super(ContextRepresentationLayer, self).__init__()
@@ -76,7 +77,7 @@ class ContextRepresentationLayer(nn.Module):
 
 
 class MatchingLayer(nn.Module):
-    def __init__(self):
+    def __init__(self, args):
         super(MatchingLayer, self).__init__()
         pass
 
@@ -85,7 +86,7 @@ class MatchingLayer(nn.Module):
 
 
 class AggregationLayer(nn.Module):
-    def __init__(self):
+    def __init__(self, args):
         super(AggregationLayer, self).__init__()
         pass
 
@@ -94,12 +95,18 @@ class AggregationLayer(nn.Module):
 
 
 class PredictionLayer(nn.Module):
-    def __init__(self):
+    def __init__(self, args):
         super(PredictionLayer, self).__init__()
-        pass
 
-    def forward(self):
-        pass
+        self.hidden_layer = nn.Linear(args.hidden_size*4, args.hidden_size*2)
+        self.output_layer = nn.Linear(args.hidden_size*2, args.num_classes)
+
+    def droput(self, V):
+        return F.droput(V, p=self.args.dropout, training=self.training)
+
+    def forward(self, match_vec):
+        x = F.relu(self.hidden_layer(match_vec))
+        return F.softmax(self.output_layer(self.dropout(x)))
 
 
 if __name__() == "__main__":
