@@ -10,7 +10,6 @@ def main():
 
 class BiMPM(nn.Module):
     def __init__(self):
-
         super(BiMPM, self).__init__()
 
         self.w_layer = layer.WordRepresentationLayer()
