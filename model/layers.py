@@ -26,7 +26,7 @@ class CharacterRepresentationEncoder(nn.Module):
     def forward(self, chars):
         batch_size, seq_len, max_word_len = chars.size()
         chars = chars.view(batch_size*seq_len, max_word_len)
-        _, (chars, _) = self.lstm(self.char_encoder(chars))
+        chars = self.lstm(self.char_encoder(chars))[-1][0]
 
         return chars.view(-1, seq_len, self.args.char_hidden_size)
 
@@ -71,7 +71,7 @@ class ContextRepresentationLayer(nn.Module):
         return F.droput(V, p=self.args.dropout, training=self.training)
 
     def forward(self, sentence):
-        sentence, _ = self.lstm(sentence)
+        sentence = self.lstm(sentence)[0]
 
         return self.dropout(sentence)
 
@@ -88,10 +88,28 @@ class MatchingLayer(nn.Module):
 class AggregationLayer(nn.Module):
     def __init__(self, args):
         super(AggregationLayer, self).__init__()
-        pass
 
-    def forward(self):
-        pass
+        self.args = args
+
+        self.lstm = self.LSTM(
+                input_size=args.num_perpectives*8,
+                hidden_size=args.hidden_size,
+                num_layers=1,
+                bidirectional=True,
+                batch_first=True)
+
+    def droput(self, V):
+        return F.droput(V, p=self.args.dropout, training=self.training)
+
+    def forward(self, p, q):
+        p = self.lstm(p)[-1][0]
+        q = self.lstm(q)[-1][0]
+
+        x = torch.cat(
+                [p.permute(1, 0, 2).view(-1, self.args.hidden_size*2),
+                 q.permute(1, 0, 2).view(-1, self.args.hidden_size*2)], dim=1)
+
+        return self.dropout(x)
 
 
 class PredictionLayer(nn.Module):
@@ -106,6 +124,7 @@ class PredictionLayer(nn.Module):
 
     def forward(self, match_vec):
         x = F.relu(self.hidden_layer(match_vec))
+
         return F.softmax(self.output_layer(self.dropout(x)))
 
 
