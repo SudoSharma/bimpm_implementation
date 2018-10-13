@@ -4,7 +4,8 @@ This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for
 # TODOs
 - create data loader using pytorch data module
 - finish matching layer functions
-- create aggregation layer
+- consider storing tensors in contiguous memory 
+- consider adding protection against exploding cosine similarity for very small norm
 - create training script
 - create test script
 - test on cpu - then port code to gpu
