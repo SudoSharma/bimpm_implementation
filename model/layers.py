@@ -86,49 +86,84 @@ class MatchingLayer(nn.Module):
         self.W = nn.ParameterList([nn.Parameter(
             torch.rand(self.l, self.hidden_size)) for _ in range(8)])
 
-    def full_match(self, p, q, w):
-        pass
-
-    def maxpool_match(self, p, q, w):
-        pass
-
-    def attentive_match(self, p, q, w):
-        pass
-
-    def max_attentive_match(self, p, q, w):
-        pass
-
     def cat(self, *args):
         return torch.cat(list(args), dim=2)
 
+    def split(self, tensor, direction):
+        if direction == 'fw':
+            return torch.split(tensor, self.hidden_size, dim=-1)[0]
+        elif direction == 'bw':
+            return torch.split(tensor, self.hidden_size, dim=-1)[-1]
+
+    def full_match(self, p, q, w, direction):
+        p = self.split(p, direction)
+        q = self.split(q, direction)
+
+        seq_len = p.size(1)
+
+        if direction == 'fw':
+            q = torch.stack([q[:, -1, :]]*seq_len, dim=1)
+        elif direction = 'bw':
+            q = torch.stack([q[:, 0, :]]*seq_len, dim=1)
+
+        w = w.unsqueeze(0).unsqueeze(2)
+        p = w * torch.stack([p]*self.l, dim=1)
+        q = w * torch.stack([q]*self.l, dim=1)
+
+        return F.cosine_similarity(p, q, dim=-1)
+
+    def maxpool_match(self, p, q, w, direction):
+        p = self.split(p, direction)
+        q = self.split(q, direction)
+
+        w = w.unsqueeze(0).unsqueeze(2)
+        p = w * torch.stack([p]*self.l, dim=1)
+        q = w * torch.stack([q]*self.l, dim=1)
+
+        p_norm = p.norm(p=2, dim=-1, keepdim=True)
+        q_norm = q.norm(p=2, dim=-1, keepdim=True)
+
+        dot = torch.matmul(p, q.permute(0, 1, 3, 2))
+        norms = p_norm * q_norm.permute(0, 1, 3, 2)
+
+        sims = dot / norms
+
+        return sims.max(dim=2), sims.max(dim=1)
+
+    def attentive_match(self, p, q, w, direction):
+        p = self.split(p, direction)
+        q = self.split(q, direction)
+
+    def max_attentive_match(self, p, q, w, direction):
+        p = self.split(p, direction)
+        q = self.split(q, direction)
+
     def match_operation(self, p, q, W):
-        full_p2q_fw = self.full_match(p, q[-1], W[0])
-        full_p2q_bw = self.full_match(p, q[0], W[1])
-        full_q2p_fw = self.full_match(q, p[-1], W[0])
-        full_q2p_bw = self.full_match(q, p[0], W[1])
+        full_p2q_fw = self.full_match(p, q, W[0], 'fw')
+        full_p2q_bw = self.full_match(p, q, W[1], 'bw')
+        full_q2p_fw = self.full_match(q, p, W[0], 'fw')
+        full_q2p_bw = self.full_match(q, p, W[1], 'bw')
 
-        pool_p2q_fw = self.maxpool_match(p, q, W[2])
-        pool_p2q_bw = self.maxpool_match(p, q, W[3])
-        pool_q2p_fw = self.maxpool_match(q, p, W[2])
-        pool_q2p_bw = self.maxpool_match(q, p, W[3])
+        pool_p_fw, pool_q_fw = self.maxpool_match(p, q, W[2], 'fw')
+        pool_p_bw, pool_q_bw = self.maxpool_match(p, q, W[3], 'bw')
 
-        att_p2mean_fw = self.attentive_match(p, q, W[5])
-        att_p2mean_bw = self.attentive_match(p, q, W[6])
-        att_q2mean_fw = self.attentive_match(p, q, W[5])
-        att_p2mean_bw = self.attentive_match(p, q, W[6])
+        att_p2mean_fw = self.attentive_match(p, q, W[4], 'fw')
+        att_p2mean_bw = self.attentive_match(p, q, W[5], 'bw')
+        att_q2mean_fw = self.attentive_match(p, q, W[4], 'fw')
+        att_p2mean_bw = self.attentive_match(p, q, W[5], 'bw')
 
-        max_att_p2max_fw = self.max_attentive_match(p, q, W[5])
-        max_att_p2max_bw = self.max_attentive_match(p, q, W[6])
-        max_att_q2max_fw = self.max_attentive_match(p, q, W[5])
-        max_att_p2max_bw = self.max_attentive_match(p, q, W[6])
+        max_att_p2max_fw = self.max_attentive_match(p, q, W[6], 'fw')
+        max_att_p2max_bw = self.max_attentive_match(p, q, W[7], 'bw')
+        max_att_q2max_fw = self.max_attentive_match(p, q, W[6], 'fw')
+        max_att_p2max_bw = self.max_attentive_match(p, q, W[7], 'bw')
 
         p_vec = self.cat(
-                full_p2q_fw, pool_p2q_fw, att_p2mean_fw, max_att_p2max_fw,
-                full_p2q_bw, pool_p2q_bw, att_p2mean_bw, max_att_p2max_bw)
+                full_p2q_fw, pool_p_fw, att_p2mean_fw, max_att_p2max_fw,
+                full_p2q_bw, pool_p_bw, att_p2mean_bw, max_att_p2max_bw)
 
         q_vec = self.cat(
-                full_q2p_fw, pool_q2p_fw, att_q2mean_fw, max_att_q2max_fw,
-                full_q2p_bw, pool_q2p_bw, att_q2mean_bw, max_att_q2max_bw)
+                full_q2p_fw, pool_q_fw, att_q2mean_fw, max_att_q2max_fw,
+                full_q2p_bw, pool_q_bw, att_q2mean_bw, max_att_q2max_bw)
 
         return (self.dropout(p_vec), self.dropout(q_vec))
 
