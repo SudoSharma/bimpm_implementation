@@ -86,26 +86,54 @@ class MatchingLayer(nn.Module):
         self.W = nn.ParameterList([nn.Parameter(
             torch.rand(self.l, self.hidden_size)) for _ in range(8)])
 
-    def full_match(self, v1, v2, w):
+    def full_match(self, p, q, w):
         pass
 
-    def maxpool_match(self, v1, v2, w):
+    def maxpool_match(self, p, q, w):
         pass
 
-    def attentive_match(self):
+    def attentive_match(self, p, q, w):
         pass
 
-    def max_attentive_match(self):
+    def max_attentive_match(self, p, q, w):
         pass
 
-    def match_operation(self):
-        p2q_fwd = self.full_match(p, q[-1], self.W[0])
-        p2q_bwd = self.full_match(p, q[0], self.W[1])
-        q2p_fwd = self.full_match(q, p[-1], self.W[0])
-        q2p_bwd = self.full_match(q, p[0], self.W[1])
+    def cat(self, *args):
+        return torch.cat(list(args), dim=2)
+
+    def match_operation(self, p, q, W):
+        full_p2q_fw = self.full_match(p, q[-1], W[0])
+        full_p2q_bw = self.full_match(p, q[0], W[1])
+        full_q2p_fw = self.full_match(q, p[-1], W[0])
+        full_q2p_bw = self.full_match(q, p[0], W[1])
+
+        pool_p2q_fw = self.maxpool_match(p, q, W[2])
+        pool_p2q_bw = self.maxpool_match(p, q, W[3])
+        pool_q2p_fw = self.maxpool_match(q, p, W[2])
+        pool_q2p_bw = self.maxpool_match(q, p, W[3])
+
+        att_p2mean_fw = self.attentive_match(p, q, W[5])
+        att_p2mean_bw = self.attentive_match(p, q, W[6])
+        att_q2mean_fw = self.attentive_match(p, q, W[5])
+        att_p2mean_bw = self.attentive_match(p, q, W[6])
+
+        max_att_p2max_fw = self.max_attentive_match(p, q, W[5])
+        max_att_p2max_bw = self.max_attentive_match(p, q, W[6])
+        max_att_q2max_fw = self.max_attentive_match(p, q, W[5])
+        max_att_p2max_bw = self.max_attentive_match(p, q, W[6])
+
+        p_vec = self.cat(
+                full_p2q_fw, pool_p2q_fw, att_p2mean_fw, max_att_p2max_fw,
+                full_p2q_bw, pool_p2q_bw, att_p2mean_bw, max_att_p2max_bw)
+
+        q_vec = self.cat(
+                full_q2p_fw, pool_q2p_fw, att_q2mean_fw, max_att_q2max_fw,
+                full_q2p_bw, pool_q2p_bw, att_q2mean_bw, max_att_q2max_bw)
+
+        return (self.dropout(p_vec), self.dropout(q_vec))
 
     def forward(self, p, q):
-        pass
+        return  match_operation(p, q, self.W)
 
 
 class AggregationLayer(nn.Module):
