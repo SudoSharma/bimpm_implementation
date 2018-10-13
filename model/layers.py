@@ -124,15 +124,47 @@ class MatchingLayer(nn.Module):
         q_norm = q.norm(p=2, dim=-1, keepdim=True)
 
         dot = torch.matmul(p, q.permute(0, 1, 3, 2))
-        norms = p_norm * q_norm.permute(0, 1, 3, 2)
+        magnitude = p_norm * q_norm.permute(0, 1, 3, 2)
 
-        sims = dot / norms
+        cosine = dot / magnitude
 
-        return sims.max(dim=2), sims.max(dim=1)
+        pool_p, _ = cosine.max(dim=2)
+        pool_q, _ = cosine.max(dim=1)
+
+        return (pool_p, pool_q)
 
     def attentive_match(self, p, q, w, direction):
         p = self.split(p, direction)
         q = self.split(q, direction)
+
+        p_norm = p.norm(p=2, dim=2, keepdim=True)
+        q_norm = q.norm(p=2, dim=2, keepdim=True).permute(0, 2, 1)
+
+        dot = torch.bmm(p, q.permute(0, 2, 1))
+        magnitude = p_norm * q_norm
+
+        cosine = dot / magnitude
+
+        weighted_p = p.unsqueeze(2) * cosine.unsqueeze(-1)
+        weighted_q = q.unsqueeze(1) * conine.unsqueeze(-1)
+
+        att_p2mean = weighted_p.sum(dim=1) /
+            cosine.sum(dim=1, keepdim=True).permute(0, 2, 1)
+        att_q2mean = weighted_q.sum(dim=2) / cosine.sum(dim=2, keepdim=True)
+
+        #TODO finish up attentive match by matching each time step in p with
+        # the attentive vector we just gathered
+
+        # refactor the code to match all timesteps with one time step in a
+        # function
+        seq_len = p.size(1)
+        q = torch.stack([att_p2mean]*seq_len, dim=1)
+
+        w = w.unsqueeze(0).unsqueeze(2)
+        p = w * torch.stack([p]*self.l, dim=1)
+        q = w * torch.stack([q]*self.l, dim=1)
+
+        F.cosine_similarity(p, q, dim=-1)
 
     def max_attentive_match(self, p, q, w, direction):
         p = self.split(p, direction)
@@ -147,10 +179,8 @@ class MatchingLayer(nn.Module):
         pool_p_fw, pool_q_fw = self.maxpool_match(p, q, W[2], 'fw')
         pool_p_bw, pool_q_bw = self.maxpool_match(p, q, W[3], 'bw')
 
-        att_p2mean_fw = self.attentive_match(p, q, W[4], 'fw')
-        att_p2mean_bw = self.attentive_match(p, q, W[5], 'bw')
-        att_q2mean_fw = self.attentive_match(p, q, W[4], 'fw')
-        att_p2mean_bw = self.attentive_match(p, q, W[5], 'bw')
+        att_p2mean_fw, att_q2mean_fw = self.attentive_match(p, q, W[4], 'fw')
+        att_p2mean_bw, att_q2mean_bw = self.attentive_match(p, q, W[5], 'bw')
 
         max_att_p2max_fw = self.max_attentive_match(p, q, W[6], 'fw')
         max_att_p2max_bw = self.max_attentive_match(p, q, W[7], 'bw')
