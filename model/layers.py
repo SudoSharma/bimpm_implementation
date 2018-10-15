@@ -95,30 +95,48 @@ class MatchingLayer(nn.Module):
         elif direction == 'bw':
             return torch.split(tensor, self.hidden_size, dim=-1)[-1]
 
-    def full_match(self, p, q, w, direction):
-        p = self.split(p, direction)
-        q = self.split(q, direction)
+    def prep_match(self, p, q, w, direction='fw', split=True, stack=True):
+        if split:
+            p = self.split(p, direction)
+            q = self.split(q, direction)
 
-        seq_len = p.size(1)
+        if stack:
+            seq_len = p.size(1)
 
-        if direction == 'fw':
-            q = torch.stack([q[:, -1, :]]*seq_len, dim=1)
-        elif direction = 'bw':
-            q = torch.stack([q[:, 0, :]]*seq_len, dim=1)
+            if direction == 'fw':
+                q = torch.stack([q[:, -1, :]]*seq_len, dim=1)
+            elif direction == 'bw':
+                q = torch.stack([q[:, 0, :]]*seq_len, dim=1)
 
         w = w.unsqueeze(0).unsqueeze(2)
         p = w * torch.stack([p]*self.l, dim=1)
         q = w * torch.stack([q]*self.l, dim=1)
+
+        return (p, q)
+
+    def prep_attention(self, p, q, direction='fw')
+        p = self.split(p, direction)
+        q = self.split(q, direction)
+
+        p_norm = p.norm(p=2, dim=2, keepdim=True)
+        q_norm = q.norm(p=2, dim=2, keepdim=True).permute(0, 2, 1)
+
+        dot = torch.bmm(p, q.permute(0, 2, 1))
+        magnitude = p_norm * q_norm
+
+        cosine = dot / magnitude
+        weighted_p = p.unsqueeze(2) * cosine.unsqueeze(-1)
+        weighted_q = q.unsqueeze(1) * conine.unsqueeze(-1)
+
+        return (weighted_p, weighted_q)
+
+    def full_match(self, p, q, w, direction):
+        p, q = self.prep_match(p, q, w, direction, split=True, stack=True)
 
         return F.cosine_similarity(p, q, dim=-1)
 
     def maxpool_match(self, p, q, w, direction):
-        p = self.split(p, direction)
-        q = self.split(q, direction)
-
-        w = w.unsqueeze(0).unsqueeze(2)
-        p = w * torch.stack([p]*self.l, dim=1)
-        q = w * torch.stack([q]*self.l, dim=1)
+        p, q = self.prep_match(p, q, w, direction, split=True, stack=False)
 
         p_norm = p.norm(p=2, dim=-1, keepdim=True)
         q_norm = q.norm(p=2, dim=-1, keepdim=True)
@@ -133,42 +151,32 @@ class MatchingLayer(nn.Module):
 
         return (pool_p, pool_q)
 
-    def attentive_match(self, p, q, w, direction):
-        p = self.split(p, direction)
-        q = self.split(q, direction)
+    def attentive_match(
+            self, p, q, w, direction, att='mean'):
+        weighted_p, weighted_q = self.prep_attention(p, q, w, direction)
 
-        p_norm = p.norm(p=2, dim=2, keepdim=True)
-        q_norm = q.norm(p=2, dim=2, keepdim=True).permute(0, 2, 1)
+        if att == 'mean':
+            p2att = weighted_p.sum(dim=1) /
+                cosine.sum(dim=1, keepdim=True).permute(0, 2, 1)
+            q2att = weighted_q.sum(dim=2) / cosine.sum(dim=2, keepdim=True)
+        elif att == 'max':
+            p2att, _ = weighted_p.max(dim=1)
+            q2att, _ = weighted_q.max(dim=2)
 
-        dot = torch.bmm(p, q.permute(0, 2, 1))
-        magnitude = p_norm * q_norm
-
-        cosine = dot / magnitude
-
-        weighted_p = p.unsqueeze(2) * cosine.unsqueeze(-1)
-        weighted_q = q.unsqueeze(1) * conine.unsqueeze(-1)
-
-        att_p2mean = weighted_p.sum(dim=1) /
-            cosine.sum(dim=1, keepdim=True).permute(0, 2, 1)
-        att_q2mean = weighted_q.sum(dim=2) / cosine.sum(dim=2, keepdim=True)
-
-        #TODO finish up attentive match by matching each time step in p with
-        # the attentive vector we just gathered
-
-        # refactor the code to match all timesteps with one time step in a
-        # function
         seq_len = p.size(1)
-        q = torch.stack([att_p2mean]*seq_len, dim=1)
 
-        w = w.unsqueeze(0).unsqueeze(2)
-        p = w * torch.stack([p]*self.l, dim=1)
-        q = w * torch.stack([q]*self.l, dim=1)
+        att_q = torch.stack([p2att]*seq_len, dim=1)
+        att_p, att_q = self.prep_match(p, att_q, w, split=False, stack=False)
+        att_p_match = F.cosine_similarity(att_p, att_q, dim=-1)
 
-        F.cosine_similarity(p, q, dim=-1)
+        att_p = torch.stack([q2att]*seq_len, dim=1)
+        att_p, att_q = self.prep_match(att_p, q, w, split=False, stack=False)
+        att_q_match = F.cosine_similarity(att_p, att_q, dim=-1)
+
+        return (att_p_match, att_q_match)
 
     def max_attentive_match(self, p, q, w, direction):
-        p = self.split(p, direction)
-        q = self.split(q, direction)
+        return attentive_match(p, q, w, direction, att='max')
 
     def match_operation(self, p, q, W):
         full_p2q_fw = self.full_match(p, q, W[0], 'fw')
@@ -182,18 +190,16 @@ class MatchingLayer(nn.Module):
         att_p2mean_fw, att_q2mean_fw = self.attentive_match(p, q, W[4], 'fw')
         att_p2mean_bw, att_q2mean_bw = self.attentive_match(p, q, W[5], 'bw')
 
-        max_att_p2max_fw = self.max_attentive_match(p, q, W[6], 'fw')
-        max_att_p2max_bw = self.max_attentive_match(p, q, W[7], 'bw')
-        max_att_q2max_fw = self.max_attentive_match(p, q, W[6], 'fw')
-        max_att_p2max_bw = self.max_attentive_match(p, q, W[7], 'bw')
+        att_p2max_fw, att_q2max_fw = self.max_attentive_match(p, q, W[6], 'fw')
+        att_p2max_bw, att_q2max_bw = self.max_attentive_match(p, q, W[7], 'bw')
 
         p_vec = self.cat(
-                full_p2q_fw, pool_p_fw, att_p2mean_fw, max_att_p2max_fw,
-                full_p2q_bw, pool_p_bw, att_p2mean_bw, max_att_p2max_bw)
+                full_p2q_fw, pool_p_fw, att_p2mean_fw, att_p2max_fw,
+                full_p2q_bw, pool_p_bw, att_p2mean_bw, att_p2max_bw)
 
         q_vec = self.cat(
-                full_q2p_fw, pool_q_fw, att_q2mean_fw, max_att_q2max_fw,
-                full_q2p_bw, pool_q_bw, att_q2mean_bw, max_att_q2max_bw)
+                full_q2p_fw, pool_q_fw, att_q2mean_fw, att_q2max_fw,
+                full_q2p_bw, pool_q_bw, att_q2mean_bw, att_q2max_bw)
 
         return (self.dropout(p_vec), self.dropout(q_vec))
 
