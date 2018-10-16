@@ -95,11 +95,12 @@ class MatchingLayer(nn.Module):
         elif direction == 'bw':
             return torch.split(tensor, self.hidden_size, dim=-1)[-1]
 
-    def match(self, p, q, w,
-              direction='fw',
-              split=True,
-              stack=True,
-              cosine=False):
+    def match(
+            self, p, q, w,
+            direction='fw',
+            split=True,
+            stack=True,
+            cosine=False):
         if split:
             p = self.split(p, direction)
             q = self.split(q, direction)
