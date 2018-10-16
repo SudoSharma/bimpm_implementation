@@ -3,7 +3,6 @@ This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for
 
 # TODOs
 - create data loader using pytorch data module
-- finish matching layer functions
 - consider storing tensors in contiguous memory 
 - consider adding protection against exploding cosine similarity for very small norm
 - create training script
