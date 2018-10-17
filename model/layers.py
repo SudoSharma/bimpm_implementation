@@ -10,7 +10,7 @@ def main():
 
 class CharacterRepresentationEncoder(nn.Module):
     def __init__(self, args):
-        super(CharacterRepresentationEncoder, self).__init__()
+        super()
 
         self.char_hidden_size = args.char_hidden_size
 
@@ -33,7 +33,7 @@ class CharacterRepresentationEncoder(nn.Module):
 
 class WordRepresentationLayer(nn.Module):
     def __init__(self, args, data):
-        super(WordRepresentationLayer, self).__init__()
+        super()
 
         self.drop = args.dropout
 
@@ -56,7 +56,7 @@ class WordRepresentationLayer(nn.Module):
 
 class ContextRepresentationLayer(nn.Module):
     def __init__(self, args):
-        super(ContextRepresentationLayer, self).__init__()
+        super()
 
         self.drop = args.dropout
         self.input_size = args.word_dim + args.char_hidden_size
@@ -79,7 +79,7 @@ class ContextRepresentationLayer(nn.Module):
 
 class MatchingLayer(nn.Module):
     def __init__(self, args):
-        super(MatchingLayer, self).__init__()
+        super()
 
         self.hidden_size = args.hidden_size
         self.l = args.num_perspectives
@@ -214,7 +214,7 @@ class MatchingLayer(nn.Module):
 
 class AggregationLayer(nn.Module):
     def __init__(self, args):
-        super(AggregationLayer, self).__init__()
+        super()
 
         self.hidden_size = args.hidden_size
         self.drop = args.dropout
@@ -241,7 +241,7 @@ class AggregationLayer(nn.Module):
 
 class PredictionLayer(nn.Module):
     def __init__(self, args):
-        super(PredictionLayer, self).__init__()
+        super()
 
         self.drop = args.dropout
         self.hidden_layer = nn.Linear(args.hidden_size*4, args.hidden_size*2)
