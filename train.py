@@ -58,7 +58,7 @@ def main(batch_size=64,
 
 def train(args, model_data):
     model = BiMPM(args, model_data)
-    if args.gpu > -1:
+    if args.gpu:
         model.cuda(args.gpu)
 
     parameters = (p for p in model.parameters() if p.requires_grad)
