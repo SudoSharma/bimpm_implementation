@@ -61,6 +61,7 @@ class SNLI:
         self.last_epoch = self.present_epoch
         return True
 
+
 class Quora:
     def __init__(self, args):
         self.args = args
@@ -138,7 +139,7 @@ class Sentence:
         elif data_type == 'Quora':
             self.p, self.q = 'q1', 'q2'
 
-    def process_batch(self):
+    def process_batch(self, gpu):
         self.p = getattr(self.batch, self.p)
         self.q = getattr(self.batch, self.q)
 
@@ -147,11 +148,15 @@ class Sentence:
         self.char_q = Variable(
             torch.LongTensor(self.model_data.words_to_char(self.q)))
 
+        if gpu:
+            self.char_p.cuda(gpu)
+            self.char_q.cuda(gpu)
+
     def make_data_dict(self):
         self.p = {'words': self.p, 'chars': self.char_p}
         self.q = {'words': self.q, 'chars': self.char_q}
 
-    def generate(self):
-        self.process_batch
-        self.make_data_dict
+    def generate(self, gpu):
+        self.process_batch(gpu)
+        self.make_data_dict()
         return (self.p, self.q)
