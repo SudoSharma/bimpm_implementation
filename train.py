@@ -41,7 +41,7 @@ def main(batch_size=64,
     args['word_vocab_size'] = len(model_data.TEXT.vocab)
     args['class_size'] = len(model_data.LABEL.vocab)
     args['max_word_len'] = model_data.max_word_len
-    args['args'] = strftime('%H:%M:%S', gmtime())
+    args['model_time'] = strftime('%H:%M:%S', gmtime())
 
     args = namedtuple('args', args.keys())(*args.values())
 
@@ -68,8 +68,7 @@ def train(args, model_data):
     writer = SummaryWriter(log_dir='runs/' + args.model_time)
 
     model.train()
-    train_loss = 0
-    max_valid_acc, max_test_acc = 0, 0
+    train_loss, max_valid_acc, max_test_acc = 0, 0, 0
 
     iterator = model_data.train_iter
     for i, batch in enumerate(iterator):

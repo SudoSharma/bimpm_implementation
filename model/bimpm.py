@@ -4,10 +4,6 @@ import model.layers as L
 import plac
 
 
-def main():
-    pass
-
-
 class BiMPM(nn.Module):
     def __init__(self, args, data):
         super()
@@ -26,7 +22,3 @@ class BiMPM(nn.Module):
         match_vec = self.a_layer(p, q)
 
         return self.p_layer(match_vec)
-
-
-if __name__ == "__main__":
-    plac.call(main)

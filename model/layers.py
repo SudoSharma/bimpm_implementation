@@ -4,10 +4,6 @@ import torch.nn.functional as F
 import plac
 
 
-def main():
-    pass
-
-
 class CharacterRepresentationEncoder(nn.Module):
     def __init__(self, args):
         super()
@@ -259,7 +255,3 @@ class PredictionLayer(nn.Module):
         x = F.relu(self.hidden_layer(match_vec))
 
         return F.softmax(self.output_layer(self.dropout(x)))
-
-
-if __name__ == "__main__":
-    plac.call(main)
