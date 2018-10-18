@@ -4,11 +4,9 @@ This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for
 # TODOs
 - consider storing tensors in contiguous memory 
 - consider adding protection against exploding cosine similarity for very small norm
-- create training script
 - create test script
 - test on cpu - then port code to gpu
 - optimize on Quora dataset
 - optimize on SNLI dataset
 - create benchmark in readme
 - finish docstrings
-- add logging for train/test loops in tensorboardx
