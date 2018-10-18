@@ -1,2 +1,7 @@
 # Hiding the following from git.
 /data/*
+/.data/
+/.vector_cache/
+/__pycache__/
+/model/__pycache__/
+/runs/*
