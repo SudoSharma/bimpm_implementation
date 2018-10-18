@@ -23,10 +23,11 @@ class SNLI:
             vectors=GloVe(name='840B', dim=300))
         self.LABEL.build_vocab(self.train)
 
-        self.train_iter, self.valid_iter = data.BucketIterator.splits(
-            (self.train, self.valid, self.test),
-            batch_sizes=[args.batch_size] * 3,
-            device=args.gpu)
+        self.train_iter, self.valid_iter, self.test_iter = \
+            data.BucketIterator.splits(
+                (self.train, self.valid, self.test),
+                batch_sizes=[args.batch_size] * 3,
+                device=args.gpu)
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
         self.char_vocab = {'': 0}
@@ -63,21 +64,22 @@ class SNLI:
 
 
 class Quora:
-    def __init__(self, args):
+    def __init__(self, args, toy=False):
         self.args = args
 
         self.RAW = data.RawField()
+        self.RAW.is_target = False
         self.TEXT = data.Field(batch_first=True)
         self.LABEL = data.LabelField()
 
         self.fields = [('label', self.LABEL), ('q1', self.TEXT),
-                       ('q2', self.TEXT), ('q2', self.RAW)]
+                       ('q2', self.TEXT), ('id', self.RAW)]
 
         self.train, self.valid, self.test = data.TabularDataset.splits(
             path='./data/quora',
-            train='train.tsv',
-            validation='dev.tsv',
-            test='test.tsv',
+            train='toy_train.tsv' if toy else 'train.tsv',
+            validation='toy_dev.tsv' if toy else 'dev.tsv',
+            test='toy_test.tsv' if toy else 'test.tsv',
             format='tsv',
             fields=self.fields)
 
@@ -90,11 +92,12 @@ class Quora:
 
         self.sort_key = lambda x: data.interleave_keys(len(x.q1), len(x.q2))
 
-        self.train_iter, self.valid_iter = data.BucketIterator.splits(
-            (self.train, self.valid, self.test),
-            batch_sizes=[args.batch_size] * 3,
-            device=args.gpu,
-            sort_key=self.sort_key)
+        self.train_iter, self.valid_iter, self.test_iter = \
+            data.BucketIterator.splits(
+                (self.train, self.valid, self.test),
+                batch_sizes=[args.batch_size] * 3,
+                device=args.gpu,
+                sort_key=self.sort_key)
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
         self.char_vocab = {'': 0}
@@ -136,7 +139,7 @@ class Sentence:
 
         if data_type == 'SNLI':
             self.p, self.q = 'premise', 'hypothesis'
-        elif data_type == 'Quora':
+        else:
             self.p, self.q = 'q1', 'q2'
 
     def process_batch(self, gpu):
@@ -144,11 +147,11 @@ class Sentence:
         self.q = getattr(self.batch, self.q)
 
         self.char_p = Variable(
-            torch.LongTensor(self.model_data.words_to_char(self.p)))
+            torch.LongTensor(self.model_data.words_to_chars(self.p)))
         self.char_q = Variable(
-            torch.LongTensor(self.model_data.words_to_char(self.q)))
+            torch.LongTensor(self.model_data.words_to_chars(self.q)))
 
-        if gpu:
+        if gpu > -1:
             self.char_p.cuda(gpu)
             self.char_q.cuda(gpu)
 
@@ -160,3 +163,9 @@ class Sentence:
         self.process_batch(gpu)
         self.make_data_dict()
         return (self.p, self.q)
+
+
+class Args:
+    def __init__(self, args_dict):
+        for k, v in args_dict.items():
+            setattr(self, k, v)

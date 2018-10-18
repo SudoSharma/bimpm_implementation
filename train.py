@@ -1,7 +1,6 @@
 import os
 import copy
 from time import gmtime, strftime
-from collections import namedtuple
 import plac
 
 import torch
@@ -9,41 +8,40 @@ from torch import nn, optim
 from tensorboardX import SummaryWriter
 
 from model.bimpm import BiMPM
-from model.utils import SNLI, Quora, Sentence
+from model.utils import SNLI, Quora, Sentence, Args
 from test import test
 
 
 def main(batch_size=64,
-         char_dim=20,
+         char_input_size=20,
          char_hidden_size=50,
-         data_type=(['SNLI', 'Quora']),
+         data_type: ("choose SNLI or Quora") = 'quora',
          dropout=0.1,
          epoch=10,
-         gpu=True,
+         gpu=-1,
          hidden_size=100,
          lr=0.001,
          num_perspectives=20,
          print_interval=500,
          word_dim=300):
-    args = locals()
+    args = Args(locals())
 
-    if args.data_type == 'SNLI':
+    if args.data_type.lower() == 'snli':
         print("Loading SNLI data...")
         model_data = SNLI(args)
-    elif args.data_type == 'Quora':
-        print("Loading Quoradata...")
-        model_data = Quora(args)
+    elif args.data_type.lower() == 'quora':
+        print("Loading Quora data...")
+        model_data = Quora(args, toy=True)
+        # model_data = Quora(args)
     else:
         raise RuntimeError(
             'Data source other than SNLI or Quora was provided.')
 
-    args['char_vocab_size'] = len(model_data.char_vocab)
-    args['word_vocab_size'] = len(model_data.TEXT.vocab)
-    args['class_size'] = len(model_data.LABEL.vocab)
-    args['max_word_len'] = model_data.max_word_len
-    args['model_time'] = strftime('%H:%M:%S', gmtime())
-
-    args = namedtuple('args', args.keys())(*args.values())
+    args.char_vocab_size = len(model_data.char_vocab)
+    args.word_vocab_size = len(model_data.TEXT.vocab)
+    args.class_size = len(model_data.LABEL.vocab)
+    args.max_word_len = model_data.max_word_len
+    args.model_time = strftime('%H:%M:%S', gmtime())
 
     print("Starting training...")
     best_model = train(args, model_data)
@@ -58,7 +56,7 @@ def main(batch_size=64,
 
 def train(args, model_data):
     model = BiMPM(args, model_data)
-    if args.gpu:
+    if args.gpu > -1:
         model.cuda(args.gpu)
 
     parameters = (p for p in model.parameters() if p.requires_grad)

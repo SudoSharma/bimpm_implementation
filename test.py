@@ -1,18 +1,17 @@
-from collections import namedtuple
 import plac
 
 import torch
 from torch import nn
 
 from model.bimpm import BiMPM
-from model.utils import SNLI, Quora, Sentence
+from model.utils import SNLI, Quora, Sentence, Args
 
 
 def main(model_path,
          batch_size=64,
-         char_dim=20,
+         char_input_size=20,
          char_hidden_size=50,
-         data_type=(['SNLI', 'Quora']),
+         data_type: ("choose SNLI or Quora") = 'quora',
          dropout=0.1,
          epoch=10,
          gpu=True,
@@ -20,24 +19,23 @@ def main(model_path,
          lr=0.001,
          num_perspectives=20,
          word_dim=300):
-    args = locals()
+    args = Args(locals())
 
     if args.data_type == 'SNLI':
         print("Loading SNLI data...")
         model_data = SNLI(args)
     elif args.data_type == 'Quora':
-        print("Loading Quoradata...")
-        model_data = Quora(args)
+        print("Loading Quora data...")
+        model_data = Quora(args, toy=True)
+        # model_data = Quora(args)
     else:
         raise RuntimeError(
             'Data source other than SNLI or Quora was provided.')
 
-    args['char_vocab_size'] = len(model_data.char_vocab)
-    args['word_vocab_size'] = len(model_data.TEXT.vocab)
-    args['class_size'] = len(model_data.LABEL.vocab)
-    args['max_word_len'] = model_data.max_word_len
-
-    args = namedtuple('args', args.keys())(*args.values())
+    args.char_vocab_size = len(model_data.char_vocab)
+    args.word_vocab_size = len(model_data.TEXT.vocab)
+    args.class_size = len(model_data.LABEL.vocab)
+    args.max_word_len = model_data.max_word_len
 
     print("Loading model...")
     model = load_model(args, model_data)

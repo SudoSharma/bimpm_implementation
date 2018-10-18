@@ -1,12 +1,12 @@
-import torch
+import plac
+
 import torch.nn as nn
 import model.layers as L
-import plac
 
 
 class BiMPM(nn.Module):
     def __init__(self, args, data):
-        super()
+        super(BiMPM, self).__init__()
 
         self.args = args
         self.w_layer = L.WordRepresentationLayer(args, data)

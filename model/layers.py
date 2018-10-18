@@ -1,17 +1,16 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import plac
 
 
 class CharacterRepresentationEncoder(nn.Module):
     def __init__(self, args):
-        super()
+        super(CharacterRepresentationEncoder, self).__init__()
 
         self.char_hidden_size = args.char_hidden_size
 
         self.char_encoder = nn.Embedding(
-            args.char_vocab_size, args.char_dim, padding_idx=0)
+            args.char_vocab_size, args.char_input_size, padding_idx=0)
         self.lstm = nn.LSTM(
             input_size=args.char_input_size,
             hidden_size=args.char_hidden_size,
@@ -29,7 +28,7 @@ class CharacterRepresentationEncoder(nn.Module):
 
 class WordRepresentationLayer(nn.Module):
     def __init__(self, args, data):
-        super()
+        super(WordRepresentationLayer, self).__init__()
 
         self.drop = args.dropout
 
@@ -43,16 +42,16 @@ class WordRepresentationLayer(nn.Module):
         return F.dropout(V, p=self.drop, training=self.training)
 
     def forward(self, sentence):
-        words = sentence.words
-        chars = self.char_encoder(sentence.chars)
-        sentence = torch.cat([words, chars], dim=-1)
+        words = self.word_encoder(sentence['words'])
+        chars = self.char_encoder(sentence['chars'])
+        p = torch.cat([words, chars], dim=-1)
 
-        return self.dropout(sentence)
+        return self.dropout(p)
 
 
 class ContextRepresentationLayer(nn.Module):
     def __init__(self, args):
-        super()
+        super(ContextRepresentationLayer, self).__init__()
 
         self.drop = args.dropout
         self.input_size = args.word_dim + args.char_hidden_size
@@ -67,15 +66,15 @@ class ContextRepresentationLayer(nn.Module):
     def dropout(self, V):
         return F.dropout(V, p=self.drop, training=self.training)
 
-    def forward(self, sentence):
-        sentence = self.lstm(sentence)[0]
+    def forward(self, p):
+        p = self.lstm(p)[0]
 
-        return self.dropout(sentence)
+        return self.dropout(p)
 
 
 class MatchingLayer(nn.Module):
     def __init__(self, args):
-        super()
+        super(MatchingLayer, self).__init__()
 
         self.hidden_size = args.hidden_size
         self.l = args.num_perspectives
@@ -144,15 +143,11 @@ class MatchingLayer(nn.Module):
             p_vec, _ = weighted_p.max(dim=1)
             q_vec, _ = weighted_q.max(dim=2)
 
-        seq_len = p.size(1)
-
-        p_vec = torch.stack([p_vec] * seq_len, dim=1)
         att_p_match = self.match(
-            p, p_vec, w, split=False, stack=False, cosine=True)
+            p, q_vec, w, split=False, stack=False, cosine=True)
 
-        q_vec = torch.stack([q_vec] * seq_len, dim=1)
         att_q_match = self.match(
-            q, q_vec, w, split=False, stack=False, cosine=True)
+            q, p_vec, w, split=False, stack=False, cosine=True)
 
         return (att_p_match, att_q_match)
 
@@ -212,12 +207,12 @@ class MatchingLayer(nn.Module):
 
 class AggregationLayer(nn.Module):
     def __init__(self, args):
-        super()
+        super(AggregationLayer, self).__init__()
 
         self.hidden_size = args.hidden_size
         self.drop = args.dropout
-        self.lstm = self.LSTM(
-            input_size=args.num_perpectives * 8,
+        self.lstm = nn.LSTM(
+            input_size=args.num_perspectives * 8,
             hidden_size=args.hidden_size,
             num_layers=1,
             bidirectional=True,
@@ -241,12 +236,12 @@ class AggregationLayer(nn.Module):
 
 class PredictionLayer(nn.Module):
     def __init__(self, args):
-        super()
+        super(PredictionLayer, self).__init__()
 
         self.drop = args.dropout
         self.hidden_layer = nn.Linear(args.hidden_size * 4,
                                       args.hidden_size * 2)
-        self.output_layer = nn.Linear(args.hidden_size * 2, args.num_classes)
+        self.output_layer = nn.Linear(args.hidden_size * 2, args.class_size)
 
     def dropout(self, V):
         return F.dropout(V, p=self.drop, training=self.training)
