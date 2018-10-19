@@ -21,7 +21,7 @@ def main(batch_size: ('[64]', 'positional', None, int)=64,
          hidden_size: ('[100]', 'positional', None, int)=100,
          lr: ('[0.001]', 'positional', None, float)=0.001,
          num_perspectives: ('[20]', 'positional', None, int)=20,
-         print_interval: ('[500]', 'positional', None, int)=500,
+         print_interval: ('[500]', 'positional', None, int)=3,
          word_dim: ('[300]', 'positional', None, int)=300):
     args = Args(locals())
 
