@@ -76,12 +76,16 @@ class MatchingLayer(nn.Module):
     def __init__(self, args):
         super(MatchingLayer, self).__init__()
 
+        self.drop = args.dropout
         self.hidden_size = args.hidden_size
         self.l = args.num_perspectives
         self.W = nn.ParameterList([
             nn.Parameter(torch.rand(self.l, self.hidden_size))
             for _ in range(8)
         ])
+
+    def dropout(self, V):
+        return F.dropout(V, p=self.drop, training=self.training)
 
     def cat(self, *args):
         return torch.cat(list(args), dim=2)
@@ -107,75 +111,95 @@ class MatchingLayer(nn.Module):
         if stack:
             seq_len = p.size(1)
 
+            # out_shape: (batch_size, seq_len_p, hidden_size)
             if direction == 'fw':
                 q = torch.stack([q[:, -1, :]] * seq_len, dim=1)
             elif direction == 'bw':
                 q = torch.stack([q[:, 0, :]] * seq_len, dim=1)
 
+        # out_shape: (1, l, 1, hidden_size)
         w = w.unsqueeze(0).unsqueeze(2)
+
+        # out_shape: (batch_size, l, seq_len_{p, q}, hidden_size)
         p = w * torch.stack([p] * self.l, dim=1)
         q = w * torch.stack([q] * self.l, dim=1)
 
         if cosine:
-            return F.cosine_similarity(p, q, dim=-1)
+            # out_shape: (batch_size, seq_len, l)
+            return F.cosine_similarity(p, q, dim=-1).permute(0, 2, 1)
 
         return (p, q)
 
     def attention(self, p, q, w, direction='fw', att='mean'):
+        # out_shape: (batch_size, seq_len_{p, q}, hidden_size)
         p = self.split(p, direction)
         q = self.split(q, direction)
 
+        # out_shape: (batch_size, seq_len_p, 1)
         p_norm = p.norm(p=2, dim=2, keepdim=True)
+        # out_shape: (batch_size, 1, seq_len_q)
         q_norm = q.norm(p=2, dim=2, keepdim=True).permute(0, 2, 1)
 
+        # out_shape: (batch_size, seq_len_p, seq_len_q)
         dot = torch.bmm(p, q.permute(0, 2, 1))
         magnitude = p_norm * q_norm
-
         cosine = dot / magnitude
+
+        # out_shape: (batch_size, seq_len_p, seq_len_q, hidden_size)
         weighted_p = p.unsqueeze(2) * cosine.unsqueeze(-1)
         weighted_q = q.unsqueeze(1) * cosine.unsqueeze(-1)
 
         if att == 'mean':
+            # out_shape: (batch_size, seq_len_{q, p}, hidden_size))
             p_vec = weighted_p.sum(dim=1) /\
                 cosine.sum(dim=1, keepdim=True).permute(0, 2, 1)
             q_vec = weighted_q.sum(dim=2) / cosine.sum(dim=2, keepdim=True)
         elif att == 'max':
+            # out_shape: (batch_size, seq_len_{q, p}, hidden_size)
             p_vec, _ = weighted_p.max(dim=1)
             q_vec, _ = weighted_q.max(dim=2)
 
+        # out_shape: (batch_size, seq_len_{p, q}, l)
         att_p_match = self.match(
             p, q_vec, w, split=False, stack=False, cosine=True)
-
         att_q_match = self.match(
             q, p_vec, w, split=False, stack=False, cosine=True)
 
         return (att_p_match, att_q_match)
 
     def full_match(self, p, q, w, direction):
+        # out_shape: (batch_size, seq_len_{p, q}, l)
         return self.match(
             p, q, w, direction, split=True, stack=True, cosine=True)
 
     def maxpool_match(self, p, q, w, direction):
+        # out_shape: (batch_size, l, seq_len_{p, q}, hidden_size)
         p, q = self.match(
             p, q, w, direction, split=True, stack=False, cosine=False)
 
+        # out_shape: (batch_size, l, seq_len_{p, q}, 1)
         p_norm = p.norm(p=2, dim=-1, keepdim=True)
         q_norm = q.norm(p=2, dim=-1, keepdim=True)
 
+        # out_shape: (batch_size, l, seq_len_p, seq_len_q)
         dot = torch.matmul(p, q.permute(0, 1, 3, 2))
         magnitude = p_norm * q_norm.permute(0, 1, 3, 2)
 
-        cosine = dot / magnitude
+        # out_shape: (batch_size, seq_len_p, seq_len_q, l)
+        cosine = (dot / magnitude).permute(0, 2, 3, 1)
 
+        # out_shape: (batch_size, seq_len_{p, q}, l)
         pool_p, _ = cosine.max(dim=2)
         pool_q, _ = cosine.max(dim=1)
 
         return (pool_p, pool_q)
 
     def attentive_match(self, p, q, w, direction):
+        # out_shape: (batch_size, seq_len_{p, q}, l)
         return self.attention(p, q, w, direction, att='mean')
 
     def max_attentive_match(self, p, q, w, direction):
+        # out_shape: (batch_size, seq_len_{p, q}, l)
         return self.attention(p, q, w, direction, att='max')
 
     def match_operation(self, p, q, W):
@@ -226,8 +250,8 @@ class AggregationLayer(nn.Module):
         q = self.lstm(q)[-1][0]
 
         x = torch.cat([
-            p.permute(1, 0, 2).view(-1, self.hidden_size * 2),
-            q.permute(1, 0, 2).view(-1, self.hidden_size * 2)
+            p.permute(1, 0, 2).contiguous().view(-1, self.hidden_size * 2),
+            q.permute(1, 0, 2).contiguous().view(-1, self.hidden_size * 2)
         ],
                       dim=1)
 
@@ -249,4 +273,4 @@ class PredictionLayer(nn.Module):
     def forward(self, match_vec):
         x = F.relu(self.hidden_layer(match_vec))
 
-        return F.softmax(self.output_layer(self.dropout(x)))
+        return self.output_layer(self.dropout(x))

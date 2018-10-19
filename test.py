@@ -8,18 +8,20 @@ from model.utils import SNLI, Quora, Sentence, Args
 
 
 def main(model_path,
-         batch_size=64,
-         char_input_size=20,
-         char_hidden_size=50,
-         data_type: ("choose SNLI or Quora") = 'quora',
-         dropout=0.1,
-         epoch=10,
-         gpu=True,
-         hidden_size=100,
-         lr=0.001,
-         num_perspectives=20,
-         word_dim=300):
+         batch_size: ('[64]', 'positional', None, int)=64,
+         char_input_size: ('[20]', 'positional', None, int)=20,
+         char_hidden_size: ('[50]', 'positional', None, int)=50,
+         data_type: ("{SNLI, [Quora]}")='quora',
+         dropout: ('[0.1]', 'positional', None, float)=0.1,
+         epoch: ('[10]', 'positional', None, int)=10,
+         hidden_size: ('[100]', 'positional', None, int)=100,
+         lr: ('[0.001]', 'positional', None, float)=0.001,
+         num_perspectives: ('[20]', 'positional', None, int)=20,
+         word_dim: ('[300]', 'positional', None, int)=300):
     args = Args(locals())
+
+    args.device = torch.device('cuds:0' if torch.cuda.
+                               is_available() else 'cpu')
 
     if args.data_type == 'SNLI':
         print("Loading SNLI data...")
@@ -56,19 +58,20 @@ def test(model, args, model_data, mode='test'):
     acc, loss, size = 0, 0, 0
 
     for batch in iterator:
-        p, q = Sentence(batch, model_data, args.data_type).generate(args.gpu)
+        p, q = Sentence(batch, model_data,
+                        args.data_type).generate(args.device)
 
         preds = model(p, q)
 
         batch_loss = criterion(preds, batch.label)
-        loss += batch_loss.data[0]
+        loss += batch_loss.data.item()
 
         _, preds = preds.max(dim=1)
         acc += (preds == batch.label).sum().float()
         size += len(preds)
 
     acc /= size
-    acc = acc.cpu().data[0]
+    acc = acc.cpu().data.item()
     return loss, acc
 
 
@@ -76,8 +79,7 @@ def load_model(args, model_data):
     model = BiMPM(args, model_data)
     model.load_state_dict(torch.load(args.model_path))
 
-    if args.gpu:
-        model.cuda(args.gpu)
+    model.to(args.device)
 
     return model
 

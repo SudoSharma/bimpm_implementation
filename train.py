@@ -12,19 +12,21 @@ from model.utils import SNLI, Quora, Sentence, Args
 from test import test
 
 
-def main(batch_size=64,
-         char_input_size=20,
-         char_hidden_size=50,
-         data_type: ("choose SNLI or Quora") = 'quora',
-         dropout=0.1,
-         epoch=10,
-         gpu=-1,
-         hidden_size=100,
-         lr=0.001,
-         num_perspectives=20,
-         print_interval=500,
-         word_dim=300):
+def main(batch_size: ('[64]', 'positional', None, int)=64,
+         char_input_size: ('[20]', 'positional', None, int)=20,
+         char_hidden_size: ('[50]', 'positional', None, int)=50,
+         data_type: ("{SNLI, [Quora]}") = 'quora',
+         dropout: ('[0.1]', 'positional', None, float)=0.1,
+         epoch: ('[10]', 'positional', None, int)=10,
+         hidden_size: ('[100]', 'positional', None, int)=100,
+         lr: ('[0.001]', 'positional', None, float)=0.001,
+         num_perspectives: ('[20]', 'positional', None, int)=20,
+         print_interval: ('[500]', 'positional', None, int)=3,
+         word_dim: ('[300]', 'positional', None, int)=300):
     args = Args(locals())
+
+    args.device = torch.device('cuda:0' if torch.cuda.
+                               is_available() else 'cpu')
 
     if args.data_type.lower() == 'snli':
         print("Loading SNLI data...")
@@ -56,8 +58,7 @@ def main(batch_size=64,
 
 def train(args, model_data):
     model = BiMPM(args, model_data)
-    if args.gpu > -1:
-        model.cuda(args.gpu)
+    model.to(args.device)
 
     parameters = (p for p in model.parameters() if p.requires_grad)
     optimizer = optim.Adam(parameters, lr=args.lr)
@@ -72,13 +73,14 @@ def train(args, model_data):
     for i, batch in enumerate(iterator):
         if not model_data.keep_training(iterator):
             break
-        p, q = Sentence(batch, model_data, args.data_type).generate(args.gpu)
+        p, q = Sentence(batch, model_data,
+                        args.data_type).generate(args.device)
 
         preds = model(p, q)
 
         optimizer.zero_grad()
         batch_loss = criterion(preds, batch.label)
-        train_loss += batch_loss.data[0]
+        train_loss += batch_loss.data.item()
         batch_loss.backward()
         optimizer.step()
 
@@ -113,7 +115,6 @@ def train(args, model_data):
         f'max_valid_acc: {max_valid_acc:.3f}\n',
         f'max_test_acc: {max_test_acc:.3f}',
         sep='')
-    writer.add_graph(best_model, (p, q))
     writer.close()
 
     return best_model

@@ -27,7 +27,7 @@ class SNLI:
             data.BucketIterator.splits(
                 (self.train, self.valid, self.test),
                 batch_sizes=[args.batch_size] * 3,
-                device=args.gpu)
+                device=torch.device(args.device))
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
         self.char_vocab = {'': 0}
@@ -96,7 +96,7 @@ class Quora:
             data.BucketIterator.splits(
                 (self.train, self.valid, self.test),
                 batch_sizes=[args.batch_size] * 3,
-                device=args.gpu,
+                device=torch.device(args.device),
                 sort_key=self.sort_key)
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
@@ -142,7 +142,7 @@ class Sentence:
         else:
             self.p, self.q = 'q1', 'q2'
 
-    def process_batch(self, gpu):
+    def process_batch(self, device):
         self.p = getattr(self.batch, self.p)
         self.q = getattr(self.batch, self.q)
 
@@ -151,9 +151,8 @@ class Sentence:
         self.char_q = Variable(
             torch.LongTensor(self.model_data.words_to_chars(self.q)))
 
-        if gpu > -1:
-            self.char_p.cuda(gpu)
-            self.char_q.cuda(gpu)
+        self.char_p.to(device)
+        self.char_q.to(device)
 
     def make_data_dict(self):
         self.p = {'words': self.p, 'chars': self.char_p}

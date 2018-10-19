@@ -1,5 +1,3 @@
-import plac
-
 import torch.nn as nn
 import model.layers as L
 
