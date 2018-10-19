@@ -58,7 +58,7 @@ class SNLI:
         if self.present_epoch == self.args.epoch:
             return False
         if self.present_epoch > self.last_epoch:
-            print(f'epoch: {self.present_epoch+1}')
+            print(f'\tepoch: {self.present_epoch+1}')
         self.last_epoch = self.present_epoch
         return True
 
@@ -128,7 +128,7 @@ class Quora:
         if self.present_epoch == self.args.epoch:
             return False
         if self.present_epoch > self.last_epoch:
-            print(f'epoch: {self.present_epoch+1}')
+            print(f'\tepoch: {self.present_epoch+1}')
         self.last_epoch = self.present_epoch
         return True
 
@@ -151,15 +151,15 @@ class Sentence:
         self.char_q = Variable(
             torch.LongTensor(self.model_data.words_to_chars(self.q)))
 
-        self.char_p.to(device)
-        self.char_q.to(device)
+        self.char_p = self.char_p.to(device)
+        self.char_q = self.char_q.to(device)
 
     def make_data_dict(self):
         self.p = {'words': self.p, 'chars': self.char_p}
         self.q = {'words': self.q, 'chars': self.char_q}
 
-    def generate(self, gpu):
-        self.process_batch(gpu)
+    def generate(self, device):
+        self.process_batch(device)
         self.make_data_dict()
         return (self.p, self.q)
 
