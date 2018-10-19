@@ -20,7 +20,7 @@ def main(model_path,
          word_dim: ('[300]', 'positional', None, int)=300):
     args = Args(locals())
 
-    args.device = torch.device('cuds:0' if torch.cuda.
+    args.device = torch.device('cuda:0' if torch.cuda.
                                is_available() else 'cpu')
 
     if args.data_type == 'SNLI':
@@ -78,7 +78,6 @@ def test(model, args, model_data, mode='test'):
 def load_model(args, model_data):
     model = BiMPM(args, model_data)
     model.load_state_dict(torch.load(args.model_path))
-
     model.to(args.device)
 
     return model

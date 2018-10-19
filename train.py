@@ -12,17 +12,17 @@ from model.utils import SNLI, Quora, Sentence, Args
 from test import test
 
 
-def main(batch_size: ('[64]', 'positional', None, int)=64,
-         char_input_size: ('[20]', 'positional', None, int)=20,
-         char_hidden_size: ('[50]', 'positional', None, int)=50,
+def main(batch_size: ('[64]', 'positional', None, int) = 64,
+         char_input_size: ('[20]', 'positional', None, int) = 20,
+         char_hidden_size: ('[50]', 'positional', None, int) = 50,
          data_type: ("{SNLI, [Quora]}") = 'quora',
-         dropout: ('[0.1]', 'positional', None, float)=0.1,
-         epoch: ('[10]', 'positional', None, int)=10,
-         hidden_size: ('[100]', 'positional', None, int)=100,
-         lr: ('[0.001]', 'positional', None, float)=0.001,
-         num_perspectives: ('[20]', 'positional', None, int)=20,
-         print_interval: ('[500]', 'positional', None, int)=3,
-         word_dim: ('[300]', 'positional', None, int)=300):
+         dropout: ('[0.1]', 'positional', None, float) = 0.1,
+         epoch: ('[10]', 'positional', None, int) = 10,
+         hidden_size: ('[100]', 'positional', None, int) = 100,
+         lr: ('[0.001]', 'positional', None, float) = 0.001,
+         num_perspectives: ('[20]', 'positional', None, int) = 20,
+         print_interval: ('[500]', 'positional', None, int) = 3,
+         word_dim: ('[300]', 'positional', None, int) = 300):
     args = Args(locals())
 
     args.device = torch.device('cuda:0' if torch.cuda.
@@ -49,7 +49,7 @@ def main(batch_size: ('[64]', 'positional', None, int)=64,
     best_model = train(args, model_data)
 
     if not os.path.exists('saved_models'):
-        os.makedirs('save_models')
+        os.makedirs('saved_models')
     torch.save(best_model.state_dict(),
                f'saved_models/bimpm_{args.data_type}_{args.model_time}.pt')
 
@@ -96,11 +96,11 @@ def train(args, model_data):
             writer.add_scalar('acc/test', test_acc, c)
 
             print(
-                f'train_loss: {train_loss:.3f}\n',
-                f'valid_loss: {valid_loss:.3f}\n',
-                f'test_loss: {test_loss:.3f}\n',
-                f'valid_acc: {valid_acc:.3f}\n',
-                f'test_acc: {test_acc:.3f}',
+                f'\ntrain_loss:  {train_loss:.3f}\n',
+                f'valid_loss:  {valid_loss:.3f}\n',
+                f'test_loss:   {test_loss:.3f}\n',
+                f'valid_acc:   {valid_acc:.3f}\n',
+                f'test_acc:    {test_acc:.3f}\n',
                 sep='')
 
             if valid_acc > max_valid_acc:
@@ -112,8 +112,8 @@ def train(args, model_data):
             model.train()
 
     print(
-        f'max_valid_acc: {max_valid_acc:.3f}\n',
-        f'max_test_acc: {max_test_acc:.3f}',
+        f'\nmax_valid_acc:  {max_valid_acc:.3f}\n',
+        f'max_test_acc:   {max_test_acc:.3f}\n',
         sep='')
     writer.close()
 
