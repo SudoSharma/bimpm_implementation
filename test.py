@@ -58,6 +58,7 @@ def test(model, args, model_data, mode='test'):
     acc, loss, size = 0, 0, 0
 
     for batch in iterator:
+        print(iterator)
         if not model_data.keep_training(iterator, test=True):
             break
         p, q = Sentence(batch, model_data,

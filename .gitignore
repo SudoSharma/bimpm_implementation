@@ -5,3 +5,4 @@
 /__pycache__/
 /model/__pycache__/
 /runs/*
+/saved_models/*

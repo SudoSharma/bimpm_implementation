@@ -71,6 +71,7 @@ def train(args, model_data):
 
     iterator = model_data.train_iter
     for i, batch in enumerate(iterator):
+        print(iterator)
         if not model_data.keep_training(iterator):
             break
         p, q = Sentence(batch, model_data,
