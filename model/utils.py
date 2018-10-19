@@ -27,7 +27,8 @@ class SNLI:
             data.BucketIterator.splits(
                 (self.train, self.valid, self.test),
                 batch_sizes=[args.batch_size] * 3,
-                device=torch.device(args.device))
+                device=args.device,
+                repeat=True)
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
         self.char_vocab = {'': 0}
@@ -53,12 +54,14 @@ class SNLI:
         batch = batch.data.cpu().numpy().astype(int).tolist()
         return [[self.word_chars[w] for w in words] for words in batch]
 
-    def keep_training(self, iterator):
+    def keep_training(self, iterator, test=False):
+        max_epochs = 1 if test else self.args.epoch
+
         self.present_epoch = int(iterator.epoch)
-        if self.present_epoch == self.args.epoch:
+        if self.present_epoch == max_epochs:
             return False
         if self.present_epoch > self.last_epoch:
-            print(f'\tepoch: {self.present_epoch+1}')
+            print(f'  epoch: {self.present_epoch+1}')
         self.last_epoch = self.present_epoch
         return True
 
@@ -96,8 +99,9 @@ class Quora:
             data.BucketIterator.splits(
                 (self.train, self.valid, self.test),
                 batch_sizes=[args.batch_size] * 3,
-                device=torch.device(args.device),
-                sort_key=self.sort_key)
+                device=args.device,
+                sort_key=self.sort_key,
+                repeat=True)
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
         self.char_vocab = {'': 0}
@@ -123,12 +127,14 @@ class Quora:
         batch = batch.data.cpu().numpy().astype(int).tolist()
         return [[self.word_chars[w] for w in words] for words in batch]
 
-    def keep_training(self, iterator):
+    def keep_training(self, iterator, test=False):
+        max_epochs = 1 if test else self.args.epoch
+
         self.present_epoch = int(iterator.epoch)
-        if self.present_epoch == self.args.epoch:
+        if self.present_epoch == max_epochs:
             return False
         if self.present_epoch > self.last_epoch:
-            print(f'\tepoch: {self.present_epoch+1}')
+            print(f'  epoch: {self.present_epoch+1}')
         self.last_epoch = self.present_epoch
         return True
 

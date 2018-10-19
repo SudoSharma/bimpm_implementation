@@ -86,7 +86,7 @@ def train(args, model_data):
 
         if (i + 1) % args.print_interval == 0:
             valid_loss, valid_acc = test(model, args, model_data, mode='valid')
-            test_loss, test_acc = test(model, args, model_data)
+            test_loss, test_acc = test(model, args, model_data, mode='test')
             c = (i + 1) // args.print_interval
 
             writer.add_scalar('loss/train', train_loss, c)

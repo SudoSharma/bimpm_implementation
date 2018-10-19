@@ -44,7 +44,7 @@ def main(model_path,
 
     _, test_acc = test(model, args, model_data)
 
-    print(f'test_acc: {test_acc:.3f}')
+    print(f'\ntest_acc:  {test_acc:.3f}\n')
 
 
 def test(model, args, model_data, mode='test'):
@@ -58,11 +58,12 @@ def test(model, args, model_data, mode='test'):
     acc, loss, size = 0, 0, 0
 
     for batch in iterator:
+        if not model_data.keep_training(iterator, test=True):
+            break
         p, q = Sentence(batch, model_data,
                         args.data_type).generate(args.device)
 
         preds = model(p, q)
-
         batch_loss = criterion(preds, batch.label)
         loss += batch_loss.data.item()
 
