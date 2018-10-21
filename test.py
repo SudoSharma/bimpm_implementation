@@ -49,18 +49,17 @@ def main(model_path,
 
 def test(model, args, model_data, mode='test'):
     if mode == 'valid':
-        iterator = iter(model_data.valid_iter)
+        iterator = model_data.valid_iter
+        iterator.repeat = False
     elif mode == 'test':
-        iterator = iter(model_data.test_iter)
+        iterator = model_data.test_iter
+        iterator.repeat = False
 
     criterion = nn.CrossEntropyLoss()
     model.eval()
     acc, loss, size = 0, 0, 0
 
     for batch in iterator:
-        print(iterator)
-        if not model_data.keep_training(iterator, test=True):
-            break
         p, q = Sentence(batch, model_data,
                         args.data_type).generate(args.device)
 
