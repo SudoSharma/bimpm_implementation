@@ -5,6 +5,17 @@ This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for
 - consider adding protection against exploding cosine similarity for very small norm
 - optimize on Quora dataset
 - optimize on SNLI dataset
-- create benchmark in readme
 - finish docstrings
-- fix issue with test data epochs and generatory type
+
+# Experiments
+Quora Baseline: 88.17 
+
+## Vanilla Version 
+Quora Reimplementation: 85.88
+SNLI Reimplementation: 
+
+## Bi-LSTM Char Version
+Quora Reimplementation:
+
+## Weight Initialization Version
+Quora Reimplementation:
