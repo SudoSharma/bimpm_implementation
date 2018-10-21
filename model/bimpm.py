@@ -3,11 +3,11 @@ import model.layers as L
 
 
 class BiMPM(nn.Module):
-    def __init__(self, args, data):
+    def __init__(self, args, model_data):
         super(BiMPM, self).__init__()
 
         self.args = args
-        self.w_layer = L.WordRepresentationLayer(args, data)
+        self.w_layer = L.WordRepresentationLayer(args, model_data)
         self.c_layer = L.ContextRepresentationLayer(args)
         self.m_layer = L.MatchingLayer(args)
         self.a_layer = L.AggregationLayer(args)
