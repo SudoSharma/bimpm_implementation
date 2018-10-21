@@ -1,3 +1,5 @@
+"""A script to train and test a PyTorch implementation of the BiMPM model."""
+
 import os
 import copy
 from time import gmtime, strftime
@@ -7,9 +9,9 @@ import torch
 from torch import nn, optim
 from tensorboardX import SummaryWriter
 
+from test import test
 from model.bimpm import BiMPM
 from model.utils import SNLI, Quora, Sentence, Args
-from test import test
 
 
 def main(batch_size: ('[64]', 'positional', None, int) = 64,
@@ -38,6 +40,7 @@ def main(batch_size: ('[64]', 'positional', None, int) = 64,
     print_interval -- how often to write to tensorboard (default 500),
     word_dim -- size of word embeddings (default 300):
     """
+    # Store local namespace dict in Args() object
     args = Args(locals())
 
     args.device = torch.device('cuda:0' if torch.cuda.
@@ -48,13 +51,13 @@ def main(batch_size: ('[64]', 'positional', None, int) = 64,
         model_data = SNLI(args)
     elif args.data_type.lower() == 'quora':
         print("Loading Quora data...")
-        # model_data = Quora(args, toy=True)
+        # model_data = Quora(args, toy=True) # Use for experimentation 
         model_data = Quora(args)
     else:
         raise RuntimeError(
             'Data source other than SNLI or Quora was provided.')
 
-    # create a few more parameters based on chosen dataset
+    # Create a few more parameters based on chosen dataset
     args.char_vocab_size = len(model_data.char_vocab)
     args.word_vocab_size = len(model_data.TEXT.vocab)
     args.class_size = len(model_data.LABEL.vocab)
@@ -73,7 +76,12 @@ def main(batch_size: ('[64]', 'positional', None, int) = 64,
 
 
 def train(args, model_data):
-    """"""
+    """Train BiMPM model on SNLI or Quora data.
+
+    Keyword arguments:
+    args -- Args() object with all arguments for BiMPM model
+    model_data -- data loading object which returns word vectors and sentences
+    """
     model = BiMPM(args, model_data)
     model.to(args.device)
 
@@ -81,6 +89,7 @@ def train(args, model_data):
     optimizer = optim.Adam(parameters, lr=args.lr)
     criterion = nn.CrossEntropyLoss()
 
+    # Initialize tensorboardx logging 
     writer = SummaryWriter(log_dir='runs/' + args.model_time)
 
     model.train()
@@ -88,13 +97,16 @@ def train(args, model_data):
 
     iterator = model_data.train_iter
     for i, batch in enumerate(iterator):
+        # Train for args.epoch number of epochs
         if not model_data.keep_training(iterator):
             break
+        # Sentence() object contains chars and word batches
         p, q = Sentence(batch, model_data,
                         args.data_type).generate(args.device)
 
         preds = model(p, q)
 
+        # Backpropagate loss and update weights
         optimizer.zero_grad()
         batch_loss = criterion(preds, batch.label)
         train_loss += batch_loss.data.item()
@@ -104,8 +116,9 @@ def train(args, model_data):
         if (i + 1) % args.print_interval == 0:
             valid_loss, valid_acc = test(model, args, model_data, mode='valid')
             test_loss, test_acc = test(model, args, model_data, mode='test')
-            c = (i + 1) // args.print_interval
+            c = (i + 1) // args.print_interval  # Calculate step
 
+            # Update tensorboardx logs
             writer.add_scalar('loss/train', train_loss, c)
             writer.add_scalar('loss/valid', valid_loss, c)
             writer.add_scalar('acc/valid', valid_acc, c)
@@ -120,6 +133,7 @@ def train(args, model_data):
                 f'test_acc:    {test_acc:.3f}\n',
                 sep='')
 
+            # Track best model and metrics so far
             if valid_acc > max_valid_acc:
                 max_valid_acc = valid_acc
                 max_test_acc = test_acc
@@ -138,4 +152,4 @@ def train(args, model_data):
 
 
 if __name__ == '__main__':
-    plac.call(main)
+    plac.call(main)  # Only executed when script is run directly
