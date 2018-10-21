@@ -141,7 +141,7 @@ class Sentence:
     def __init__(self, batch, model_data, data_type):
         self.batch, self.model_data = batch, model_data
 
-        if data_type == 'SNLI':
+        if data_type.lower() == 'snli':
             self.p, self.q = 'premise', 'hypothesis'
         else:
             self.p, self.q = 'q1', 'q2'
