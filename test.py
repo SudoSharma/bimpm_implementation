@@ -50,10 +50,8 @@ def main(model_path,
 def test(model, args, model_data, mode='test'):
     if mode == 'valid':
         iterator = model_data.valid_iter
-        iterator.repeat = False
     elif mode == 'test':
         iterator = model_data.test_iter
-        iterator.repeat = False
 
     criterion = nn.CrossEntropyLoss()
     model.eval()
