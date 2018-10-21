@@ -2,10 +2,8 @@
 This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for Natural Language Sentences (BiMPM) paper by <em>Wang et al.</em>, which can be found [here](https://arxiv.org/pdf/1702.03814v3.pdf).
 
 # TODOs
-- consider adding protection against exploding cosine similarity for very small norm
-- optimize on Quora dataset
-- optimize on SNLI dataset
 - finish docstrings
+- create a requirements file
 
 # Experiments
 Quora Baseline: 88.17 
@@ -14,8 +12,15 @@ Quora Baseline: 88.17
 Quora Reimplementation: 85.88
 SNLI Reimplementation: 
 
-## Bi-LSTM Char Version
-Quora Reimplementation:
-
-## Weight Initialization Version
-Quora Reimplementation:
+# Ways to improve further on toy Quora dataset
+1. SGDR - stochastic gradient descent with warm restarts
+- cosine annealing
+- add adamw?
+- try tanh and then try swish or eswish
+- try GRU 
+- weight initialization
+- bi-lstm char
+- more perspectives - try 25
+- more hidden neurons in char lstm - 100
+- ensembling?
+- swap glove vectors with ulmfit word vectors
