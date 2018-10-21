@@ -21,7 +21,7 @@ def main(batch_size: ('[64]', 'positional', None, int) = 64,
          hidden_size: ('[100]', 'positional', None, int) = 100,
          lr: ('[0.001]', 'positional', None, float) = 0.001,
          num_perspectives: ('[20]', 'positional', None, int) = 20,
-         print_interval: ('[500]', 'positional', None, int) = 3,
+         print_interval: ('[500]', 'positional', None, int) = 500,
          word_dim: ('[300]', 'positional', None, int) = 300):
     args = Args(locals())
 
@@ -33,8 +33,8 @@ def main(batch_size: ('[64]', 'positional', None, int) = 64,
         model_data = SNLI(args)
     elif args.data_type.lower() == 'quora':
         print("Loading Quora data...")
-        model_data = Quora(args, toy=True)
-        # model_data = Quora(args)
+        # model_data = Quora(args, toy=True)
+        model_data = Quora(args)
     else:
         raise RuntimeError(
             'Data source other than SNLI or Quora was provided.')

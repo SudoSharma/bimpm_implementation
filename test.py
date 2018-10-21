@@ -28,8 +28,8 @@ def main(model_path,
         model_data = SNLI(args)
     elif args.data_type == 'Quora':
         print("Loading Quora data...")
-        model_data = Quora(args, toy=True)
-        # model_data = Quora(args)
+        # model_data = Quora(args, toy=True)
+        model_data = Quora(args)
     else:
         raise RuntimeError(
             'Data source other than SNLI or Quora was provided.')
