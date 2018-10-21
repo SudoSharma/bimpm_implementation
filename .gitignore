@@ -6,3 +6,4 @@
 /model/__pycache__/
 /runs/*
 /saved_models/*
+/train.out
