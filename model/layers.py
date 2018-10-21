@@ -27,13 +27,13 @@ class CharacterRepresentationEncoder(nn.Module):
 
 
 class WordRepresentationLayer(nn.Module):
-    def __init__(self, args, data):
+    def __init__(self, args, model_data):
         super(WordRepresentationLayer, self).__init__()
 
         self.drop = args.dropout
 
         self.word_encoder = nn.Embedding(args.word_vocab_size, args.word_dim)
-        self.word_encoder.weight.data.copy_(data.TEXT.vocab.vectors)
+        self.word_encoder.weight.data.copy_(model_data.TEXT.vocab.vectors)
         self.word_encoder.weight.requires_grad = False
 
         self.char_encoder = CharacterRepresentationEncoder(args)
@@ -41,9 +41,9 @@ class WordRepresentationLayer(nn.Module):
     def dropout(self, V):
         return F.dropout(V, p=self.drop, training=self.training)
 
-    def forward(self, sentence):
-        words = self.word_encoder(sentence['words'])
-        chars = self.char_encoder(sentence['chars'])
+    def forward(self, p):
+        words = self.word_encoder(p['words'])
+        chars = self.char_encoder(p['chars'])
         p = torch.cat([words, chars], dim=-1)
 
         return self.dropout(p)
