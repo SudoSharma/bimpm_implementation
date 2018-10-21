@@ -23,6 +23,21 @@ def main(batch_size: ('[64]', 'positional', None, int) = 64,
          num_perspectives: ('[20]', 'positional', None, int) = 20,
          print_interval: ('[500]', 'positional', None, int) = 500,
          word_dim: ('[300]', 'positional', None, int) = 300):
+    """Train and store the best BiMPM model in a cycle.
+
+    Keyword arguments:
+    batch_size -- number of examples in one iteration (default 64),
+    char_input_size -- size of character embedding (default 20),
+    char_hidden_size -- size of hidden layer in char lstm (default 50),
+    data_type -- either SNLI or Quora (default 'quora'),
+    dropout -- applied to each layer (default 0.1),
+    epoch -- number of passes through full dataset (default 10),
+    hidden_size -- size of hidden layer for all BiLSTM layers (default 100),
+    lr -- learning rate (default 0.001),
+    num_perspectives -- number of perspectives in matching layer (default 20),
+    print_interval -- how often to write to tensorboard (default 500),
+    word_dim -- size of word embeddings (default 300):
+    """
     args = Args(locals())
 
     args.device = torch.device('cuda:0' if torch.cuda.
@@ -39,6 +54,7 @@ def main(batch_size: ('[64]', 'positional', None, int) = 64,
         raise RuntimeError(
             'Data source other than SNLI or Quora was provided.')
 
+    # create a few more parameters based on chosen dataset
     args.char_vocab_size = len(model_data.char_vocab)
     args.word_vocab_size = len(model_data.TEXT.vocab)
     args.class_size = len(model_data.LABEL.vocab)
@@ -57,6 +73,7 @@ def main(batch_size: ('[64]', 'positional', None, int) = 64,
 
 
 def train(args, model_data):
+    """"""
     model = BiMPM(args, model_data)
     model.to(args.device)
 
