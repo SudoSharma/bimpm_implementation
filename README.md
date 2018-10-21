@@ -10,7 +10,7 @@ Quora Baseline: 88.17
 
 ## Vanilla Version 
 Quora Reimplementation: 85.88
-SNLI Reimplementation: 
+SNLI Reimplementation: 85.13
 
 # Ways to improve further on toy Quora dataset
 1. SGDR - stochastic gradient descent with warm restarts
