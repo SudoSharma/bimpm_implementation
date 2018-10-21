@@ -27,8 +27,9 @@ class SNLI:
             data.BucketIterator.splits(
                 (self.train, self.valid, self.test),
                 batch_sizes=[args.batch_size] * 3,
-                device=args.device,
-                repeat=True)
+                device=args.device)
+
+        self.train_iter.repeat = True
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
         self.char_vocab = {'': 0}
@@ -54,11 +55,9 @@ class SNLI:
         batch = batch.data.cpu().numpy().astype(int).tolist()
         return [[self.word_chars[w] for w in words] for words in batch]
 
-    def keep_training(self, iterator, test=False):
-        max_epochs = 1 if test else self.args.epoch
-
+    def keep_training(self, iterator):
         self.present_epoch = int(iterator.epoch)
-        if self.present_epoch == max_epochs:
+        if self.present_epoch == self.args.epoch:
             return False
         if self.present_epoch > self.last_epoch:
             print(f'  epoch: {self.present_epoch+1}')
@@ -100,8 +99,9 @@ class Quora:
                 (self.train, self.valid, self.test),
                 batch_sizes=[args.batch_size] * 3,
                 device=args.device,
-                sort_key=self.sort_key,
-                repeat=True)
+                sort_key=self.sort_key)
+
+        self.train_iter.repeat = True
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
         self.char_vocab = {'': 0}
@@ -127,11 +127,9 @@ class Quora:
         batch = batch.data.cpu().numpy().astype(int).tolist()
         return [[self.word_chars[w] for w in words] for words in batch]
 
-    def keep_training(self, iterator, test=False):
-        max_epochs = 1 if test else self.args.epoch
-
+    def keep_training(self, iterator):
         self.present_epoch = int(iterator.epoch)
-        if self.present_epoch == max_epochs:
+        if self.present_epoch == self.args.epoch:
             return False
         if self.present_epoch > self.last_epoch:
             print(f'  epoch: {self.present_epoch+1}')
