@@ -22,7 +22,6 @@ This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for
 
 # Experiments 
 ## (Toy Quora) Sentence Similarity Baseline
-### Description
 ## Stochastic Gradient Descent with Warm Restarts (SGDR)
 ## Cosine Annealing 
 ## AdamW 
@@ -36,6 +35,9 @@ This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for
 ## Increased Hidden Layers in Char LSTM (100)
 ## ULMFiT Word Vectors
 ## Ensembling
+## Enhanced Reimplementation
+(Quora) Sentence Similarity: 
+<br>(SNLI) Natural Language Inference: 
 
 # Pending Tasks 
 - Finish docstrings
