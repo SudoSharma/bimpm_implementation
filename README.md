@@ -4,13 +4,19 @@ This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for
 # TODOs
 - finish docstrings
 - create a requirements file
+- add to website, and create UI for Sentence 1, Sentence 2, Inference or Similarity, and provide results - create a command-line script, and a UI
+- test "What can I pick up my meds?" and "Where is the nearest pharmacy?"
+- write tests
+- figure out if CI is important
 
 # Experiments
-Quora Baseline: 88.17 
+## Original Baseline
+(Quora) Sentence Similarity: 88.2
+(SNLI) Natural Language Inference: 86.9
 
-## Vanilla Version 
-Quora Reimplementation: 85.88
-<br>SNLI Reimplementation: 85.13
+## Vanilla Reimplementation 
+(Quora) Sentence Similarity: 85.9
+<br>(SNLI) Natural Language Inference: 85.1
 
 ## Ways to improve further on toy Quora dataset
 - SGDR - stochastic gradient descent with warm restarts
