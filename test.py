@@ -64,7 +64,7 @@ def main(model_path,
         model_data = SNLI(args)
     elif args.data_type == 'Quora':
         print("Loading Quora data...")
-        # model_data = Quora(args, toy=True) # Use for experimentation
+        # model_data = Quora(args, toy=True)  # Use for experimentation
         model_data = Quora(args)
     else:
         raise RuntimeError(

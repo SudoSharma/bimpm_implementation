@@ -69,7 +69,7 @@ def main(batch_size: ('[64]', 'optional', None, int) = 64,
         model_data = SNLI(args)
     elif args.data_type.lower() == 'quora':
         print("Loading Quora data...")
-        # model_data = Quora(args, toy=True) # Use for experimentation 
+        # model_data = Quora(args, toy=True)  # Use for experimentation 
         model_data = Quora(args)
     else:
         raise RuntimeError(
