@@ -20,24 +20,27 @@ This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for
 ## Training
 ## Evaluation
 
-
-## Pending Experiments 
-- SGDR - stochastic gradient descent with warm restarts
-- cosine annealing
-- add adamw?
-- try tanh and then try swish or eswish
-- try GRU 
-- weight initialization
-- bi-lstm char
-- more perspectives - try 25
-- more hidden neurons in char lstm - 100
-- ensembling?
-- swap glove vectors with ulmfit word vectors
+# Experiments 
+## (Toy Quora) Sentence Similarity Baseline
+### Description
+## Stochastic Gradient Descent with Warm Restarts (SGDR)
+## Cosine Annealing 
+## AdamW 
+## Activation Functions
+### Tanh   
+### Swish
+## GRU 
+## Structured Weight Initialization
+## Bi-LSTM for Characters
+## Increased Perspectives
+## Increased Hidden Layers in Char LSTM (100)
+## ULMFiT Word Vectors
+## Ensembling
 
 # Pending Tasks 
-- finish docstrings
-- create a requirements file
-- add to website, and create UI for Sentence 1, Sentence 2, Inference or Similarity, and provide results - create a command-line script, and a UI
-- test "What can I pick up my meds?" and "Where is the nearest pharmacy?"
-- write tests
-- figure out if CI is important
+- Finish docstrings
+- Create a requirements file
+- Create web app
+- Allow one example testing in command line
+- Write tests
+- Include continuous integration
