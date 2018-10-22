@@ -25,6 +25,7 @@ class BiMPM(nn.Module):
         super(BiMPM, self).__init__()
 
         self.args = args
+
         self.w_layer = L.WordRepresentationLayer(args, model_data)
         self.c_layer = L.ContextRepresentationLayer(args)
         self.m_layer = L.MatchingLayer(args)
@@ -39,6 +40,12 @@ class BiMPM(nn.Module):
         ----------
         p, q : Sentence
             A sentence object with chars and word batches.
+
+        Returns
+        -------
+        torch.FloatTensor
+            A PyTorch FloatTensor object with size (batch_size, num_classes)
+            containing the class probalities for each sentence in the batch.
 
         """
         p, q = self.w_layer(p), self.w_layer(q)  # Create word embeddings
