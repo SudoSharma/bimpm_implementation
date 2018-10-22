@@ -1,4 +1,4 @@
-"""A script to train and test a PyTorch implementation of the BiMPM model."""
+"""Trains and tests a PyTorch implementation of the BiMPM model."""
 
 import os
 import copy
@@ -99,9 +99,9 @@ def train(args, model_data):
     Parameters
     ----------
     args : Args
-        An object with all arguments for BiMPM model
+        An object with all arguments for BiMPM model.
     model_data : {Quora, SNLI}
-        A data loading object which returns word vectors and sentences
+        A data loading object which returns word vectors and sentences.
 
     Returns
     -------

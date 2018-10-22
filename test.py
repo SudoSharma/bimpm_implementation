@@ -1,4 +1,4 @@
-"""A script to test a model trained on a PyTorch reimplementation of BiMPM"""
+"""Tests a model trained on a PyTorch reimplementation of BiMPM"""
 
 import plac
 
@@ -90,11 +90,11 @@ def test(model, args, model_data, mode='test'):
     Parameters
     ----------
     args : Args
-        An object with all arguments for BiMPM model
+        An object with all arguments for BiMPM model.
     model_data : {Quora, SNLI}
-        A data loading object which returns word vectors and sentences
+        A data loading object which returns word vectors and sentences.
     mode : int, optional
-        Indicates whether or not to use valid or test data (default is test)
+        Indicates whether or not to use valid or test data (default is 'test').
 
     Returns
     -------
@@ -140,7 +140,7 @@ def load_model(args, model_data):
     args : Args
         An object with all arguments for BiMPM model
     model_data : {Quora, SNLI}
-        A data loading object which returns word vectors and sentences
+        A data loading object which returns word vectors and sentences.
 
     Returns
     -------
