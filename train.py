@@ -14,31 +14,49 @@ from model.bimpm import BiMPM
 from model.utils import SNLI, Quora, Sentence, Args
 
 
-def main(batch_size: ('[64]', 'positional', None, int) = 64,
-         char_input_size: ('[20]', 'positional', None, int) = 20,
-         char_hidden_size: ('[50]', 'positional', None, int) = 50,
-         data_type: ("{SNLI, [Quora]}") = 'quora',
-         dropout: ('[0.1]', 'positional', None, float) = 0.1,
-         epoch: ('[10]', 'positional', None, int) = 10,
-         hidden_size: ('[100]', 'positional', None, int) = 100,
-         lr: ('[0.001]', 'positional', None, float) = 0.001,
-         num_perspectives: ('[20]', 'positional', None, int) = 20,
-         print_interval: ('[500]', 'positional', None, int) = 500,
-         word_dim: ('[300]', 'positional', None, int) = 300):
+def main(batch_size: ('[64]', 'optional', None, int) = 64,
+         char_input_size: ('[20]', 'optional', None, int) = 20,
+         char_hidden_size: ('[50]', 'optional', None, int) = 50,
+         data_type: ("{[Quora], SNLI}") = 'quora',
+         dropout: ('[0.1]', 'optional', None, float) = 0.1,
+         epoch: ('[10]', 'optional', None, int) = 10,
+         hidden_size: ('[100]', 'optional', None, int) = 100,
+         lr: ('[0.001]', 'optional', None, float) = 0.001,
+         num_perspectives: ('[20]', 'optional', None, int) = 20,
+         print_interval: ('[500]', 'optional', None, int) = 500,
+         word_dim: ('[300]', 'optional', None, int) = 300):
     """Train and store the best BiMPM model in a cycle.
 
-    Keyword arguments:
-    batch_size -- number of examples in one iteration (default 64),
-    char_input_size -- size of character embedding (default 20),
-    char_hidden_size -- size of hidden layer in char lstm (default 50),
-    data_type -- either SNLI or Quora (default 'quora'),
-    dropout -- applied to each layer (default 0.1),
-    epoch -- number of passes through full dataset (default 10),
-    hidden_size -- size of hidden layer for all BiLSTM layers (default 100),
-    lr -- learning rate (default 0.001),
-    num_perspectives -- number of perspectives in matching layer (default 20),
-    print_interval -- how often to write to tensorboard (default 500),
-    word_dim -- size of word embeddings (default 300):
+    Parameters
+    ----------
+    batch_size : int, optional
+        Number of examples in one iteration (default is 64).
+    char_input_size : int, optional
+        Size of character embedding (default is 20).
+    char_hidden_size : int, optional
+        Size of hidden layer in char lstm (default is 50).
+    data_type : {'Quora', 'SNLI'}, optional
+        Choose either SNLI or Quora (default is 'quora').
+    dropout : int, optional
+        Applied to each layer (default is 0.1).
+    epoch : int, optional
+        Number of passes through full dataset (default is 10).
+    hidden_size : int, optional
+        Size of hidden layer for all BiLSTM layers (default is 100).
+    lr : int, optional
+        Learning rate (default is 0.001).
+    num_perspectives : int, optional
+        Number of perspectives in matching layer (default is 20).
+    print_interval : int, optional
+        How often to write to tensorboard (default is 500).
+    word_dim : int, optional
+        Size of word embeddings (default is 300).
+
+    Raises
+    ------
+    RuntimeError
+        If any data source other than SNLI or Quora is requested.
+
     """
     # Store local namespace dict in Args() object
     args = Args(locals())
@@ -76,11 +94,20 @@ def main(batch_size: ('[64]', 'positional', None, int) = 64,
 
 
 def train(args, model_data):
-    """Train BiMPM model on SNLI or Quora data.
+    """Train the BiMPM model on SNLI or Quora data.
 
-    Keyword arguments:
-    args -- Args() object with all arguments for BiMPM model
-    model_data -- data loading object which returns word vectors and sentences
+    Parameters
+    ----------
+    args : Args
+        An object with all arguments for BiMPM model
+    model_data : {Quora, SNLI}
+        A data loading object which returns word vectors and sentences
+
+    Returns
+    -------
+    best_model : BiMPM
+        The BiMPM model with the highest accuracy on the test set.
+
     """
     model = BiMPM(args, model_data)
     model.to(args.device)
