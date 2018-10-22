@@ -114,7 +114,7 @@ class SNLI:
         Returns
         -------
         bool
-            True if all epochs are complete, else False.
+            False if all epochs are complete, else True.
 
         """
         self.present_epoch = int(iterator.epoch)
@@ -243,7 +243,7 @@ class Quora:
         Returns
         -------
         bool
-            True if all epochs are complete, else False.
+            False if all epochs are complete, else True.
 
         """
         self.present_epoch = int(iterator.epoch)
