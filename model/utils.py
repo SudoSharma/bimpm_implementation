@@ -282,7 +282,7 @@ class Sentence:
             self.p, self.q = 'q1', 'q2'
 
     def process_batch(self, device):
-        """Retrieve either SNLI or Quora data from each batch by lable, and
+        """Retrieve either SNLI or Quora data from each batch by label, and
         construct words and chars.
 
         Parameters
