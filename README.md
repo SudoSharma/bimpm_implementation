@@ -45,4 +45,5 @@ This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for
 - Create web app
 - Allow one example testing in command line
 - Write tests
+- Move args out into config file and have seperate params for SNLI and for Quora; parse config in train.sh
 - Include continuous integration
