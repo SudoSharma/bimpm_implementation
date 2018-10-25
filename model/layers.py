@@ -1,10 +1,25 @@
+"""Creates the layers for a BiMPM model architecture."""
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 
 class CharacterRepresentationEncoder(nn.Module):
+    """A character embedding layer with embeddings that are learned along
+    with other network parameters during training.
+
+    """
+
     def __init__(self, args):
+        """Initialize the character embedding layer model architecture.
+
+        Parameters
+        ----------
+        args : Args
+            An object with all arguments for BiMPM model.
+
+        """
         super(CharacterRepresentationEncoder, self).__init__()
 
         self.char_hidden_size = args.char_hidden_size
@@ -19,6 +34,20 @@ class CharacterRepresentationEncoder(nn.Module):
             batch_first=True)
 
     def forward(self, chars):
+        """Defines forward pass computations flowing from inputs to
+        outputs in the network.
+
+        Parameters
+        ----------
+        chars : Variable
+            A PyTorch Variable.
+
+        Returns
+        -------
+        Variable
+            A PyTorch Variable with size (batch_size, seq_len, char_hidden_size).
+
+        """
         batch_size, seq_len, max_word_len = chars.size()
         chars = chars.view(batch_size * seq_len, max_word_len)
         chars = self.lstm(self.char_encoder(chars))[-1][0]
@@ -27,7 +56,22 @@ class CharacterRepresentationEncoder(nn.Module):
 
 
 class WordRepresentationLayer(nn.Module):
+    """A word representation layer which will create word and char embeddings
+    which will then be concatenated and trained with other model parameters.
+
+    """
+
     def __init__(self, args, model_data):
+        """Initialize the BiMPM model architecture.
+
+        Parameters
+        ----------
+        args : Args
+            An object with all arguments for BiMPM model.
+        model_data : {Quora, SNLI}
+            A data loading object which returns word vectors and sentences.
+
+        """
         super(WordRepresentationLayer, self).__init__()
 
         self.drop = args.dropout
@@ -39,9 +83,36 @@ class WordRepresentationLayer(nn.Module):
         self.char_encoder = CharacterRepresentationEncoder(args)
 
     def dropout(self, V):
+        """Defines a dropout function to regularize the parameters.
+
+        Parameters
+        ----------
+        V : Variable
+            A Pytorch Variable.
+
+        Returns
+        -------
+        Variable
+            A PyTorch Variable with same size as input.
+        """
         return F.dropout(V, p=self.drop, training=self.training)
 
     def forward(self, p):
+        """Defines forward pass computations flowing from inputs to
+        outputs in the network.
+
+        Parameters
+        ----------
+        p : Sentence
+            A sentence object with chars and word batches.
+
+        Returns
+        -------
+        Variable
+            A PyTorch Variable with size (batch_size, seq_len,
+            word_dim + char_hidden_size).
+
+        """
         words = self.word_encoder(p['words'])
         chars = self.char_encoder(p['chars'])
         p = torch.cat([words, chars], dim=-1)
@@ -50,6 +121,10 @@ class WordRepresentationLayer(nn.Module):
 
 
 class ContextRepresentationLayer(nn.Module):
+    """A context representation layer to incorporate contextual information
+    into the representation of each time step of p and q.
+
+    """
     def __init__(self, args):
         super(ContextRepresentationLayer, self).__init__()
 
@@ -64,6 +139,18 @@ class ContextRepresentationLayer(nn.Module):
             batch_first=True)
 
     def dropout(self, V):
+        """Defines a dropout function to regularize the parameters.
+
+        Parameters
+        ----------
+        V : Variable
+            A Pytorch Variable.
+
+        Returns
+        -------
+        Variable
+            A PyTorch Variable with same size as input.
+        """
         return F.dropout(V, p=self.drop, training=self.training)
 
     def forward(self, p):
@@ -74,6 +161,14 @@ class ContextRepresentationLayer(nn.Module):
 
 class MatchingLayer(nn.Module):
     def __init__(self, args):
+        """Initialize the BiMPM model architecture.
+
+        Parameters
+        ----------
+        args : Args
+            An object with all arguments for BiMPM model.
+
+        """
         super(MatchingLayer, self).__init__()
 
         self.drop = args.dropout
@@ -85,6 +180,18 @@ class MatchingLayer(nn.Module):
         ])
 
     def dropout(self, V):
+        """Defines a dropout function to regularize the parameters.
+
+        Parameters
+        ----------
+        V : Variable
+            A Pytorch Variable.
+
+        Returns
+        -------
+        Variable
+            A PyTorch Variable with same size as input.
+        """
         return F.dropout(V, p=self.drop, training=self.training)
 
     def cat(self, *args):
@@ -231,6 +338,14 @@ class MatchingLayer(nn.Module):
 
 class AggregationLayer(nn.Module):
     def __init__(self, args):
+        """Initialize the BiMPM model architecture.
+
+        Parameters
+        ----------
+        args : Args
+            An object with all arguments for BiMPM model.
+
+        """
         super(AggregationLayer, self).__init__()
 
         self.hidden_size = args.hidden_size
@@ -243,6 +358,18 @@ class AggregationLayer(nn.Module):
             batch_first=True)
 
     def dropout(self, V):
+        """Defines a dropout function to regularize the parameters.
+
+        Parameters
+        ----------
+        V : Variable
+            A Pytorch Variable.
+
+        Returns
+        -------
+        Variable
+            A PyTorch Variable with same size as input.
+        """
         return F.dropout(V, p=self.drop, training=self.training)
 
     def forward(self, p, q):
@@ -260,6 +387,14 @@ class AggregationLayer(nn.Module):
 
 class PredictionLayer(nn.Module):
     def __init__(self, args):
+        """Initialize the BiMPM model architecture.
+
+        Parameters
+        ----------
+        args : Args
+            An object with all arguments for BiMPM model.
+
+        """
         super(PredictionLayer, self).__init__()
 
         self.drop = args.dropout
@@ -268,6 +403,18 @@ class PredictionLayer(nn.Module):
         self.output_layer = nn.Linear(args.hidden_size * 2, args.class_size)
 
     def dropout(self, V):
+        """Defines a dropout function to regularize the parameters.
+
+        Parameters
+        ----------
+        V : Variable
+            A Pytorch Variable.
+
+        Returns
+        -------
+        Variable
+            A PyTorch Variable with same size as input.
+        """
         return F.dropout(V, p=self.drop, training=self.training)
 
     def forward(self, match_vec):
