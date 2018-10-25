@@ -40,7 +40,7 @@ If you are SSHing into a cloud instance to train this model, you can modify the 
 
     ./train.sh
 
-The script will allow your model to run in the background without interruptions incase your connection ever times out, and the output of the training is stored in `train.out`.
+The script will allow your model to run in the background without interruptions incase your connection ever times out, and the output of the training will be stored in **train.out**.
 
 ## Training
 
