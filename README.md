@@ -3,7 +3,9 @@ This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for
 
 ## Model Architecture 
 
-![BiMPM Architecture](https://github.com/SudoSharma/bimpm_implementation/blob/master/media/bimpm.png)
+<p align="center">
+    <img width="500" src="https://github.com/SudoSharma/bimpm_implementation/blob/master/media/bimpm.png"/>
+</p>
 
 # Performance 
 ## Sentence Similarity
