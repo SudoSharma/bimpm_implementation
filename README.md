@@ -38,7 +38,7 @@ The script will allow your model to run in the background without interruptions 
 
 ## Training
 
-> python train.py -h
+    $ python train.py -h
 
     usage: train.py [-h]
                     [batch_size] [char_input_size] [char_hidden_size] [data_type]
@@ -97,7 +97,7 @@ The script will allow your model to run in the background without interruptions 
 
 ## Testing 
 
-> python test.py -h
+    $ python test.py -h
 
 
     usage: test.py [-h]
