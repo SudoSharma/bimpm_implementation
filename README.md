@@ -1,6 +1,10 @@
 # BiMPM Implementation in PyTorch
 This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for Natural Language Sentences (BiMPM) paper by <em>Wang et al.</em>, which can be found [here](https://arxiv.org/pdf/1702.03814v3.pdf).
 
+## Model Architecture 
+
+![BiMPM Architecture](https://github.com/SudoSharma/bimpm_implementation/blob/master/media/bimpm.png)
+
 # Performance 
 ## Sentence Similarity
 Data: [Quora](https://drive.google.com/file/d/0B0PlTAo--BnaQWlsZl9FZ3l1c28/view) 
@@ -154,3 +158,6 @@ The script will allow your model to run in the background without interruptions 
 
     optional arguments:
       -h, --help        show this help message and exit
+
+# References
+1. Wang, Zhiguo, Wael Hamza, and Radu Florian. "Bilateral Multi-Perspective Matching for Natural Language Sentences." Proceedings of the Twenty-Sixth International Joint Conference on Artificial Intelligence, July 14, 2017. Accessed October 10, 2018. doi:10.24963/ijcai.2017/579. 
