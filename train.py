@@ -14,17 +14,17 @@ from model.bimpm import BiMPM
 from model.utils import SNLI, Quora, Sentence, Args
 
 
-def main(batch_size: ('[64]', 'optional', None, int) = 64,
-         char_input_size: ('[20]', 'optional', None, int) = 20,
-         char_hidden_size: ('[50]', 'optional', None, int) = 50,
+def main(batch_size: ('[64]', 'positional', None, int) = 64,
+         char_input_size: ('[20]', 'positional', None, int) = 20,
+         char_hidden_size: ('[50]', 'positional', None, int) = 50,
          data_type: ("{[Quora], SNLI}") = 'quora',
-         dropout: ('[0.1]', 'optional', None, float) = 0.1,
-         epoch: ('[10]', 'optional', None, int) = 10,
-         hidden_size: ('[100]', 'optional', None, int) = 100,
-         lr: ('[0.001]', 'optional', None, float) = 0.001,
-         num_perspectives: ('[20]', 'optional', None, int) = 20,
-         print_interval: ('[500]', 'optional', None, int) = 500,
-         word_dim: ('[300]', 'optional', None, int) = 300):
+         dropout: ('[0.1]', 'positional', None, float) = 0.1,
+         epoch: ('[10]', 'positional', None, int) = 10,
+         hidden_size: ('[100]', 'positional', None, int) = 100,
+         lr: ('[0.001]', 'positional', None, float) = 0.001,
+         num_perspectives: ('[20]', 'positional', None, int) = 20,
+         print_interval: ('[500]', 'positional', None, int) = 500,
+         word_dim: ('[300]', 'positional', None, int) = 300):
     """Train and store the best BiMPM model in a cycle.
 
     Parameters
