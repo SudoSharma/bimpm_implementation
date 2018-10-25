@@ -9,41 +9,149 @@ This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for
 ## Vanilla Reimplementation 
 (Quora) Sentence Similarity: 85.9
 <br>(SNLI) Natural Language Inference: 85.1
+## Results
+
+Data: [Quora](https://drive.google.com/file/d/0B0PlTAo--BnaQWlsZl9FZ3l1c28/view) 
+
+| Models        | Accuracy   | 
+|--------------|:----------:|
+| Original Baseline | 88.2 |
+| **Reimplementation** | **85.9** |  
+
+Data: [SNLI](https://nlp.stanford.edu/projects/snli/)
+
+| Models        |  Accuracy   | 
+|--------------|:----------:|
+| Original Baseline	| 86.9 |    
+| **Reimplementation** | **85.1** |  
+
 
 # Requirements
-## Python Modules
-## System Requirements
+## Environment
+Please create a new conda environment using the **environment.yml** file.
+    
+    conda create --name {my_env} -f=environment.yml
+
+## System
+- OS: Ubuntu 16.04 LTS (64 bit)
+- GPU: 1 x NVIDIA Tesla P100 
 
 # Instructions
-## Data
-## Folder Structure
 ## Training
-## Evaluation
 
-# Experiments 
-## (Toy Quora) Sentence Similarity Baseline
-## Stochastic Gradient Descent with Warm Restarts (SGDR)
-## Cosine Annealing 
-## AdamW 
-## Activation Functions
-### Tanh   
-### Swish
-## GRU 
-## Structured Weight Initialization
-## Bi-LSTM for Characters
-## Increased Perspectives
-## Increased Hidden Layers in Char LSTM (100)
-## ULMFiT Word Vectors
-## Ensembling
-## Enhanced Reimplementation
-(Quora) Sentence Similarity: 
-<br>(SNLI) Natural Language Inference: 
+> python train.py -h
 
-# Pending Tasks 
-- Finish docstrings
-- Create a requirements file
-- Create web app
-- Allow one example testing in command line
-- Write tests
-- Move args out into config file and have seperate params for SNLI and for Quora; parse config in train.sh
-- Include continuous integration
+    usage: train.py [-h]
+                    [batch_size] [char_input_size] [char_hidden_size] [data_type]
+                    [dropout] [epoch] [hidden_size] [lr] [num_perspectives]
+                    [print_interval] [word_dim]
+
+    Train and store the best BiMPM model in a cycle.
+
+        Parameters
+        ----------
+        batch_size : int, optional
+            Number of examples in one iteration (default is 64).
+        char_input_size : int, optional
+            Size of character embedding (default is 20).
+        char_hidden_size : int, optional
+            Size of hidden layer in char lstm (default is 50).
+        data_type : {'Quora', 'SNLI'}, optional
+            Choose either SNLI or Quora (default is 'quora').
+        dropout : int, optional
+            Applied to each layer (default is 0.1).
+        epoch : int, optional
+            Number of passes through full dataset (default is 10).
+        hidden_size : int, optional
+            Size of hidden layer for all BiLSTM layers (default is 100).
+        lr : int, optional
+            Learning rate (default is 0.001).
+        num_perspectives : int, optional
+            Number of perspectives in matching layer (default is 20).
+        print_interval : int, optional
+            How often to write to tensorboard (default is 500).
+        word_dim : int, optional
+            Size of word embeddings (default is 300).
+
+        Raises
+        ------
+        RuntimeError
+            If any data source other than SNLI or Quora is requested.
+
+        
+
+    positional arguments:
+      batch_size        [64]
+      char_input_size   [20]
+      char_hidden_size  [50]
+      data_type         {[Quora], SNLI}
+      dropout           [0.1]
+      epoch             [10]
+      hidden_size       [100]
+      lr                [0.001]
+      num_perspectives  [20]
+      print_interval    [500]
+      word_dim          [300]
+
+    optional arguments:
+      -h, --help        show this help message and exit
+
+## Testing 
+
+> python test.py -h
+
+
+    usage: test.py [-h]
+                   model_path [batch_size] [char_input_size] [char_hidden_size]
+                   [data_type] [dropout] [epoch] [hidden_size] [lr]
+                   [num_perspectives] [word_dim]
+
+    Print the best BiMPM model accuracy for the test set in a cycle.
+
+        Parameters
+        ----------
+        model_path : str
+            A path to the location of the BiMPM trained model.
+        batch_size : int, optional
+            Number of examples in one iteration (default is 64).
+        char_input_size : int, optional
+            Size of character embedding (default is 20).
+        char_hidden_size : int, optional
+            Size of hidden layer in char lstm (default is 50).
+        data_type : {'Quora', 'SNLI'}, optional
+            Choose either SNLI or Quora (default is 'quora').
+        dropout : int, optional
+            Applied to each layer (default is 0.1).
+        epoch : int, optional
+            Number of passes through full dataset (default is 10).
+        hidden_size : int, optional
+            Size of hidden layer for all BiLSTM layers (default is 100).
+        lr : int, optional
+            Learning rate (default is 0.001).
+        num_perspectives : int, optional
+            Number of perspectives in matching layer (default is 20).
+        word_dim : int, optional
+            Size of word embeddings (default is 300).
+
+        Raises
+        ------
+        RuntimeError
+            If any data source other than SNLI or Quora is requested.
+
+        
+
+    positional arguments:
+      model_path
+      batch_size        [64]
+      char_input_size   [20]
+      char_hidden_size  [50]
+      data_type         {SNLI, [Quora]}
+      dropout           [0.1]
+      epoch             [10]
+      hidden_size       [100]
+      lr                [0.001]
+      num_perspectives  [20]
+      word_dim          [300]
+
+    optional arguments:
+      -h, --help        show this help message and exit
