@@ -17,15 +17,17 @@ from model.utils import SNLI, Quora, Sentence, Args
 def main(batch_size: (None, 'option', None, int) = 64,
          char_input_size: (None, 'option', None, int) = 20,
          char_hidden_size: (None, 'option', None, int) = 50,
-         data_type: ("quora or snli", 'option', None, str,
-                     ['quora', 'snli']) = 'quora',
+         data_type: ("use quora or snli", 'option', None, str, ['quora',
+                                                            'snli']) = 'quora',
          dropout: (None, 'option', None, float) = 0.1,
          epoch: (None, 'option', None, int) = 10,
          hidden_size: (None, 'option', None, int) = 100,
          lr: (None, 'option', None, float) = 0.001,
          num_perspectives: (None, 'option', None, int) = 20,
          print_interval: (None, 'option', None, int) = 500,
-         word_dim: (None, 'option', None, int) = 300):
+         word_dim: (None, 'option', None, int) = 300,
+         shutdown: ("shutdown system after training", 'option', None,
+                    bool) = False):
     """Train and store the best BiMPM model in a cycle.
 
     Parameters
@@ -92,6 +94,10 @@ def main(batch_size: (None, 'option', None, int) = 64,
                f'saved_models/bimpm_{args.data_type}_{args.model_time}.pt')
 
     print("Finished training...")
+
+    if args.shutdown:
+        print("Shutting system down...")
+        os.system("sudo shutdown now -h")
 
 
 def train(args, model_data):
