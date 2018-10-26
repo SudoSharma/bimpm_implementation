@@ -14,17 +14,18 @@ from model.bimpm import BiMPM
 from model.utils import SNLI, Quora, Sentence, Args
 
 
-def main(batch_size: ('[64]', 'positional', None, int) = 64,
-         char_input_size: ('[20]', 'positional', None, int) = 20,
-         char_hidden_size: ('[50]', 'positional', None, int) = 50,
-         data_type: ("{[Quora], SNLI}") = 'quora',
-         dropout: ('[0.1]', 'positional', None, float) = 0.1,
-         epoch: ('[10]', 'positional', None, int) = 10,
-         hidden_size: ('[100]', 'positional', None, int) = 100,
-         lr: ('[0.001]', 'positional', None, float) = 0.001,
-         num_perspectives: ('[20]', 'positional', None, int) = 20,
-         print_interval: ('[500]', 'positional', None, int) = 500,
-         word_dim: ('[300]', 'positional', None, int) = 300):
+def main(batch_size: (None, 'option', None, int) = 64,
+         char_input_size: (None, 'option', None, int) = 20,
+         char_hidden_size: (None, 'option', None, int) = 50,
+         data_type: ("quora or snli", 'option', None, str,
+                     ['quora', 'snli']) = 'quora',
+         dropout: (None, 'option', None, float) = 0.1,
+         epoch: (None, 'option', None, int) = 10,
+         hidden_size: (None, 'option', None, int) = 100,
+         lr: (None, 'option', None, float) = 0.001,
+         num_perspectives: (None, 'option', None, int) = 20,
+         print_interval: (None, 'option', None, int) = 500,
+         word_dim: (None, 'option', None, int) = 300):
     """Train and store the best BiMPM model in a cycle.
 
     Parameters
@@ -69,7 +70,7 @@ def main(batch_size: ('[64]', 'positional', None, int) = 64,
         model_data = SNLI(args)
     elif args.data_type.lower() == 'quora':
         print("Loading Quora data...")
-        # model_data = Quora(args, toy=True)  # Use for experimentation 
+        # model_data = Quora(args, toy=True)  # Use for experimentation
         model_data = Quora(args)
     else:
         raise RuntimeError(
@@ -116,7 +117,7 @@ def train(args, model_data):
     optimizer = optim.Adam(parameters, lr=args.lr)
     criterion = nn.CrossEntropyLoss()
 
-    # Initialize tensorboardx logging 
+    # Initialize tensorboardx logging
     writer = SummaryWriter(log_dir='runs/' + args.model_time)
 
     model.train()
