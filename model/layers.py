@@ -12,7 +12,8 @@ class CharacterRepresentationEncoder(nn.Module):
     """
 
     def __init__(self, args):
-        """Initialize the character embedding layer model architecture.
+        """Initialize the character embedding layer model architecture, and
+        the char rnn.
 
         Parameters
         ----------
@@ -40,16 +41,18 @@ class CharacterRepresentationEncoder(nn.Module):
         Parameters
         ----------
         chars : Variable
-            A PyTorch Variable.
+            A PyTorch Variable with shape (batch_size, seq_len, max_word_len)
 
         Returns
         -------
         Variable
-            A PyTorch Variable with size (batch_size, seq_len, char_hidden_size).
+            A PyTorch Variable with shape (batch_size, seq_len, char_hidden_size).
 
         """
         batch_size, seq_len, max_word_len = chars.size()
         chars = chars.view(batch_size * seq_len, max_word_len)
+
+        # out_shape: (batch_size * seq_len, char_hidden_size)
         chars = self.lstm(self.char_encoder(chars))[-1][0]
 
         return chars.view(-1, seq_len, self.char_hidden_size)
@@ -62,7 +65,8 @@ class WordRepresentationLayer(nn.Module):
     """
 
     def __init__(self, args, model_data):
-        """Initialize the BiMPM model architecture.
+        """Initialize the word representation layer, and store pre-trained
+        embeddings. Also initialize the char rnn.
 
         Parameters
         ----------
@@ -78,7 +82,7 @@ class WordRepresentationLayer(nn.Module):
 
         self.word_encoder = nn.Embedding(args.word_vocab_size, args.word_dim)
         self.word_encoder.weight.data.copy_(model_data.TEXT.vocab.vectors)
-        self.word_encoder.weight.requires_grad = False
+        self.word_encoder.weight.requires_grad = False  # Freeze parameters
 
         self.char_encoder = CharacterRepresentationEncoder(args)
 
@@ -125,7 +129,17 @@ class ContextRepresentationLayer(nn.Module):
     into the representation of each time step of p and q.
 
     """
+
     def __init__(self, args):
+        """Initialize the context representation layer, and initialize an
+        lstm.
+
+        Parameters
+        ----------
+        args : Args
+            An object with all arguments for BiMPM model.
+
+        """
         super(ContextRepresentationLayer, self).__init__()
 
         self.drop = args.dropout
@@ -154,14 +168,35 @@ class ContextRepresentationLayer(nn.Module):
         return F.dropout(V, p=self.drop, training=self.training)
 
     def forward(self, p):
+        """Defines forward pass computations flowing from inputs to
+        outputs in the network.
+
+        Parameters
+        ----------
+        p : Variable
+            A PyTorch Variable with size (batch_size, seq_len,
+            word_dim + char_hidden_size).
+
+        Returns
+        -------
+        Variable
+            A PyTorch Variable with size (batch_size, seq_len,
+            hidden_size, num_passes)
+
+        """
         p = self.lstm(p)[0]
 
         return self.dropout(p)
 
 
 class MatchingLayer(nn.Module):
+    """A matching layer to incorporate contextual information
+    into the representation of each time step of p and q.
+
+    """
+
     def __init__(self, args):
-        """Initialize the BiMPM model architecture.
+        """Initialize the mactching layer  architecture.
 
         Parameters
         ----------
