@@ -92,7 +92,7 @@ The outputs of this script are a `train.out` file containing any output to stdou
       -batch-size 64        [64]
       -char-input-size 20   [20]
       -char-hidden-size 50  [50]
-      -data-type quora      quora or snli
+      -data-type quora      use quora or snli
       -dropout 0.1          [0.1]
       -epoch 10             [10]
       -hidden-size 100      [100]
@@ -100,6 +100,7 @@ The outputs of this script are a `train.out` file containing any output to stdou
       -num-perspectives 20  [20]
       -print-interval 500   [500]
       -word-dim 300         [300]
+      -shutdown False       shutdown system after training
 
 ## Testing 
 
@@ -153,7 +154,7 @@ The outputs of this script are a `train.out` file containing any output to stdou
       -batch-size 64        [64]
       -char-input-size 20   [20]
       -char-hidden-size 50  [50]
-      -data-type quora      quora or snli
+      -data-type quora      use quora or snli
       -dropout 0.1          [0.1]
       -epoch 10             [10]
       -hidden-size 100      [100]
