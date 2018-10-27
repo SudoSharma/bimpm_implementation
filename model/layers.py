@@ -40,19 +40,20 @@ class CharacterRepresentationEncoder(nn.Module):
 
         Parameters
         ----------
-        chars : Variable
-            A PyTorch Variable with shape (batch_size, seq_len, max_word_len)
+        chars : Tensor
+            A PyTorch Tensor with shape (batch_size, seq_len, max_word_len)
 
         Returns
         -------
-        Variable
-            A PyTorch Variable with shape (batch_size, seq_len, char_hidden_size).
+        Tensor
+            A PyTorch Tensor with shape (batch_size, seq_len,
+            char_hidden_size).
 
         """
         batch_size, seq_len, max_word_len = chars.size()
         chars = chars.view(batch_size * seq_len, max_word_len)
 
-        # out_shape: (batch_size * seq_len, char_hidden_size)
+        # out_shape: (1, batch_size * seq_len, char_hidden_size)
         chars = self.lstm(self.char_encoder(chars))[-1][0]
 
         return chars.view(-1, seq_len, self.char_hidden_size)
@@ -86,20 +87,21 @@ class WordRepresentationLayer(nn.Module):
 
         self.char_encoder = CharacterRepresentationEncoder(args)
 
-    def dropout(self, V):
+    def dropout(self, tensor):
         """Defines a dropout function to regularize the parameters.
 
         Parameters
         ----------
-        V : Variable
-            A Pytorch Variable.
+        tensor : Tensor
+            A Pytorch Tensor.
 
         Returns
         -------
-        Variable
-            A PyTorch Variable with same size as input.
+        Tensor
+            A PyTorch Tensor with same size as input.
+
         """
-        return F.dropout(V, p=self.drop, training=self.training)
+        return F.dropout(tensor, p=self.drop, training=self.training)
 
     def forward(self, p):
         """Defines forward pass computations flowing from inputs to
@@ -112,8 +114,8 @@ class WordRepresentationLayer(nn.Module):
 
         Returns
         -------
-        Variable
-            A PyTorch Variable with size (batch_size, seq_len,
+        Tensor
+            A PyTorch Tensor with size (batch_size, seq_len,
             word_dim + char_hidden_size).
 
         """
@@ -152,20 +154,21 @@ class ContextRepresentationLayer(nn.Module):
             bidirectional=True,
             batch_first=True)
 
-    def dropout(self, V):
+    def dropout(self, tensor):
         """Defines a dropout function to regularize the parameters.
 
         Parameters
         ----------
-        V : Variable
-            A Pytorch Variable.
+        tensor : Tensor
+            A Pytorch Tensor.
 
         Returns
         -------
-        Variable
-            A PyTorch Variable with same size as input.
+        Tensor
+            A PyTorch Tensor with same size as input.
+
         """
-        return F.dropout(V, p=self.drop, training=self.training)
+        return F.dropout(tensor, p=self.drop, training=self.training)
 
     def forward(self, p):
         """Defines forward pass computations flowing from inputs to
@@ -173,14 +176,14 @@ class ContextRepresentationLayer(nn.Module):
 
         Parameters
         ----------
-        p : Variable
-            A PyTorch Variable with size (batch_size, seq_len,
+        p : Tensor
+            A PyTorch Tensor with size (batch_size, seq_len,
             word_dim + char_hidden_size).
 
         Returns
         -------
-        Variable
-            A PyTorch Variable with size (batch_size, seq_len,
+        Tensor
+            A PyTorch Tensor with size (batch_size, seq_len,
             hidden_size, num_passes)
 
         """
@@ -190,13 +193,13 @@ class ContextRepresentationLayer(nn.Module):
 
 
 class MatchingLayer(nn.Module):
-    """A matching layer to incorporate contextual information
-    into the representation of each time step of p and q.
+    """A matching layer to compare contextual embeddings from one sentence
+    against the contextual embeddings of the other sentence.
 
     """
 
     def __init__(self, args):
-        """Initialize the mactching layer  architecture.
+        """Initialize the mactching layer architecture.
 
         Parameters
         ----------
@@ -214,25 +217,54 @@ class MatchingLayer(nn.Module):
             for _ in range(8)
         ])
 
-    def dropout(self, V):
+    def dropout(self, tensor):
         """Defines a dropout function to regularize the parameters.
 
         Parameters
         ----------
-        V : Variable
-            A Pytorch Variable.
+        tensor : Tensor
+            A Pytorch Tensor.
 
         Returns
         -------
-        Variable
-            A PyTorch Variable with same size as input.
+        Tensor
+            A PyTorch Tensor with same size as input.
+
         """
-        return F.dropout(V, p=self.drop, training=self.training)
+        return F.dropout(tensor, p=self.drop, training=self.training)
 
     def cat(self, *args):
-        return torch.cat(list(args), dim=2)
+        """Concatenate matching vectors.
 
-    def split(self, tensor, direction):
+        Parameters
+        ----------
+        *args
+            Variable length argument list.
+
+        Returns
+        -------
+        Tensor
+            A PyTorch Tensor with input tensors concatenated over dim 2.
+        """
+        return torch.cat(list(args), dim=2)  # dim 2 is num_perspectives 
+
+    def split(self, tensor, direction='fw'):
+        """Split the output of an bidirectional rnn into forward or
+        backward passes.
+
+        Parameters
+        ----------
+        tensor : Tensor
+            A Pytorch Tensor containing the output of a bidirectional rnn.
+        direction : str, optional
+            The direction of the rnn pass to return (default is 'fw').
+
+        Returns
+        -------
+        Tensor
+            A Pytorch Tensor for the rnn pass in the specified direction.
+
+        """
         if direction == 'fw':
             return torch.split(tensor, self.hidden_size, dim=-1)[0]
         elif direction == 'bw':
@@ -246,6 +278,42 @@ class MatchingLayer(nn.Module):
               split=True,
               stack=True,
               cosine=False):
+        """Match two sentences based on various matching strategies and
+        time-step constraints.
+
+        Parameters
+        ----------
+        p, q : Tensor
+            A PyTorch Tensor with size (batch_size, seq_len,
+            hidden_size, num_passes) if split is True, else it is size
+            (batch_size, seq_len, hidden_size).
+        w : Parameter
+            A Pytorch Parameter with size (num_perspectives, hidden_size).
+        direction : str, optional
+            The direction of the rnn pass to return (default is 'fw').
+        split : bool, optional
+            Split input Tensor if output from bidirectional rnn
+            (default is True).
+        stack : bool, optional
+            Stack input Tensor if input size is (batch_size, hidden_size),
+            for the second sentence `q` for example, in the case of the
+            full-matching strategy, when matching only the last time-step
+            (default is True).
+        cosine : bool, optional
+            Perform cosine similarity using built-in PyTorch Function, for
+            example, in the case of a full-matching or attentive-matching
+            strategy (default is False).
+
+        Returns
+        -------
+        p, q : Tensor
+            A PyTorch Tensor with size (batch_size, seq_len, l) with the
+            weights multiplied by the input sentence.
+        Tensor
+            If cosine=True, returns a tensor of size (batch_size, seq_len, l)
+            representing the distance between `p` and `q`.
+
+        """
         if split:
             p = self.split(p, direction)
             q = self.split(q, direction)
@@ -273,6 +341,27 @@ class MatchingLayer(nn.Module):
         return (p, q)
 
     def attention(self, p, q, w, direction='fw', att='mean'):
+        """Create either a mean or max attention vector for the attentive
+        matching strategies.
+
+        Parameters
+        ----------
+        p, q : Tensor
+            A PyTorch Tensor with size (batch_size, seq_len,
+            hidden_size, num_passes).
+        w : Parameter
+            A Pytorch Parameter with size (num_perspectives, hidden_size).
+        direction : str, optional
+            The direction of the rnn pass to return (default is 'fw').
+        att : str, optional
+            The type of attention vector to generate (default is 'mean').
+
+        Returns
+        -------
+        att_p_match, att_q_match : Tensor
+            A PyTorch Tensor with size (batch_size, seq_len, hidden_size).
+
+        """
         # out_shape: (batch_size, seq_len_{p, q}, hidden_size)
         p = self.split(p, direction)
         q = self.split(q, direction)
@@ -309,12 +398,50 @@ class MatchingLayer(nn.Module):
 
         return (att_p_match, att_q_match)
 
-    def full_match(self, p, q, w, direction):
+    def full_match(self, p, q, w, direction='fw'):
+        """Match each contextual embedding with the last time-step of the other
+        sentence for either the forward or backward pass.
+
+        Parameters
+        ----------
+        p, q : Tensor
+            A PyTorch Tensor with size (batch_size, seq_len,
+            hidden_size, num_passes).
+        w : Parameter
+            A Pytorch Parameter with size (num_perspectives, hidden_size).
+        direction : str, optional
+            The direction of the rnn pass to return (default is 'fw').
+
+        Returns
+        -------
+        Tensor
+            A PyTorch Tensor with size (batch_size, seq_len, l).
+
+        """
         # out_shape: (batch_size, seq_len_{p, q}, l)
         return self.match(
             p, q, w, direction, split=True, stack=True, cosine=True)
 
-    def maxpool_match(self, p, q, w, direction):
+    def maxpool_match(self, p, q, w, direction='fw'):
+        """Match each contextual embedding with each time-step of the other
+        sentence for either the forward or backward pass.
+
+        Parameters
+        ----------
+        p, q : Tensor
+            A PyTorch Tensor with size (batch_size, seq_len,
+            hidden_size, num_passes).
+        w : Parameter
+            A Pytorch Parameter with size (num_perspectives, hidden_size).
+        direction : str, optional
+            The direction of the rnn pass to return (default is 'fw').
+
+        Returns
+        -------
+        pool_p, pool_q : array_like
+            A tuple of PyTorch Tensors with size (batch_size, seq_len, l).
+
+        """
         # out_shape: (batch_size, l, seq_len_{p, q}, hidden_size)
         p, q = self.match(
             p, q, w, direction, split=True, stack=False, cosine=False)
@@ -336,15 +463,69 @@ class MatchingLayer(nn.Module):
 
         return (pool_p, pool_q)
 
-    def attentive_match(self, p, q, w, direction):
+    def attentive_match(self, p, q, w, direction='fw'):
+        """Match each contextual embedding with its mean attentive vector.
+
+        Parameters
+        ----------
+        p, q : Tensor
+            A PyTorch Tensor with size (batch_size, seq_len,
+            hidden_size, num_passes).
+        w : Parameter
+            A Pytorch Parameter with size (num_perspectives, hidden_size).
+        direction : str, optional
+            The direction of the rnn pass to return (default is 'fw').
+
+        Returns
+        -------
+        array_like
+            A tuple of PyTorch Tensors with size (batch_size, seq_len, l).
+
+        """
         # out_shape: (batch_size, seq_len_{p, q}, l)
         return self.attention(p, q, w, direction, att='mean')
 
-    def max_attentive_match(self, p, q, w, direction):
+    def max_attentive_match(self, p, q, w, direction='fw'):
+        """Match each contextual embedding with its max attentive vector.
+
+        Parameters
+        ----------
+        p, q : Tensor
+            A PyTorch Tensor with size (batch_size, seq_len,
+            hidden_size, num_passes).
+        w : Parameter
+            A Pytorch Parameter with size (num_perspectives, hidden_size).
+        direction : str, optional
+            The direction of the rnn pass to return (default is 'fw').
+
+        Returns
+        -------
+        array_like
+            A tuple of PyTorch Tensors with size (batch_size, seq_len, l).
+
+        """
         # out_shape: (batch_size, seq_len_{p, q}, l)
         return self.attention(p, q, w, direction, att='max')
 
     def match_operation(self, p, q, W):
+        """Match each contextual embedding with its attentive vector.
+
+        Parameters
+        ----------
+        p, q : Tensor
+            A PyTorch Tensor with size (batch_size, seq_len,
+            hidden_size, num_passes).
+        W : ParameterList
+            A list of Pytorch Parameters with size
+            (num_perspectives, hidden_size).
+
+        Returns
+        -------
+        array_like
+            A list of PyTorch Tensors of size (batch_size, seq_len, l*8).
+
+        """
+
         full_p2q_fw = self.full_match(p, q, W[0], 'fw')
         full_p2q_bw = self.full_match(p, q, W[1], 'bw')
         full_q2p_fw = self.full_match(q, p, W[0], 'fw')
@@ -359,21 +540,43 @@ class MatchingLayer(nn.Module):
         att_p2max_fw, att_q2max_fw = self.max_attentive_match(p, q, W[6], 'fw')
         att_p2max_bw, att_q2max_bw = self.max_attentive_match(p, q, W[7], 'bw')
 
+        # Concatenate all the vectors for each sentence
         p_vec = self.cat(full_p2q_fw, pool_p_fw, att_p2mean_fw, att_p2max_fw,
                          full_p2q_bw, pool_p_bw, att_p2mean_bw, att_p2max_bw)
 
         q_vec = self.cat(full_q2p_fw, pool_q_fw, att_q2mean_fw, att_q2max_fw,
                          full_q2p_bw, pool_q_bw, att_q2mean_bw, att_q2max_bw)
 
+        # out_shape: (batch_size, seq_len_{p, q}, l*8)
         return (self.dropout(p_vec), self.dropout(q_vec))
 
     def forward(self, p, q):
+        """Defines forward pass computations flowing from inputs to
+        outputs in the network.
+
+        Parameters
+        ----------
+        p, q : Tensor
+            A PyTorch Tensor with size (batch_size, seq_len,
+            hidden_size, num_passes).
+
+        Returns
+        -------
+        array_like
+            A list of PyTorch Tensors of size (batch_size, seq_len, l*8).
+
+        """
         return self.match_operation(p, q, self.W)
 
 
 class AggregationLayer(nn.Module):
+    """An aggregation layer to combine two sequences of matching vectors into
+    fixed-length matching vector.
+
+    """
+
     def __init__(self, args):
-        """Initialize the BiMPM model architecture.
+        """Initialize the aggregation layer architecture.
 
         Parameters
         ----------
@@ -392,25 +595,42 @@ class AggregationLayer(nn.Module):
             bidirectional=True,
             batch_first=True)
 
-    def dropout(self, V):
+    def dropout(self, tensor):
         """Defines a dropout function to regularize the parameters.
 
         Parameters
         ----------
-        V : Variable
-            A Pytorch Variable.
+        tensor : Tensor
+            A Pytorch Tensor.
 
         Returns
         -------
-        Variable
-            A PyTorch Variable with same size as input.
+        Tensor
+            A PyTorch Tensor with same size as input.
+
         """
-        return F.dropout(V, p=self.drop, training=self.training)
+        return F.dropout(tensor, p=self.drop, training=self.training)
 
     def forward(self, p, q):
+        """Defines forward pass computations flowing from inputs to
+        outputs in the network.
+
+        Parameters
+        ----------
+        p, q : Tensor
+            A PyTorch Tensor with size (batch_size, seq_len, l*8).
+
+        Returns
+        -------
+        Tensor
+            A PyTorch Tensor of size (batch_size, hidden_size*4).
+
+        """
+        # out_shape: (2, batch_size, hidden_size)
         p = self.lstm(p)[-1][0]
         q = self.lstm(q)[-1][0]
 
+        # out_shape: (batch_size, hidden_size*4)
         x = torch.cat([
             p.permute(1, 0, 2).contiguous().view(-1, self.hidden_size * 2),
             q.permute(1, 0, 2).contiguous().view(-1, self.hidden_size * 2)
@@ -421,8 +641,13 @@ class AggregationLayer(nn.Module):
 
 
 class PredictionLayer(nn.Module):
+    """An prediction layer to evaluate the probability distribution for a class
+    given the two sentences. The number of outputs would change based on task.
+
+    """
+
     def __init__(self, args):
-        """Initialize the BiMPM model architecture.
+        """Initialize the prediction layer architecture.
 
         Parameters
         ----------
@@ -437,22 +662,37 @@ class PredictionLayer(nn.Module):
                                       args.hidden_size * 2)
         self.output_layer = nn.Linear(args.hidden_size * 2, args.class_size)
 
-    def dropout(self, V):
+    def dropout(self, tensor):
         """Defines a dropout function to regularize the parameters.
 
         Parameters
         ----------
-        V : Variable
-            A Pytorch Variable.
+        tensor : Tensor
+            A Pytorch Tensor.
 
         Returns
         -------
-        Variable
-            A PyTorch Variable with same size as input.
+        Tensor
+            A PyTorch Tensor with same size as input.
+
         """
-        return F.dropout(V, p=self.drop, training=self.training)
+        return F.dropout(tensor, p=self.drop, training=self.training)
 
     def forward(self, match_vec):
+        """Defines forward pass computations flowing from inputs to
+        outputs in the network.
+
+        Parameters
+        ----------
+        match_vec : Tensor
+            A PyTorch Tensor of size (batch_size, hidden_size*4).
+
+        Returns
+        -------
+        Tensor
+            A PyTorch Tensor of size (batch_size, class_size).
+
+        """
         x = F.relu(self.hidden_layer(match_vec))
 
         return self.output_layer(self.dropout(x))
