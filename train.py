@@ -55,7 +55,7 @@ def main(batch_size: (None, 'option', None, int) = 64,
     word_dim : int, optional
         Size of word embeddings (default is 300).
     shutdown: bool, optional
-        Whether or not to shutodown system after training (default is False).
+        Whether or not to shutdown system after training (default is False).
 
     Raises
     ------
