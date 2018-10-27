@@ -48,7 +48,7 @@ The outputs of this script are a `train.out` file containing any output to stdou
 
     $ python train.py --help
 
-    usage: train.py [-h] [-batch-size 64] [-char-input-size 20]
+    usage: train.py [-h] [-s] [-e] [-batch-size 64] [-char-input-size 20]
                     [-char-hidden-size 50] [-data-type quora] [-dropout 0.1]
                     [-epoch 10] [-hidden-size 100] [-lr 0.001]
                     [-num-perspectives 20] [-print-interval 500] [-word-dim 300]
@@ -57,6 +57,10 @@ The outputs of this script are a `train.out` file containing any output to stdou
 
         Parameters
         ----------
+        shutdown : bool, flag
+            Whether or not to shutdown system after training (default is False).
+        experiment : bool, flag
+            Whether or not to run experiments on small dataset (default is False).
         batch_size : int, optional
             Number of examples in one iteration (default is 64).
         char_input_size : int, optional
@@ -79,8 +83,6 @@ The outputs of this script are a `train.out` file containing any output to stdou
             How often to write to tensorboard (default is 500).
         word_dim : int, optional
             Size of word embeddings (default is 300).
-        shutdown: bool, optional
-            Whether or not to shutodown system after training (default is False).
 
         Raises
         ------
@@ -91,6 +93,8 @@ The outputs of this script are a `train.out` file containing any output to stdou
 
     optional arguments:
       -h, --help            show this help message and exit
+      -s, --shutdown        shutdown system after training
+      -e, --experiment      use smaller dataset
       -batch-size 64        [64]
       -char-input-size 20   [20]
       -char-hidden-size 50  [50]
@@ -102,13 +106,12 @@ The outputs of this script are a `train.out` file containing any output to stdou
       -num-perspectives 20  [20]
       -print-interval 500   [500]
       -word-dim 300         [300]
-      -shutdown False       shutdown system after training
 
 ## Testing 
 
     $ python test.py --help
 
-    usage: test.py [-h] [-batch-size 64] [-char-input-size 20]
+    usage: test.py [-h] [-e] [-batch-size 64] [-char-input-size 20]
                    [-char-hidden-size 50] [-data-type quora] [-dropout 0.1]
                    [-epoch 10] [-hidden-size 100] [-lr 0.001]
                    [-num-perspectives 20] [-print-interval 500] [-word-dim 300]
@@ -120,6 +123,8 @@ The outputs of this script are a `train.out` file containing any output to stdou
         ----------
         model_path : str
             A path to the location of the BiMPM trained model.
+        experiment : bool, flag
+            Whether or not to run experiments on small dataset (default is False).
         batch_size : int, optional
             Number of examples in one iteration (default is 64).
         char_input_size : int, optional
@@ -153,6 +158,7 @@ The outputs of this script are a `train.out` file containing any output to stdou
 
     optional arguments:
       -h, --help            show this help message and exit
+      -e, --experiment      use smaller dataset
       -batch-size 64        [64]
       -char-input-size 20   [20]
       -char-hidden-size 50  [50]
