@@ -17,8 +17,8 @@ from model.utils import SNLI, Quora, Sentence, Args
 def main(batch_size: (None, 'option', None, int) = 64,
          char_input_size: (None, 'option', None, int) = 20,
          char_hidden_size: (None, 'option', None, int) = 50,
-         data_type: ("use quora or snli", 'option', None, str, ['quora',
-                                                            'snli']) = 'quora',
+         data_type: ("use quora or snli", 'option', None, str,
+                     ['quora', 'snli']) = 'quora',
          dropout: (None, 'option', None, float) = 0.1,
          epoch: (None, 'option', None, int) = 10,
          hidden_size: (None, 'option', None, int) = 100,
@@ -54,6 +54,8 @@ def main(batch_size: (None, 'option', None, int) = 64,
         How often to write to tensorboard (default is 500).
     word_dim : int, optional
         Size of word embeddings (default is 300).
+    shutdown: bool, optional
+        Whether or not to shutodown system after training (default is False).
 
     Raises
     ------
