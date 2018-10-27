@@ -79,6 +79,8 @@ The outputs of this script are a `train.out` file containing any output to stdou
             How often to write to tensorboard (default is 500).
         word_dim : int, optional
             Size of word embeddings (default is 300).
+        shutdown: bool, optional
+            Whether or not to shutodown system after training (default is False).
 
         Raises
         ------
