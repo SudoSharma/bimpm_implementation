@@ -9,7 +9,8 @@ from model.bimpm import BiMPM
 from model.utils import SNLI, Quora, Sentence, Args
 
 
-def main(model_path,
+def main(experiment: ("use smaller dataset", 'flag', 'e'),
+         model_path,
          batch_size: (None, 'option', None, int) = 64,
          char_input_size: (None, 'option', None, int) = 20,
          char_hidden_size: (None, 'option', None, int) = 50,
@@ -28,6 +29,8 @@ def main(model_path,
     ----------
     model_path : str
         A path to the location of the BiMPM trained model.
+    experiment : bool, flag
+        Whether or not to run experiments on small dataset (default is False).
     batch_size : int, optional
         Number of examples in one iteration (default is 64).
     char_input_size : int, optional
@@ -66,8 +69,7 @@ def main(model_path,
         model_data = SNLI(args)
     elif args.data_type == 'Quora':
         print("Loading Quora data...")
-        # model_data = Quora(args, toy=True)  # Use for experimentation
-        model_data = Quora(args)
+        model_data = Quora(args, experiment)
     else:
         raise RuntimeError(
             'Data source other than SNLI or Quora was provided.')

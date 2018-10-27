@@ -14,7 +14,9 @@ from model.bimpm import BiMPM
 from model.utils import SNLI, Quora, Sentence, Args
 
 
-def main(batch_size: (None, 'option', None, int) = 64,
+def main(shutdown: ("shutdown system after training", 'flag', 's'),
+         experiment: ("use smaller dataset", 'flag', 'e'),
+         batch_size: (None, 'option', None, int) = 64,
          char_input_size: (None, 'option', None, int) = 20,
          char_hidden_size: (None, 'option', None, int) = 50,
          data_type: ("use quora or snli", 'option', None, str,
@@ -25,13 +27,15 @@ def main(batch_size: (None, 'option', None, int) = 64,
          lr: (None, 'option', None, float) = 0.001,
          num_perspectives: (None, 'option', None, int) = 20,
          print_interval: (None, 'option', None, int) = 500,
-         word_dim: (None, 'option', None, int) = 300,
-         shutdown: ("shutdown system after training", 'option', None,
-                    bool) = False):
+         word_dim: (None, 'option', None, int) = 300):
     """Train and store the best BiMPM model in a cycle.
 
     Parameters
     ----------
+    shutdown : bool, flag
+        Whether or not to shutdown system after training (default is False).
+    experiment : bool, flag
+        Whether or not to run experiments on small dataset (default is False).
     batch_size : int, optional
         Number of examples in one iteration (default is 64).
     char_input_size : int, optional
@@ -54,8 +58,6 @@ def main(batch_size: (None, 'option', None, int) = 64,
         How often to write to tensorboard (default is 500).
     word_dim : int, optional
         Size of word embeddings (default is 300).
-    shutdown: bool, optional
-        Whether or not to shutdown system after training (default is False).
 
     Raises
     ------
@@ -74,7 +76,6 @@ def main(batch_size: (None, 'option', None, int) = 64,
         model_data = SNLI(args)
     elif args.data_type.lower() == 'quora':
         print("Loading Quora data...")
-        # model_data = Quora(args, toy=True)  # Use for experimentation
         model_data = Quora(args)
     else:
         raise RuntimeError(

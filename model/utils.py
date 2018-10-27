@@ -135,7 +135,7 @@ class Quora:
 
     """
 
-    def __init__(self, args, toy=False):
+    def __init__(self, args):
         """Initialize the data loader, split data into train, valid, and
         test sets, and create iterators. Also create word and char vocabulary
         objects as part of the preprocessing pipeline.
@@ -144,9 +144,6 @@ class Quora:
         ----------
         args : Args
             An object with all arguments for BiMPM model.
-        toy : bool, optional
-            Indicates whether smaller dataset should be used for testing and
-            experimentation.
 
         """
         self.args = args
@@ -162,9 +159,9 @@ class Quora:
 
         self.train, self.valid, self.test = data.TabularDataset.splits(
             path='./data/quora',
-            train='toy_train.tsv' if toy else 'train.tsv',
-            validation='toy_dev.tsv' if toy else 'dev.tsv',
-            test='toy_test.tsv' if toy else 'test.tsv',
+            train='toy_train.tsv' if args.experiment else 'train.tsv',
+            validation='toy_dev.tsv' if args.experiment else 'dev.tsv',
+            test='toy_test.tsv' if args.experiment else 'test.tsv',
             format='tsv',
             fields=self.fields)
 
