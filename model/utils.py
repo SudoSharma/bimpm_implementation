@@ -5,7 +5,7 @@ training and testing script execution to initialize the BiMPM model.
 """
 
 import torch
-from torch.autograd import Variable
+import torch.autograd
 from torchtext import data
 from torchtext import datasets
 from torchtext.vocab import GloVe
@@ -84,13 +84,13 @@ class SNLI:
     def words_to_chars(self, batch):
         """Convert batch of sentences to appropriately shaped array for
         the WordRepresentationLayer. This will eventually be turned into
-        a Variable object to track gradients and allow for easy
+        a PyTorch Tensor to track gradients and allow for easy
         backpropagation of errors later on.
 
         Parameters
         ----------
-        batch : Variable
-            A PyTorch Variable with shape (batch_size, seq_len).
+        batch : Tensor
+            A PyTorch Tensor with shape (batch_size, seq_len).
 
         Returns
         -------
@@ -214,13 +214,13 @@ class Quora:
     def words_to_chars(self, batch):
         """Convert batch of sentences to appropriately shaped array for
         the WordRepresentationLayer. This will eventually be turned into
-        a Variable object to track gradients and allow for easy
+        a PyTorch Tensor to track gradients and allow for easy
         backpropagation of errors later on.
 
         Parameters
         ----------
-        batch : Variable
-            A PyTorch Variable with shape (batch_size, seq_len).
+        batch : Tensor
+            A PyTorch Tensor with shape (batch_size, seq_len).
 
         Returns
         -------
@@ -266,8 +266,8 @@ class Sentence:
 
         Parameters
         ----------
-        batch : Variable
-            A PyTorch Variable with shape (batch_size, seq_len).
+        batch : Tensor
+            A PyTorch Tensor with shape (batch_size, seq_len).
         model_data : {Quora, SNLI}
             A data loading object which returns word vectors and sentences.
         data_type : {'Quora', 'SNLI'}, optional
@@ -295,10 +295,8 @@ class Sentence:
         self.q = getattr(self.batch, self.q)
 
         # Track gradients on char tensors
-        self.char_p = Variable(
-            torch.LongTensor(self.model_data.words_to_chars(self.p)))
-        self.char_q = Variable(
-            torch.LongTensor(self.model_data.words_to_chars(self.q)))
+        self.char_p = torch.LongTensor(self.model_data.words_to_chars(self.p))
+        self.char_q = torch.LongTensor(self.model_data.words_to_chars(self.q))
 
         self.char_p = self.char_p.to(device)
         self.char_q = self.char_q.to(device)

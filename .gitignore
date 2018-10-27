@@ -7,3 +7,4 @@
 /runs/*
 /saved_models/*
 /train.out
+/train_pid.txt

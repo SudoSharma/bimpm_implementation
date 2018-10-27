@@ -29,27 +29,29 @@ Data: [SNLI](https://nlp.stanford.edu/projects/snli/)
 ## Environment
 Please create a new conda environment using the **environment.yml** file.
     
-    conda create --name {my_env} -f=environment.yml
+    conda create --name {my_env} -f environment.yml
 
 ## System
 - OS: Ubuntu 16.04 LTS (64 bit)
 - GPU: 1 x NVIDIA Tesla P100 
 
 # Instructions
-If you are SSHing into a cloud instance to train this model, you can modify the **train.sh** shell script with any parameters, and run it using:
+To train the model with default parameters, you can execute the **train.sh** shell script as such:
 
     ./train.sh
 
-The script will allow your model to run in the background without interruptions incase your connection ever times out, and the output of the training will be stored in **train.out**.
+The outputs of this script are a `train.out` file containing any output to stdout and stderr, and a `train_pid.txt` file you can use to kill the background process, using the following command:
+
+    kill -9 `cat train_pid.txt`
 
 ## Training
 
-    $ python train.py -h
+    $ python train.py --help
 
-    usage: train.py [-h]
-                    [batch_size] [char_input_size] [char_hidden_size] [data_type]
-                    [dropout] [epoch] [hidden_size] [lr] [num_perspectives]
-                    [print_interval] [word_dim]
+    usage: train.py [-h] [-batch-size 64] [-char-input-size 20]
+                    [-char-hidden-size 50] [-data-type quora] [-dropout 0.1]
+                    [-epoch 10] [-hidden-size 100] [-lr 0.001]
+                    [-num-perspectives 20] [-print-interval 500] [-word-dim 300]
 
     Train and store the best BiMPM model in a cycle.
 
@@ -77,6 +79,8 @@ The script will allow your model to run in the background without interruptions 
             How often to write to tensorboard (default is 500).
         word_dim : int, optional
             Size of word embeddings (default is 300).
+        shutdown: bool, optional
+            Whether or not to shutodown system after training (default is False).
 
         Raises
         ------
@@ -85,31 +89,30 @@ The script will allow your model to run in the background without interruptions 
 
         
 
-    positional arguments:
-      batch_size        [64]
-      char_input_size   [20]
-      char_hidden_size  [50]
-      data_type         {[Quora], SNLI}
-      dropout           [0.1]
-      epoch             [10]
-      hidden_size       [100]
-      lr                [0.001]
-      num_perspectives  [20]
-      print_interval    [500]
-      word_dim          [300]
-
     optional arguments:
-      -h, --help        show this help message and exit
+      -h, --help            show this help message and exit
+      -batch-size 64        [64]
+      -char-input-size 20   [20]
+      -char-hidden-size 50  [50]
+      -data-type quora      use quora or snli
+      -dropout 0.1          [0.1]
+      -epoch 10             [10]
+      -hidden-size 100      [100]
+      -lr 0.001             [0.001]
+      -num-perspectives 20  [20]
+      -print-interval 500   [500]
+      -word-dim 300         [300]
+      -shutdown False       shutdown system after training
 
 ## Testing 
 
-    $ python test.py -h
+    $ python test.py --help
 
-
-    usage: test.py [-h]
-                   model_path [batch_size] [char_input_size] [char_hidden_size]
-                   [data_type] [dropout] [epoch] [hidden_size] [lr]
-                   [num_perspectives] [word_dim]
+    usage: test.py [-h] [-batch-size 64] [-char-input-size 20]
+                   [-char-hidden-size 50] [-data-type quora] [-dropout 0.1]
+                   [-epoch 10] [-hidden-size 100] [-lr 0.001]
+                   [-num-perspectives 20] [-print-interval 500] [-word-dim 300]
+                   model_path
 
     Print the best BiMPM model accuracy for the test set in a cycle.
 
@@ -147,19 +150,20 @@ The script will allow your model to run in the background without interruptions 
 
     positional arguments:
       model_path
-      batch_size        [64]
-      char_input_size   [20]
-      char_hidden_size  [50]
-      data_type         {SNLI, [Quora]}
-      dropout           [0.1]
-      epoch             [10]
-      hidden_size       [100]
-      lr                [0.001]
-      num_perspectives  [20]
-      word_dim          [300]
 
     optional arguments:
-      -h, --help        show this help message and exit
+      -h, --help            show this help message and exit
+      -batch-size 64        [64]
+      -char-input-size 20   [20]
+      -char-hidden-size 50  [50]
+      -data-type quora      use quora or snli
+      -dropout 0.1          [0.1]
+      -epoch 10             [10]
+      -hidden-size 100      [100]
+      -lr 0.001             [0.001]
+      -num-perspectives 20  [20]
+      -print-interval 500   [500]
+      -word-dim 300         [300]
 
 # References
 1. Wang, Zhiguo, Wael Hamza, and Radu Florian. "Bilateral Multi-Perspective Matching for Natural Language Sentences." Proceedings of the Twenty-Sixth International Joint Conference on Artificial Intelligence, July 14, 2017. Accessed October 10, 2018. doi:10.24963/ijcai.2017/579. 
