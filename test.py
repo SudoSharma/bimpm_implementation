@@ -6,7 +6,7 @@ import torch
 from torch import nn
 
 from model.bimpm import BiMPM
-from model.utils import SNLI, Quora, Sentence, Args
+from model.utils import AppData, SNLI, Quora, Sentence, Args
 
 
 def main(experiment: ("use smaller dataset", 'flag', 'e'),
@@ -14,8 +14,8 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
          batch_size: (None, 'option', None, int) = 64,
          char_input_size: (None, 'option', None, int) = 20,
          char_hidden_size: (None, 'option', None, int) = 50,
-         data_type: ("use quora or snli", 'option', None, str,
-                     ['quora', 'snli']) = 'quora',
+         data_type: ("use quora, snli, or app", 'option', None, str,
+                     ['quora', 'snli', 'app']) = 'quora',
          dropout: (None, 'option', None, float) = 0.1,
          epoch: (None, 'option', None, int) = 10,
          hidden_size: (None, 'option', None, int) = 100,
@@ -64,15 +64,18 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
     args.device = torch.device('cuda:0' if torch.cuda.
                                is_available() else 'cpu')
 
-    if args.data_type == 'SNLI':
+    if args.data_type.lower() == 'snli':
         print("Loading SNLI data...")
         model_data = SNLI(args)
-    elif args.data_type == 'Quora':
+    elif args.data_type.lower() == 'quora':
         print("Loading Quora data...")
         model_data = Quora(args, experiment)
+    elif args.data_type.lower() == 'app':
+        print("Loading App data...")
+        model_data = AppData(args)
     else:
         raise RuntimeError(
-            'Data source other than SNLI or Quora was provided.')
+            'Data source other than SNLI, Quora, or App was provided.')
 
     # Create a few more parameters based on chosen dataset
     args.char_vocab_size = len(model_data.char_vocab)
@@ -83,9 +86,12 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
     print("Loading model...")
     model = load_model(args, model_data)
 
-    _, test_acc = test(model, args, model_data, mode='test')
-
-    print(f'\ntest_acc:  {test_acc:.3f}\n')
+    if args.data_type.lower() == 'app':
+        preds = test(model, args, model_data, mode='app')
+        print(f'\npreds:  {preds}\n')
+    else:
+        _, test_acc = test(model, args, model_data, mode='test')
+        print(f'\ntest_acc:  {test_acc:.3f}\n')
 
 
 def test(model, args, model_data, mode='test'):
@@ -98,7 +104,8 @@ def test(model, args, model_data, mode='test'):
     model_data : {Quora, SNLI}
         A data loading object which returns word vectors and sentences.
     mode : int, optional
-        Indicates whether or not to use valid or test data (default is 'test').
+        Indicates whether to use `valid`, `test`, or `app` data
+        (default is 'test').
 
     Returns
     -------
@@ -106,15 +113,23 @@ def test(model, args, model_data, mode='test'):
         The loss of the model provided.
     acc : int
         The accuracy of the model provided.
+    preds : array_like
+        A length-2 array of predictions for similar or asimilar class
 
     """
+    model.eval()
+
     if mode == 'valid':
         iterator = model_data.valid_iter
     elif mode == 'test':
         iterator = model_data.test_iter
+    elif mode == 'app':
+        p, q = Sentence(model_data.batch, model_data,
+                        args.data_type).generate(args.device)
+        preds = model(p, q)
+        return preds
 
     criterion = nn.CrossEntropyLoss()
-    model.eval()
     acc, loss, size = 0, 0, 0
 
     for batch in iterator:

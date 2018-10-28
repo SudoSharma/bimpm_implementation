@@ -10,57 +10,19 @@ from torchtext import data
 from torchtext import datasets
 from torchtext.vocab import GloVe
 
+from abc import ABC
 
-class SNLI:
-    """A data processor for SNLI data, which splits the original dataset
-    into a training, validation, and test. Also providers iterators, and
-    methods to process words within sentences and characters within words.
 
-    This data can be fed into the WordRepresentationLayer for the BiMPM model.
-
-    """
-
+class DataLoader(ABC):
     def __init__(self, args):
-        """Initialize the data loader, split data into train, valid, and
-        test sets, and create iterators. Also create word and char vocabulary
-        objects as part of the preprocessing pipeline.
-
-        Parameters
-        ----------
-        args : Args
-            An object with all arguments for BiMPM model.
-
-        """
         self.args = args
 
-        # Define how input data should be processed
         self.TEXT = data.Field(batch_first=True, tokenize='spacy')
-        self.LABEL = data.LabelField()
-
-        self.train, self.valid, self.test = datasets.SNLI.splits(
-            self.TEXT, self.LABEL)
-
-        self.TEXT.build_vocab(
-            self.train,
-            self.valid,
-            self.test,
-            vectors=GloVe(name='840B', dim=300))
-        self.LABEL.build_vocab(self.train)
-
-        self.train_iter, self.valid_iter, self.test_iter = \
-            data.BucketIterator.splits(
-                (self.train, self.valid, self.test),
-                batch_sizes=[args.batch_size] * 3,
-                device=args.device)
-
-        self.train_iter.repeat = True  # Allow default unlimited epochs
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
         # Handle <pad> and <unk>
         self.char_vocab = {'': 0}
         self.word_chars = [[0] * self.max_word_len, [0] * self.max_word_len]
-
-        self.build_char_vocab()
 
         self.last_epoch = -1  # Allow atleast one epoch
 
@@ -126,7 +88,93 @@ class SNLI:
         return True
 
 
-class Quora:
+class AppData(DataLoader):
+    """A data processor for Quora data, which splits the original dataset
+    into a training, validation, and test. Also providers iterators, and
+    methods to process words within sentences and characters within words.
+
+    This data can be fed into the WordRepresentationLayer for the BiMPM model.
+
+    """
+
+    def __init__(self, args):
+        """Initialize the data loader, create datasets, batches, and vocab.
+
+        Parameters
+        ----------
+        args : Args
+            An object with all arguments for BiMPM model.
+
+        """
+        super().__init__(self)
+
+        # Define how input data should be processed
+        self.fields = [('q1', self.TEXT), ('q2', self.TEXT)]
+
+        self.example = data.Example.fromCSV(
+            './data/quora/app_data.csv',
+            self.fields,
+            field_to_index={
+                'q1': 0,
+                'q2': 1
+            })
+
+        self.dataset = data.Dataset([self.example], self.fields)
+        self.TEXT.build_vocab(
+            self.example, vectors=GloVe(name='840B', dim=300))
+        self.batch = data.Batch(
+            self.dataset.examples, self.dataset, device=args.device)
+
+        self.build_char_vocab()
+
+
+class SNLI(DataLoader):
+    """A data processor for SNLI data, which splits the original dataset
+    into a training, validation, and test. Also providers iterators, and
+    methods to process words within sentences and characters within words.
+
+    This data can be fed into the WordRepresentationLayer for the BiMPM model.
+
+    """
+
+    def __init__(self, args):
+        """Initialize the data loader, split data into train, valid, and
+        test sets, and create iterators. Also create word and char vocabulary
+        objects as part of the preprocessing pipeline.
+
+        Parameters
+        ----------
+        args : Args
+            An object with all arguments for BiMPM model.
+
+        """
+        super().__init__(self)
+
+        # Define how input data should be processed
+        self.LABEL = data.LabelField()
+
+        self.train, self.valid, self.test = datasets.SNLI.splits(
+            self.TEXT, self.LABEL)
+
+        self.TEXT.build_vocab(
+            self.train,
+            self.valid,
+            self.test,
+            vectors=GloVe(name='840B', dim=300))
+        self.LABEL.build_vocab(self.train)
+
+        self.train_iter, self.valid_iter, self.test_iter = \
+            data.BucketIterator.splits(
+                (self.train, self.valid, self.test),
+                batch_sizes=[args.batch_size] * 3,
+                device=args.device)
+
+        self.train_iter.repeat = True  # Allow default unlimited epochs
+
+        self.build_char_vocab()
+
+
+class Quora(DataLoader):
     """A data processor for Quora data, which splits the original dataset
     into a training, validation, and test. Also providers iterators, and
     methods to process words within sentences and characters within words.
@@ -146,7 +194,7 @@ class Quora:
             An object with all arguments for BiMPM model.
 
         """
-        self.args = args
+        super().__init__(self)
 
         # Define how input data should be processed
         self.RAW = data.RawField()
@@ -183,73 +231,7 @@ class Quora:
 
         self.train_iter.repeat = True  # Allow default unlimited epochs
 
-        self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
-        # Handle <pad> and <unk>
-        self.char_vocab = {'': 0}
-        self.word_chars = [[0] * self.max_word_len, [0] * self.max_word_len]
-
         self.build_char_vocab()
-
-        self.last_epoch = -1  # Allow atleast one epoch
-
-    def build_char_vocab(self):
-        """Create char vocabulary, generate char2idx and idx2char mapping,
-        and pad words to max word length.
-
-        """
-        for word in self.TEXT.vocab.itos[2:]:
-            chars = []
-            for c in list(word):
-                if c not in self.char_vocab:
-                    self.char_vocab[c] = len(self.char_vocab)
-
-                chars.append(self.char_vocab[c])
-
-            chars.extend([0] * (self.max_word_len - len(word)))
-            self.word_chars.append(chars)
-
-    def words_to_chars(self, batch):
-        """Convert batch of sentences to appropriately shaped array for
-        the WordRepresentationLayer. This will eventually be turned into
-        a PyTorch Tensor to track gradients and allow for easy
-        backpropagation of errors later on.
-
-        Parameters
-        ----------
-        batch : Tensor
-            A PyTorch Tensor with shape (batch_size, seq_len).
-
-        Returns
-        -------
-        array_like
-            An nested array with shape (batch_size, seq_len, max_word_len).
-
-        """
-        batch = batch.data.cpu().numpy().astype(int).tolist()
-        return [[self.word_chars[w] for w in words] for words in batch]
-
-    def keep_training(self, iterator):
-        """Track batch iteration and epochs.
-
-        Parameters
-        ----------
-        iterator : Iterator
-            An iterator object which provides batches of data, and keeps a
-            track of the epochs.
-
-        Returns
-        -------
-        bool
-            False if all epochs are complete, else True.
-
-        """
-        self.present_epoch = int(iterator.epoch)
-        if self.present_epoch == self.args.epoch:
-            return False
-        if self.present_epoch > self.last_epoch:
-            print(f'  epoch: {self.present_epoch+1}')
-        self.last_epoch = self.present_epoch
-        return True
 
 
 class Sentence:
@@ -325,6 +307,7 @@ class Sentence:
 
 class Args:
     """Creates a mapping from dictionary to object."""
+
     def __init__(self, args_dict):
         """Initialize and store args from dict into self attributes for easy
         access during runtime.
