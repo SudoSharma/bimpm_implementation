@@ -18,21 +18,17 @@ class DataLoader(ABC):
         self.args = args
         self.TEXT = data.Field(batch_first=True, tokenize='spacy')
 
+        self.max_word_len = 15  # Set base length
         # Handle <pad> and <unk>
         self.char_vocab = {'': 0}
 
         self.last_epoch = -1  # Allow atleast one epoch
 
     @property
-    def max_word_len(self):
-        return max([len(w) for w in self.TEXT.vocab.itos])
-
-    @property
     def word_chars(self):
         return [[0] * self.max_word_len, [0] * self.max_word_len]
 
-    @classmethod
-    def words_to_chars(cls, batch):
+    def words_to_chars(self, batch):
         """Convert batch of sentences to appropriately shaped array for
         the WordRepresentationLayer. This will eventually be turned into
         a PyTorch Tensor to track gradients and allow for easy
@@ -129,6 +125,8 @@ class SNLI(DataLoader):
             vectors=GloVe(name='840B', dim=300))
         self.LABEL.build_vocab(self.train)
 
+        self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
+
         self.train_iter, self.valid_iter, self.test_iter = \
             data.BucketIterator.splits(
                 (self.train, self.valid, self.test),
@@ -168,6 +166,7 @@ class Quora(DataLoader):
         self.TEXT = data.Field(batch_first=True)
         self.LABEL = data.LabelField()
 
+
         self.fields = [('label', self.LABEL), ('q1', self.TEXT),
                        ('q2', self.TEXT), ('id', self.RAW)]
 
@@ -187,6 +186,8 @@ class Quora(DataLoader):
         self.LABEL.build_vocab(self.train)
 
         self.sort_key = lambda x: data.interleave_keys(len(x.q1), len(x.q2))
+
+        self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
 
         self.train_iter, self.valid_iter, self.test_iter = \
             data.BucketIterator.splits(
