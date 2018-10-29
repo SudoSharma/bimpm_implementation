@@ -18,15 +18,7 @@ class DataLoader(ABC):
         self.args = args
         self.TEXT = data.Field(batch_first=True, tokenize='spacy')
 
-        self.max_word_len = 15  # Set base length
-        # Handle <pad> and <unk>
-        self.char_vocab = {'': 0}
-
         self.last_epoch = -1  # Allow atleast one epoch
-
-    @property
-    def word_chars(self):
-        return [[0] * self.max_word_len, [0] * self.max_word_len]
 
     def words_to_chars(self, batch):
         """Convert batch of sentences to appropriately shaped array for
@@ -126,6 +118,9 @@ class SNLI(DataLoader):
         self.LABEL.build_vocab(self.train)
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
+        # Handle <pad> and <unk>
+        self.char_vocab = {'': 0}
+        self.word_chars = [[0] * self.max_word_len, [0] * self.max_word_len]
 
         self.train_iter, self.valid_iter, self.test_iter = \
             data.BucketIterator.splits(
@@ -166,7 +161,6 @@ class Quora(DataLoader):
         self.TEXT = data.Field(batch_first=True)
         self.LABEL = data.LabelField()
 
-
         self.fields = [('label', self.LABEL), ('q1', self.TEXT),
                        ('q2', self.TEXT), ('id', self.RAW)]
 
@@ -188,6 +182,9 @@ class Quora(DataLoader):
         self.sort_key = lambda x: data.interleave_keys(len(x.q1), len(x.q2))
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
+        # Handle <pad> and <unk>
+        self.char_vocab = {'': 0}
+        self.word_chars = [[0] * self.max_word_len, [0] * self.max_word_len]
 
         self.train_iter, self.valid_iter, self.test_iter = \
             data.BucketIterator.splits(
@@ -224,15 +221,18 @@ class AppData(Quora):
         """
         super().__init__(args)
 
-        self.example = [data.Example.fromlist(
-            data=[
-                'How can I stop being so addicted to love?',
-                'How can I stop being so addicted to my phone?'],
-            fields=self.fields)]
+        self.fields = [('q1', self.TEXT), ('q2', self.TEXT)]
 
+        self.example = [
+            data.Example.fromlist(
+                data=[
+                    'How can I earn money using YouTube?',
+                    'How can we make money from YouTube?'
+                ],
+                fields=self.fields)
+        ]
         self.dataset = data.Dataset(self.example, self.fields)
-        self.batch = data.Batch(
-            self.example, self.dataset, device=args.device)
+        self.batch = data.Batch(self.example, self.dataset, device=args.device)
 
 
 class Sentence:
