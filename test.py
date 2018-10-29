@@ -81,12 +81,9 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
             'Data source other than SNLI or Quora was provided.')
 
     # Create a few more parameters based on chosen dataset
-    args.char_vocab_size = len(model_data.char_vocab)
     args.word_vocab_size = len(model_data.TEXT.vocab)
-    if app:
-        args.class_size = 2
-    else:
-        args.class_size = len(model_data.LABEL.vocab)
+    args.char_vocab_size = len(model_data.char_vocab)
+    args.class_size = len(model_data.LABEL.vocab)
     args.max_word_len = model_data.max_word_len
 
     print("Loading model...")
@@ -174,15 +171,8 @@ def load_model(args, model_data):
         model.
     """
     model = BiMPM(args, model_data)
-    pretrained_state = torch.load(args.model_path, map_location=args.device)
-    model_state = model.state_dict()
-    pretrained_state = {
-        k: v
-        for k, v in pretrained_state.items() if k in model_state
-    }
-    model_state.update(pretrained_state)
-    model.load_state_dict(model_state)
-
+    state_dict = torch.load(args.model_path, map_location=args.device)
+    model.load_state_dict(state_dict)
     model.to(args.device)
 
     return model
