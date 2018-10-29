@@ -1,12 +1,9 @@
-from test import load_model, test
+from evaluate import load_model, evaluate
 import dill as pickle
 from flask import Flask
 from flask_restful import reqparse, Api, Resource
 import torch
-
-import sys
-sys.path.append('../model/')
-from utils import AppData
+from model.utils import AppData
 
 app = Flask(__name__)
 api = Api(app)
@@ -27,7 +24,7 @@ class PredictSentenceSimilarity(Resource):
 
         model_data = AppData(model_args, [q1, q2])
         model = load_model(model_args, model_data)
-        preds = test(model, model_args, model_data, mode='app').numpy()
+        preds = evaluate(model, model_args, model_data, mode='app').numpy()
 
         return {'preds': preds}
 
