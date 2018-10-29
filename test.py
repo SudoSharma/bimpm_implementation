@@ -67,7 +67,7 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
     args.device = torch.device('cuda:0' if torch.cuda.
                                is_available() else 'cpu')
 
-    if args.app:
+    if app:
         print("Loading App data...")
         model_data = AppData(args)
     elif args.data_type.lower() == 'snli':
@@ -83,13 +83,16 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
     # Create a few more parameters based on chosen dataset
     args.char_vocab_size = len(model_data.char_vocab)
     args.word_vocab_size = len(model_data.TEXT.vocab)
-    args.class_size = len(model_data.LABEL.vocab)
+    if app:
+        args.class_size = 2
+    else:
+        args.class_size = len(model_data.LABEL.vocab)
     args.max_word_len = model_data.max_word_len
 
     print("Loading model...")
     model = load_model(args, model_data)
 
-    if args.app:
+    if app:
         preds = test(model, args, model_data, mode='app')
         print(f'\npreds:  {preds}\n')
     else:
@@ -171,7 +174,15 @@ def load_model(args, model_data):
         model.
     """
     model = BiMPM(args, model_data)
-    model.load_state_dict(torch.load(args.model_path))
+    pretrained_state = torch.load(args.model_path, map_location=args.device)
+    model_state = model.state_dict()
+    pretrained_state = {
+        k: v
+        for k, v in pretrained_state.items() if k in model_state
+    }
+    model_state.update(pretrained_state)
+    model.load_state_dict(model_state)
+
     model.to(args.device)
 
     return model
