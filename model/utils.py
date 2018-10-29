@@ -16,34 +16,23 @@ from abc import ABC
 class DataLoader(ABC):
     def __init__(self, args):
         self.args = args
-
         self.TEXT = data.Field(batch_first=True, tokenize='spacy')
 
-        self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
         # Handle <pad> and <unk>
         self.char_vocab = {'': 0}
-        self.word_chars = [[0] * self.max_word_len, [0] * self.max_word_len]
 
         self.last_epoch = -1  # Allow atleast one epoch
 
-    def build_char_vocab(self):
-        """Create char vocabulary, generate char2idx and idx2char mapping,
-        and pad words to max word length.
+    @property
+    def max_word_len(self):
+        return max([len(w) for w in self.TEXT.vocab.itos])
 
-        """
-        for word in self.TEXT.vocab.itos[2:]:  # Skip <pad> and <unk>
-            chars = []
-            for c in list(word):
-                if c not in self.char_vocab:
-                    self.char_vocab[c] = len(self.char_vocab)
+    @property
+    def word_chars(self):
+        return [[0] * self.max_word_len, [0] * self.max_word_len]
 
-                chars.append(self.char_vocab[c])
-
-            # Pad words until max word length
-            chars.extend([0] * (self.max_word_len - len(word)))
-            self.word_chars.append(chars)
-
-    def words_to_chars(self, batch):
+    @classmethod
+    def words_to_chars(cls, batch):
         """Convert batch of sentences to appropriately shaped array for
         the WordRepresentationLayer. This will eventually be turned into
         a PyTorch Tensor to track gradients and allow for easy
@@ -63,6 +52,23 @@ class DataLoader(ABC):
         batch = batch.data.cpu().numpy().astype(int).tolist()
         return [[self.word_chars[word] for word in sentence]
                 for sentence in batch]
+
+    def build_char_vocab(self):
+        """Create char vocabulary, generate char2idx and idx2char mapping,
+        and pad words to max word length.
+
+        """
+        for word in self.TEXT.vocab.itos[2:]:  # Skip <pad> and <unk>
+            chars = []
+            for c in list(word):
+                if c not in self.char_vocab:
+                    self.char_vocab[c] = len(self.char_vocab)
+
+                chars.append(self.char_vocab[c])
+
+            # Pad words until max word length
+            chars.extend([0] * (self.max_word_len - len(word)))
+            self.word_chars.append(chars)
 
     def keep_training(self, iterator):
         """Track batch iteration and epochs.
@@ -89,7 +95,7 @@ class DataLoader(ABC):
 
 
 class AppData(DataLoader):
-    """A data processor for Quora data, which splits the original dataset
+    """A data processor for App data, which splits the original dataset
     into a training, validation, and test. Also providers iterators, and
     methods to process words within sentences and characters within words.
 
@@ -97,13 +103,16 @@ class AppData(DataLoader):
 
     """
 
-    def __init__(self, args):
+    def __init__(self, args, app_data=None):
         """Initialize the data loader, create datasets, batches, and vocab.
 
         Parameters
         ----------
         args : Args
             An object with all arguments for BiMPM model.
+        data : list, optional
+            A Python list with `q1` and `q2` as keys for two queries
+            (default is None).
 
         """
         super().__init__(self)
@@ -111,19 +120,17 @@ class AppData(DataLoader):
         # Define how input data should be processed
         self.fields = [('q1', self.TEXT), ('q2', self.TEXT)]
 
-        self.example = data.Example.fromCSV(
-            './data/quora/app_data.csv',
-            self.fields,
-            field_to_index={
-                'q1': 0,
-                'q2': 1
-            })
+        self.example = [data.Example.fromlist(
+            data=[
+                'How can I stop being so addicted to love?',
+                'How can I stop being so addicted to my phone?'],
+            fields=self.fields)]
 
-        self.dataset = data.Dataset([self.example], self.fields)
+        self.dataset = data.Dataset(self.example, self.fields)
         self.TEXT.build_vocab(
-            self.example, vectors=GloVe(name='840B', dim=300))
+            self.dataset, vectors=GloVe(name='840B', dim=300))
         self.batch = data.Batch(
-            self.dataset.examples, self.dataset, device=args.device)
+            self.example, self.dataset, device=args.device)
 
         self.build_char_vocab()
 
