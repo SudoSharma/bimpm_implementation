@@ -6,6 +6,7 @@ import io
 from pstats import SortKey
 import plac
 import dill as pickle
+import os
 
 import torch
 from torch import nn
@@ -105,6 +106,11 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
     model = load_model(args, model_data)
 
     if app:
+        pickle_dir = './pickle/'
+        args_pickle = 'app_args.pkl'
+        if not os.path.exists(pickle_dir):
+            os.makedirs(pickle_dir)
+        pickle.dump(args, open(f'{pickle_dir}{args_pickle}', 'wb'))
         preds = test(model, args, model_data, mode='app')
         print(f'\npreds:  {preds}\n')
     else:
