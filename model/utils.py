@@ -4,6 +4,7 @@ training and testing script execution to initialize the BiMPM model.
 
 """
 
+import os
 import dill as pickle
 from abc import ABC
 
@@ -173,16 +174,21 @@ class Quora(DataLoader):
             format='tsv',
             fields=self.fields)
 
+        # Access pickle file for TEXT field, or create it
+        pickle_dir = './pickle/'
         TEXT_pickle = 'quora_toy_TEXT.pkl' if args.experiment else 'quora_TEXT.pkl'
+
         try:
-            self.TEXT = pickle.load(open(f'./pickle/{TEXT_pickle}', 'rb'))
+            self.TEXT = pickle.load(open(f'{pickle_dir}{TEXT_pickle}', 'rb'))
         except (FileNotFoundError, EOFError):
             self.TEXT.build_vocab(
                 self.train,
                 self.valid,
                 self.test,
                 vectors=GloVe(name='840B', dim=300))
-            pickle.dump(self.TEXT, open('./pickle/{TEXT_pickle}', 'wb'))
+            if not os,path.exists(pickle_dir):
+                os.makedirs(pickle_dir)
+            pickle.dump(self.TEXT, open('{pickle_dir}{TEXT_pickle}', 'wb'))
 
         self.LABEL.build_vocab(self.train)
 
