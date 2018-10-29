@@ -7,6 +7,7 @@ from pstats import SortKey
 import plac
 import dill as pickle
 import os
+import csv
 
 import torch
 from torch import nn
@@ -74,18 +75,25 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
                                is_available() else 'cpu')
 
     if app:
+        help_message = ("\nPlease create a csv file "
+                        "`./app_data/sample_queries.csv` with two queries."
+                        " For example:"
+                        "\n\t$ cat sample_queries.csv"
+                        "\n\tHow can I run faster?"
+                        "\n\tHow do I get better at running?\n")
+        try:
+            with open('./app_data/sample_queries.csv', 'r') as f:
+                reader = csv.reader(f)
+                app_data = []
+                [app_data.extend(line) for line in reader]
+            assert len(
+                app_data) == 2, f"Too many queries to unpack. {help_message}"
+        except FileNotFoundError as e:
+            print(e)
+            print(help_message)
+            return
         print("Loading App data...")
-        #pr = cProfile.Profile()
-        #pr.enable()
-        model_data = AppData(args)
-        #pr.disable()
-        #s = io.StringIO()
-        #ps = pstats.Stats(
-        #    pr, stream=s).strip_dirs().sort_stats(SortKey.TIME,
-        #                                          SortKey.CUMULATIVE)
-        #ps.print_stats(0.5)
-        #print(s.getvalue())
-        #raise RuntimeError
+        model_data = AppData(args, app_data)
     elif args.data_type.lower() == 'snli':
         print("Loading SNLI data...")
         model_data = SNLI(args)
@@ -106,13 +114,21 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
     model = load_model(args, model_data)
 
     if app:
+        # Store args for use in app
         pickle_dir = './pickle/'
         args_pickle = 'app_args.pkl'
         if not os.path.exists(pickle_dir):
             os.makedirs(pickle_dir)
         pickle.dump(args, open(f'{pickle_dir}{args_pickle}', 'wb'))
         preds = evaluate(model, args, model_data, mode='app')
-        print(f'\npreds:  {preds}\n')
+        print('\nQueries:\n', f'\n{app_data[0]}\n', f'{app_data[1]}\n', sep='')
+        print('\nPrediction:')
+        if max(preds) == preds.data[1]:
+            print('\nSIMILAR based on max value at index 1:',
+                  f'\npreds:  {preds.data}\n')
+        else:
+            print('\nNOT SIMILAR based on max value at index 0',
+                  f'\npreds:  {preds.data}\n')
     else:
         _, eval_acc = evaluate(model, args, model_data, mode='eval')
         print(f'\neval_acc:  {eval_acc:.3f}\n')
