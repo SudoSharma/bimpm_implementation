@@ -238,10 +238,7 @@ class AppData(Quora):
 
         self.example = [
             data.Example.fromlist(
-                data=[
-                    'How can I earn money using YouTube?',
-                    'How can we make money from YouTube?'
-                ],
+                data=app_data,
                 fields=self.fields)
         ]
         self.dataset = data.Dataset(self.example, self.fields)
