@@ -4,7 +4,7 @@ training and testing script execution to initialize the BiMPM model.
 
 """
 
-import functools
+import dill as pickle
 from abc import ABC
 
 import torch
@@ -143,7 +143,6 @@ class Quora(DataLoader):
 
     """
 
-    @functools.lru_cache(maxsize=128)
     def __init__(self, args):
         """Initialize the data loader, split data into train, valid, and
         test sets, and create iterators. Also create word and char vocabulary
@@ -168,17 +167,22 @@ class Quora(DataLoader):
 
         self.train, self.valid, self.test = data.TabularDataset.splits(
             path='./data/quora',
-            train='toy_train.tsv',
-            validation='toy_dev.tsv',
-            test='toy_test.tsv',
+            train='toy_train.tsv' if args.experiment else 'train.tsv',
+            validation='toy_dev.tsv' if args.experiment else 'dev.tsv',
+            test='toy_test.tsv' if args.experiment else 'test.tsv',
             format='tsv',
             fields=self.fields)
 
-        self.TEXT.build_vocab(
-            self.train,
-            self.valid,
-            self.test,
-            vectors=GloVe(name='840B', dim=300))
+        TEXT_pickle = 'quora_toy_TEXT.pkl' if args.experiment else 'quora_TEXT.pkl'
+        try:
+            self.TEXT = pickle.load(open(f'./pickle/{TEXT_pickle}', 'rb'))
+        except (FileNotFoundError, EOFError):
+            self.TEXT.build_vocab(
+                self.train,
+                self.valid,
+                self.test,
+                vectors=GloVe(name='840B', dim=300))
+            pickle.dump(self.TEXT, open('./pickle/{TEXT_pickle}', 'wb'))
 
         self.LABEL.build_vocab(self.train)
 
