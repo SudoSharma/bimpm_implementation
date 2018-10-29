@@ -16,7 +16,7 @@ from model.utils import AppData, SNLI, Quora, Sentence, Args
 
 
 def main(experiment: ("use smaller dataset", 'flag', 'e'),
-         app: ("test user queries from app", 'flag', 'a'),
+         app: ("evaluate user queries from app", 'flag', 'a'),
          model_path,
          batch_size: (None, 'option', None, int) = 64,
          char_input_size: (None, 'option', None, int) = 20,
@@ -37,7 +37,7 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
     experiment : bool, flag
         Whether to run experiments on small dataset (default is False).
     app : bool, flag
-        Whether to test queries from bimpm app (default is False).
+        Whether to evaluate queries from bimpm app (default is False).
     model_path : str
         A path to the location of the BiMPM trained model.
     batch_size : int, optional
@@ -111,14 +111,14 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
         if not os.path.exists(pickle_dir):
             os.makedirs(pickle_dir)
         pickle.dump(args, open(f'{pickle_dir}{args_pickle}', 'wb'))
-        preds = test(model, args, model_data, mode='app')
+        preds = evaluate(model, args, model_data, mode='app')
         print(f'\npreds:  {preds}\n')
     else:
-        _, test_acc = test(model, args, model_data, mode='test')
-        print(f'\ntest_acc:  {test_acc:.3f}\n')
+        _, eval_acc = evaluate(model, args, model_data, mode='eval')
+        print(f'\neval_acc:  {eval_acc:.3f}\n')
 
 
-def test(model, args, model_data, mode='test'):
+def evaluate(model, args, model_data, mode='eval'):
     """Test the BiMPM model on SNLI or Quora validation or test data.
 
     Parameters
@@ -128,8 +128,8 @@ def test(model, args, model_data, mode='test'):
     model_data : {Quora, SNLI}
         A data loading object which returns word vectors and sentences.
     mode : int, optional
-        Indicates whether to use `valid`, `test`, or `app` data
-        (default is 'test').
+        Indicates whether to use `valid`, `eval`, or `app` data
+        (default is 'eval').
 
     Returns
     -------
@@ -145,8 +145,8 @@ def test(model, args, model_data, mode='test'):
 
     if mode == 'valid':
         iterator = model_data.valid_iter
-    elif mode == 'test':
-        iterator = model_data.test_iter
+    elif mode == 'eval':
+        iterator = model_data.eval_iter
     elif mode == 'app':
         p, q = Sentence(model_data.batch, model_data,
                         args.data_type).generate(args.device)
