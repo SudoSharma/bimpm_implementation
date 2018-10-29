@@ -1,6 +1,6 @@
 """Constructs data processors and loaders for Quora and SNLI sentences,
 as well a container object, Args, to hold all arguments passed during
-training and testing script execution to initialize the BiMPM model.
+training and evaluation script execution to initialize the BiMPM model.
 
 """
 
@@ -86,7 +86,7 @@ class DataLoader(ABC):
 
 class SNLI(DataLoader):
     """A data processor for SNLI data, which splits the original dataset
-    into a training, validation, and test. Also providers iterators, and
+    into a training, validation, and evaluation. Also providers iterators, and
     methods to process words within sentences and characters within words.
 
     This data can be fed into the WordRepresentationLayer for the BiMPM model.
@@ -95,8 +95,8 @@ class SNLI(DataLoader):
 
     def __init__(self, args):
         """Initialize the data loader, split data into train, valid, and
-        test sets, and create iterators. Also create word and char vocabulary
-        objects as part of the preprocessing pipeline.
+        evaluation sets, and create iterators. Also create word and char
+        vocabulary objects as part of the preprocessing pipeline.
 
         Parameters
         ----------
@@ -109,13 +109,13 @@ class SNLI(DataLoader):
         # Define how input data should be processed
         self.LABEL = data.LabelField()
 
-        self.train, self.valid, self.test = datasets.SNLI.splits(
+        self.train, self.valid, self.eval = datasets.SNLI.splits(
             self.TEXT, self.LABEL)
 
         self.TEXT.build_vocab(
             self.train,
             self.valid,
-            self.test,
+            self.eval,
             vectors=GloVe(name='840B', dim=300))
         self.LABEL.build_vocab(self.train)
 
@@ -124,9 +124,9 @@ class SNLI(DataLoader):
         self.char_vocab = {'': 0}
         self.word_chars = [[0] * self.max_word_len, [0] * self.max_word_len]
 
-        self.train_iter, self.valid_iter, self.test_iter = \
+        self.train_iter, self.valid_iter, self.eval_iter = \
             data.BucketIterator.splits(
-                (self.train, self.valid, self.test),
+                (self.train, self.valid, self.eval),
                 batch_sizes=[args.batch_size] * 3,
                 device=args.device)
 
@@ -137,7 +137,7 @@ class SNLI(DataLoader):
 
 class Quora(DataLoader):
     """A data processor for Quora data, which splits the original dataset
-    into a training, validation, and test. Also providers iterators, and
+    into a training, validation, and evaluation. Also providers iterators, and
     methods to process words within sentences and characters within words.
 
     This data can be fed into the WordRepresentationLayer for the BiMPM model.
@@ -146,8 +146,8 @@ class Quora(DataLoader):
 
     def __init__(self, args):
         """Initialize the data loader, split data into train, valid, and
-        test sets, and create iterators. Also create word and char vocabulary
-        objects as part of the preprocessing pipeline.
+        evaluation sets, and create iterators. Also create word and char
+        vocabulary objects as part of the preprocessing pipeline.
 
         Parameters
         ----------
@@ -166,7 +166,7 @@ class Quora(DataLoader):
         self.fields = [('label', self.LABEL), ('q1', self.TEXT),
                        ('q2', self.TEXT), ('id', self.RAW)]
 
-        self.train, self.valid, self.test = data.TabularDataset.splits(
+        self.train, self.valid, self.eval = data.TabularDataset.splits(
             path='./data/quora',
             train='toy_train.tsv' if args.experiment else 'train.tsv',
             validation='toy_dev.tsv' if args.experiment else 'dev.tsv',
@@ -176,7 +176,8 @@ class Quora(DataLoader):
 
         # Access pickle file for TEXT field, or create it
         pickle_dir = './pickle/'
-        TEXT_pickle = 'quora_toy_TEXT.pkl' if args.experiment else 'quora_TEXT.pkl'
+        TEXT_pickle = \
+            'quora_toy_TEXT.pkl' if args.experiment else 'quora_TEXT.pkl'
 
         try:
             self.TEXT = pickle.load(open(f'{pickle_dir}{TEXT_pickle}', 'rb'))
@@ -184,9 +185,9 @@ class Quora(DataLoader):
             self.TEXT.build_vocab(
                 self.train,
                 self.valid,
-                self.test,
+                self.eval,
                 vectors=GloVe(name='840B', dim=300))
-            if not os,path.exists(pickle_dir):
+            if not os.path.exists(pickle_dir):
                 os.makedirs(pickle_dir)
             pickle.dump(self.TEXT, open('{pickle_dir}{TEXT_pickle}', 'wb'))
 
@@ -199,9 +200,9 @@ class Quora(DataLoader):
         self.char_vocab = {'': 0}
         self.word_chars = [[0] * self.max_word_len, [0] * self.max_word_len]
 
-        self.train_iter, self.valid_iter, self.test_iter = \
+        self.train_iter, self.valid_iter, self.eval_iter = \
             data.BucketIterator.splits(
-                (self.train, self.valid, self.test),
+                (self.train, self.valid, self.eval),
                 batch_sizes=[args.batch_size] * 3,
                 device=args.device,
                 sort_key=self.sort_key)
@@ -213,7 +214,7 @@ class Quora(DataLoader):
 
 class AppData(Quora):
     """A data processor for App data, which splits the original dataset
-    into a training, validation, and test. Also providers iterators, and
+    into a training, validation, and evaluation. Also providers iterators, and
     methods to process words within sentences and characters within words.
 
     This data can be fed into the WordRepresentationLayer for the BiMPM model.
@@ -237,9 +238,7 @@ class AppData(Quora):
         self.fields = [('q1', self.TEXT), ('q2', self.TEXT)]
 
         self.example = [
-            data.Example.fromlist(
-                data=app_data,
-                fields=self.fields)
+            data.Example.fromlist(data=app_data, fields=self.fields)
         ]
         self.dataset = data.Dataset(self.example, self.fields)
         self.batch = data.Batch(self.example, self.dataset, device=args.device)
@@ -326,8 +325,9 @@ class Args:
         Parameters
         ---------
         args_dict : dict
-            A dictionary of all arguments passed to the training or testing
-            script.
+            A dictionary of all arguments passed to the training or
+            evaluation script.
+
         """
         for k, v in args_dict.items():
             setattr(self, k, v)

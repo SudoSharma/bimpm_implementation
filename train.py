@@ -1,4 +1,4 @@
-"""Trains and tests a PyTorch implementation of the BiMPM model."""
+"""Trains and evaluates a PyTorch implementation of the BiMPM model."""
 
 import os
 import copy
@@ -9,7 +9,7 @@ import torch
 from torch import nn, optim
 from tensorboardX import SummaryWriter
 
-from test import test
+from evaluate import evaluate
 from model.bimpm import BiMPM
 from model.utils import SNLI, Quora, Sentence, Args
 
@@ -130,7 +130,7 @@ def train(args, model_data):
     writer = SummaryWriter(log_dir='runs/' + args.model_time)
 
     model.train()
-    train_loss, max_valid_acc, max_test_acc = 0, 0, 0
+    train_loss, max_valid_acc, max_eval_acc = 0, 0, 0
 
     iterator = model_data.train_iter
     for i, batch in enumerate(iterator):
@@ -151,29 +151,31 @@ def train(args, model_data):
         optimizer.step()
 
         if (i + 1) % args.print_interval == 0:
-            valid_loss, valid_acc = test(model, args, model_data, mode='valid')
-            test_loss, test_acc = test(model, args, model_data, mode='test')
+            valid_loss, valid_acc = evaluate(
+                model, args, model_data, mode='valid')
+            eval_loss, eval_acc = evaluate(
+                model, args, model_data, mode='eval')
             c = (i + 1) // args.print_interval  # Calculate step
 
             # Update tensorboardx logs
             writer.add_scalar('loss/train', train_loss, c)
             writer.add_scalar('loss/valid', valid_loss, c)
             writer.add_scalar('acc/valid', valid_acc, c)
-            writer.add_scalar('loss/test', test_loss, c)
-            writer.add_scalar('acc/test', test_acc, c)
+            writer.add_scalar('loss/eval', eval_loss, c)
+            writer.add_scalar('acc/eval', eval_acc, c)
 
             print(
                 f'\ntrain_loss:  {train_loss:.3f}\n',
                 f'valid_loss:  {valid_loss:.3f}\n',
-                f'test_loss:   {test_loss:.3f}\n',
+                f'eval_loss:   {eval_loss:.3f}\n',
                 f'valid_acc:   {valid_acc:.3f}\n',
-                f'test_acc:    {test_acc:.3f}\n',
+                f'eval_acc:    {eval_acc:.3f}\n',
                 sep='')
 
             # Track best model and metrics so far
             if valid_acc > max_valid_acc:
                 max_valid_acc = valid_acc
-                max_test_acc = test_acc
+                max_eval_acc = eval_acc
                 best_model = copy.deepcopy(model)
 
             train_loss = 0
@@ -181,7 +183,7 @@ def train(args, model_data):
 
     print(
         f'\nmax_valid_acc:  {max_valid_acc:.3f}\n',
-        f'max_test_acc:   {max_test_acc:.3f}\n',
+        f'max_eval_acc:   {max_eval_acc:.3f}\n',
         sep='')
     writer.close()
 
