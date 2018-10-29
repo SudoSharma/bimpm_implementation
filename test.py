@@ -10,6 +10,7 @@ from model.utils import AppData, SNLI, Quora, Sentence, Args
 
 
 def main(experiment: ("use smaller dataset", 'flag', 'e'),
+         app: ("test user queries from app", 'flag', 'a'),
          model_path,
          batch_size: (None, 'option', None, int) = 64,
          char_input_size: (None, 'option', None, int) = 20,
@@ -27,10 +28,12 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
 
     Parameters
     ----------
+    experiment : bool, flag
+        Whether to run experiments on small dataset (default is False).
+    app : bool, flag
+        Whether to test queries from bimpm app (default is False).
     model_path : str
         A path to the location of the BiMPM trained model.
-    experiment : bool, flag
-        Whether or not to run experiments on small dataset (default is False).
     batch_size : int, optional
         Number of examples in one iteration (default is 64).
     char_input_size : int, optional
@@ -64,18 +67,18 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
     args.device = torch.device('cuda:0' if torch.cuda.
                                is_available() else 'cpu')
 
-    if args.data_type.lower() == 'snli':
+    if args.app:
+        print("Loading App data...")
+        model_data = AppData(args)
+    elif args.data_type.lower() == 'snli':
         print("Loading SNLI data...")
         model_data = SNLI(args)
     elif args.data_type.lower() == 'quora':
         print("Loading Quora data...")
-        model_data = Quora(args, experiment)
-    elif args.data_type.lower() == 'app':
-        print("Loading App data...")
-        model_data = AppData(args)
+        model_data = Quora(args)
     else:
         raise RuntimeError(
-            'Data source other than SNLI, Quora, or App was provided.')
+            'Data source other than SNLI or Quora was provided.')
 
     # Create a few more parameters based on chosen dataset
     args.char_vocab_size = len(model_data.char_vocab)
@@ -86,7 +89,7 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
     print("Loading model...")
     model = load_model(args, model_data)
 
-    if args.data_type.lower() == 'app':
+    if args.app:
         preds = test(model, args, model_data, mode='app')
         print(f'\npreds:  {preds}\n')
     else:
