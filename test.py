@@ -1,6 +1,11 @@
 """Tests a model trained on a PyTorch reimplementation of BiMPM"""
 
+import cProfile
+import pstats
+import io
+from pstats import SortKey
 import plac
+import dill as pickle
 
 import torch
 from torch import nn
@@ -69,7 +74,17 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
 
     if app:
         print("Loading App data...")
+        #pr = cProfile.Profile()
+        #pr.enable()
         model_data = AppData(args)
+        #pr.disable()
+        #s = io.StringIO()
+        #ps = pstats.Stats(
+        #    pr, stream=s).strip_dirs().sort_stats(SortKey.TIME,
+        #                                          SortKey.CUMULATIVE)
+        #ps.print_stats(0.5)
+        #print(s.getvalue())
+        #raise RuntimeError
     elif args.data_type.lower() == 'snli':
         print("Loading SNLI data...")
         model_data = SNLI(args)
@@ -130,7 +145,7 @@ def test(model, args, model_data, mode='test'):
         p, q = Sentence(model_data.batch, model_data,
                         args.data_type).generate(args.device)
         preds = model(p, q)
-        return preds
+        return preds.data[0]
 
     criterion = nn.CrossEntropyLoss()
     acc, loss, size = 0, 0, 0
