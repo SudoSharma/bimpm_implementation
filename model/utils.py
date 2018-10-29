@@ -94,47 +94,6 @@ class DataLoader(ABC):
         return True
 
 
-class AppData(DataLoader):
-    """A data processor for App data, which splits the original dataset
-    into a training, validation, and test. Also providers iterators, and
-    methods to process words within sentences and characters within words.
-
-    This data can be fed into the WordRepresentationLayer for the BiMPM model.
-
-    """
-
-    def __init__(self, args, app_data=None):
-        """Initialize the data loader, create datasets, batches, and vocab.
-
-        Parameters
-        ----------
-        args : Args
-            An object with all arguments for BiMPM model.
-        data : list, optional
-            A Python list with `q1` and `q2` as keys for two queries
-            (default is None).
-
-        """
-        super().__init__(self)
-
-        # Define how input data should be processed
-        self.fields = [('q1', self.TEXT), ('q2', self.TEXT)]
-
-        self.example = [data.Example.fromlist(
-            data=[
-                'How can I stop being so addicted to love?',
-                'How can I stop being so addicted to my phone?'],
-            fields=self.fields)]
-
-        self.dataset = data.Dataset(self.example, self.fields)
-        self.TEXT.build_vocab(
-            self.dataset, vectors=GloVe(name='840B', dim=300))
-        self.batch = data.Batch(
-            self.example, self.dataset, device=args.device)
-
-        self.build_char_vocab()
-
-
 class SNLI(DataLoader):
     """A data processor for SNLI data, which splits the original dataset
     into a training, validation, and test. Also providers iterators, and
@@ -155,7 +114,7 @@ class SNLI(DataLoader):
             An object with all arguments for BiMPM model.
 
         """
-        super().__init__(self)
+        super().__init__(args)
 
         # Define how input data should be processed
         self.LABEL = data.LabelField()
@@ -201,7 +160,7 @@ class Quora(DataLoader):
             An object with all arguments for BiMPM model.
 
         """
-        super().__init__(self)
+        super().__init__(args)
 
         # Define how input data should be processed
         self.RAW = data.RawField()
@@ -239,6 +198,40 @@ class Quora(DataLoader):
         self.train_iter.repeat = True  # Allow default unlimited epochs
 
         self.build_char_vocab()
+
+
+class AppData(Quora):
+    """A data processor for App data, which splits the original dataset
+    into a training, validation, and test. Also providers iterators, and
+    methods to process words within sentences and characters within words.
+
+    This data can be fed into the WordRepresentationLayer for the BiMPM model.
+
+    """
+
+    def __init__(self, args, app_data=None):
+        """Initialize the data loader, create datasets, batches, and vocab.
+
+        Parameters
+        ----------
+        args : Args
+            An object with all arguments for BiMPM model.
+        data : list, optional
+            A Python list with `q1` and `q2` as keys for two queries
+            (default is None).
+
+        """
+        super().__init__(args)
+
+        self.example = [data.Example.fromlist(
+            data=[
+                'How can I stop being so addicted to love?',
+                'How can I stop being so addicted to my phone?'],
+            fields=self.fields)]
+
+        self.dataset = data.Dataset(self.example, self.fields)
+        self.batch = data.Batch(
+            self.example, self.dataset, device=args.device)
 
 
 class Sentence:
