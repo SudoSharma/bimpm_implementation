@@ -9,3 +9,4 @@
 /train.out
 /train_pid.txt
 /pickle
+/app/__init__.py
