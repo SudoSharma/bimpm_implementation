@@ -19,6 +19,7 @@ install:
   - conda info -a
   - conda env create -n testenv python=3.6
   - source activate testenv
+  - python -m spacy download en
   - pip install -r requirements_cpu.txt
 
 script:
