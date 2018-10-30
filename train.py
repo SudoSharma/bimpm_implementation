@@ -15,7 +15,8 @@ from model.utils import SNLI, Quora, Sentence, Args
 
 
 def main(shutdown: ("shutdown system after training", 'flag', 's'),
-         experiment: ("use smaller dataset", 'flag', 'e'),
+         research: ("use medium dataset", 'flag', 'e'),
+         travis: ("use small testing dataset", 'flag', 't')
          batch_size: (None, 'option', None, int) = 64,
          char_input_size: (None, 'option', None, int) = 20,
          char_hidden_size: (None, 'option', None, int) = 50,
@@ -33,9 +34,11 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
     Parameters
     ----------
     shutdown : bool, flag
-        Whether or not to shutdown system after training (default is False).
-    experiment : bool, flag
-        Whether or not to run experiments on small dataset (default is False).
+        Shutdown system after training (default is False).
+    research : bool, flag
+        Run experiments on medium dataset (default is False).
+    travis : bool, flag
+        Run tests on small dataset (default is False)
     batch_size : int, optional
         Number of examples in one iteration (default is 64).
     char_input_size : int, optional
@@ -127,6 +130,8 @@ def train(args, model_data):
     criterion = nn.CrossEntropyLoss()
 
     # Initialize tensorboardx logging
+    if not os.path.exists('runs'):
+        os.makedirs('runs')
     writer = SummaryWriter(log_dir='runs/' + args.model_time)
 
     model.train()
