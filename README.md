@@ -36,6 +36,59 @@ Please create a new conda environment using the **environment.yml** file.
 - GPU: 1 x NVIDIA Tesla P100 
 
 # Instructions
+You'll have to download the Quora data on your own, since I'm not including it in this repository, but SNLI data comes packaged with TorchText, so don't worry about this. Once you've downloaded your data, you'll have to create a directory structure that looks a little bit like this:
+
+    $ sudo apt install tree
+    $ tree -I __pycache__ -F -n
+    .
+    ├── app_data/
+    │   └── sample_queries.csv
+    ├── app.py
+    ├── data/
+    │   └── quora/
+    │       ├── dev.tsv
+    │       ├── test.tsv
+    │       ├── toy_dev.tsv
+    │       ├── toy_test.tsv
+    │       ├── toy_train.tsv
+    │       └── train.tsv
+    ├── environment_cpu.yml
+    ├── environment.yml
+    ├── evaluate.py
+    ├── file_tree.txt
+    ├── LICENSE.md
+    ├── media/
+    │   └── bimpm.png
+    ├── model/
+    │   ├── bimpm.py
+    │   ├── __init__.py
+    │   ├── layers.py
+    │   └── utils.py
+    ├── pickle/
+    │   ├── app_args.pkl
+    │   └── quora_TEXT.pkl
+    ├── readme_full.md
+    ├── README.md
+    ├── runs/
+    │   ├── 05:06:49/
+    │   │   └── events.out.tfevents.1540530409.penguin
+    │   ├── 05:30:52/
+    │   │   └── events.out.tfevents.1540531853.penguin
+    │   ├── 13:54:54/
+    │   │   └── events.out.tfevents.1540907694.penguin
+    │   ├── 17:04:11/
+    │   │   └── events.out.tfevents.1540141456.machine-zero
+    │   └── 20:15:23/
+    │       └── events.out.tfevents.1540671323.penguin
+    ├── saved_models/
+    │   └── bimpm_quora_17:04:11.pt
+    ├── train.py
+    └── train.sh*
+
+    13 directories, 30 files
+
+Note that you might not have the `runs/`, `pickle/` or `saved_models/` files as they are created during runtime. 
+
 To train the model with default parameters, you can execute the **train.sh** shell script as such:
 
     ./train.sh
