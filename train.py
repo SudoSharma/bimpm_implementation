@@ -74,6 +74,18 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
     args.device = torch.device('cuda:0' if torch.cuda.
                                is_available() else 'cpu')
 
+    # Hanlde research and travis mode
+    if (args.research or args.travis) and args.data_type.lower() == 'snli':
+        raise RuntimeError("Invalid dataset size specified for SNLI data.")
+
+    if args.research:
+        print('Research mode detected. Lowering print interval...')
+        args.print_interval = 5
+    if args.travis:
+        print('Travis mode detected. Adjusting parameters...')
+        args.batch_size = 2
+        args.print_interval = 1
+
     if args.data_type.lower() == 'snli':
         print("Loading SNLI data...")
         model_data = SNLI(args)
