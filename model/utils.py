@@ -124,6 +124,10 @@ class SNLI(DataLoader):
         self.train, self.valid, self.eval = datasets.SNLI.splits(
             self.TEXT, self.LABEL)
 
+        if args.research or args.travis:
+            print("Invalid options for SNLI data.",
+                  " Using full SNLI dataset instead.")
+
         # Access pickle file for TEXT field, or create it
         pickle_dir = './pickle/'
         TEXT_pickle = 'snli_TEXT.pkl'
@@ -189,11 +193,26 @@ class Quora(DataLoader):
         self.fields = [('label', self.LABEL), ('q1', self.TEXT),
                        ('q2', self.TEXT), ('id', self.RAW)]
 
+        # Handle research and travis modes
+        path = './travis' if args.travis else './data/quora'
+        if args.research:
+            train_path = 'toy_train.tsv'
+            valid_path = 'toy_dev.tsv'
+            test_path = 'toy_test.tsv'
+        if args.travis:
+            train_path = 'travis_train.tsv'
+            valid_path = 'travis_dev.tsv'
+            test_path = 'travis_test.tsv'
+        else:
+            train_path = 'train.tsv'
+            valid_path = 'dev.tsv'
+            test_path = 'test.tsv'
+
         self.train, self.valid, self.eval = data.TabularDataset.splits(
-            path='./data/quora',
-            train='toy_train.tsv' if args.research else 'train.tsv',
-            validation='toy_dev.tsv' if args.research else 'dev.tsv',
-            test='toy_test.tsv' if args.research else 'test.tsv',
+            path=path,
+            train=train_path,
+            validation=valid_path,
+            test=test_path,
             format='tsv',
             fields=self.fields)
 
