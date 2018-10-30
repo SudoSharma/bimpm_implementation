@@ -124,10 +124,6 @@ class SNLI(DataLoader):
         self.train, self.valid, self.eval = datasets.SNLI.splits(
             self.TEXT, self.LABEL)
 
-        if args.research or args.travis:
-            print("Invalid options for SNLI data.",
-                  " Using full SNLI dataset instead.")
-
         # Access pickle file for TEXT field, or create it
         pickle_dir = './pickle/'
         TEXT_pickle = 'snli_TEXT.pkl'
