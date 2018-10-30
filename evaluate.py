@@ -1,13 +1,9 @@
 """Tests a model trained on a PyTorch reimplementation of BiMPM"""
 
-import cProfile
-import pstats
-import io
-from pstats import SortKey
-import plac
-import dill as pickle
 import os
 import csv
+import plac
+import dill as pickle
 
 import torch
 from torch import nn
@@ -75,12 +71,14 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
                                is_available() else 'cpu')
 
     if app:
+        # Load sample queries and model_data for app mode
         help_message = ("\nPlease create a csv file "
                         "`./app_data/sample_queries.csv` with two queries."
                         " For example:"
                         "\n\t$ cat sample_queries.csv"
                         "\n\tHow can I run faster?"
                         "\n\tHow do I get better at running?\n")
+
         try:
             with open('./app_data/sample_queries.csv', 'r') as f:
                 reader = csv.reader(f)
@@ -92,6 +90,7 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
             print(e)
             print(help_message)
             return
+
         print("Loading App data...")
         model_data = AppData(args, app_data)
     elif args.data_type.lower() == 'snli':
@@ -120,7 +119,9 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
         if not os.path.exists(pickle_dir):
             os.makedirs(pickle_dir)
         pickle.dump(args, open(f'{pickle_dir}{args_pickle}', 'wb'))
+
         preds = evaluate(model, args, model_data, mode='app')
+
         print('\nQueries:\n', f'\n{app_data[0]}\n', f'{app_data[1]}\n', sep='')
         print('\nPrediction:')
         if max(preds) == preds.data[1]:
@@ -153,8 +154,8 @@ def evaluate(model, args, model_data, mode='eval'):
         The loss of the model provided.
     acc : int
         The accuracy of the model provided.
-    preds : array_like
-        A length-2 array of predictions for similar or asimilar class
+    preds : Tensor
+        A length-2 PyTorch tensor of predictions for similar or asimilar class.
 
     """
     model.eval()
