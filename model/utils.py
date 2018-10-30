@@ -16,10 +16,22 @@ from torchtext.vocab import GloVe
 
 
 class DataLoader(ABC):
+    """A data loader abstract class, which initializes a field, and prepares
+    methods for converting words to chars and building a character vocab.
+
+    """
+
     def __init__(self, args):
+        """Initialize the data loader, store args, and initialize epochs.
+
+        Parameters
+        ----------
+        args : Args
+            An object with all arguments for BiMPM model.
+
+        """
         self.args = args
         self.TEXT = data.Field(batch_first=True, tokenize='spacy')
-
         self.last_epoch = -1  # Allow atleast one epoch
 
     def words_to_chars(self, batch):
@@ -86,8 +98,8 @@ class DataLoader(ABC):
 
 class SNLI(DataLoader):
     """A data processor for SNLI data, which splits the original dataset
-    into a training, validation, and evaluation. Also providers iterators, and
-    methods to process words within sentences and characters within words.
+    into a training, validation, and evaluation, and provides iterators.
+    Inherits from the DataLoader abstract class.
 
     This data can be fed into the WordRepresentationLayer for the BiMPM model.
 
@@ -112,11 +124,23 @@ class SNLI(DataLoader):
         self.train, self.valid, self.eval = datasets.SNLI.splits(
             self.TEXT, self.LABEL)
 
-        self.TEXT.build_vocab(
-            self.train,
-            self.valid,
-            self.eval,
-            vectors=GloVe(name='840B', dim=300))
+        # Access pickle file for TEXT field, or create it
+        pickle_dir = './pickle/'
+        TEXT_pickle = \
+            'snli_toy_TEXT.pkl' if args.experiment else 'snli_TEXT.pkl'
+
+        try:
+            self.TEXT = pickle.load(open(f'{pickle_dir}{TEXT_pickle}', 'rb'))
+        except (FileNotFoundError, EOFError):
+            self.TEXT.build_vocab(
+                self.train,
+                self.valid,
+                self.eval,
+                vectors=GloVe(name='840B', dim=300))
+            if not os.path.exists(pickle_dir):
+                os.makedirs(pickle_dir)
+            pickle.dump(self.TEXT, open('{pickle_dir}{TEXT_pickle}', 'wb'))
+
         self.LABEL.build_vocab(self.train)
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
@@ -137,8 +161,8 @@ class SNLI(DataLoader):
 
 class Quora(DataLoader):
     """A data processor for Quora data, which splits the original dataset
-    into a training, validation, and evaluation. Also providers iterators, and
-    methods to process words within sentences and characters within words.
+    into a training, validation, and evaluation, and provides iterators.
+    Inherits from the DataLoader class.
 
     This data can be fed into the WordRepresentationLayer for the BiMPM model.
 
@@ -213,22 +237,19 @@ class Quora(DataLoader):
 
 
 class AppData(Quora):
-    """A data processor for App data, which splits the original dataset
-    into a training, validation, and evaluation. Also providers iterators, and
-    methods to process words within sentences and characters within words.
-
-    This data can be fed into the WordRepresentationLayer for the BiMPM model.
+    """A data processor for App data, which inherits from the Quora, and
+    DataLoader class and generates a single example and batch for inference.
 
     """
 
     def __init__(self, args, app_data=None):
-        """Initialize the data loader, create datasets, batches, and vocab.
+        """Initialize the data loader, create a dataset and a batch.
 
         Parameters
         ----------
         args : Args
             An object with all arguments for BiMPM model.
-        data : list, optional
+        app_data : list, optional
             A Python list with `q1` and `q2` as keys for two queries
             (default is None).
 
