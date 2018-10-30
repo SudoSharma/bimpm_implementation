@@ -17,8 +17,9 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda env create -q -f environment_cpu.yml 
-  - source activate sudosharma 
+  - conda env create -n testenv python=3.6
+  - source activate testenv
+  - pip install -r requirements_cpu.txt
 
 script:
   - python train.py -t 
