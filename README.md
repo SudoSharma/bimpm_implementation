@@ -29,7 +29,7 @@ Data: [SNLI](https://nlp.stanford.edu/projects/snli/)
 ## Environment
 Please create a new conda environment using the `environment.yml`  or `environment_cpu.yml` file if your development environment doesn't have a GPU. 
     
-    conda create --name {my_env} -f environment.yml
+    conda create --name {my_env} -f=environment.yml
 
 ## System
 - OS: Ubuntu 16.04 LTS (64 bit)
