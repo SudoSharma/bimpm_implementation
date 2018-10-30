@@ -6,6 +6,7 @@ python:
 branches:
     only:
         - master
+        - develop
 
 install:
   - sudo apt-get update
