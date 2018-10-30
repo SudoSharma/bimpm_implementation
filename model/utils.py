@@ -126,8 +126,7 @@ class SNLI(DataLoader):
 
         # Access pickle file for TEXT field, or create it
         pickle_dir = './pickle/'
-        TEXT_pickle = \
-            'snli_toy_TEXT.pkl' if args.experiment else 'snli_TEXT.pkl'
+        TEXT_pickle = 'snli_TEXT.pkl'
 
         try:
             self.TEXT = pickle.load(open(f'{pickle_dir}{TEXT_pickle}', 'rb'))
@@ -139,7 +138,7 @@ class SNLI(DataLoader):
                 vectors=GloVe(name='840B', dim=300))
             if not os.path.exists(pickle_dir):
                 os.makedirs(pickle_dir)
-            pickle.dump(self.TEXT, open('{pickle_dir}{TEXT_pickle}', 'wb'))
+            pickle.dump(self.TEXT, open(f'{pickle_dir}{TEXT_pickle}', 'wb'))
 
         self.LABEL.build_vocab(self.train)
 
@@ -192,16 +191,16 @@ class Quora(DataLoader):
 
         self.train, self.valid, self.eval = data.TabularDataset.splits(
             path='./data/quora',
-            train='toy_train.tsv' if args.experiment else 'train.tsv',
-            validation='toy_dev.tsv' if args.experiment else 'dev.tsv',
-            test='toy_test.tsv' if args.experiment else 'test.tsv',
+            train='toy_train.tsv' if args.research else 'train.tsv',
+            validation='toy_dev.tsv' if args.research else 'dev.tsv',
+            test='toy_test.tsv' if args.research else 'test.tsv',
             format='tsv',
             fields=self.fields)
 
         # Access pickle file for TEXT field, or create it
         pickle_dir = './pickle/'
         TEXT_pickle = \
-            'quora_toy_TEXT.pkl' if args.experiment else 'quora_TEXT.pkl'
+            'quora_toy_TEXT.pkl' if args.research else 'quora_TEXT.pkl'
 
         try:
             self.TEXT = pickle.load(open(f'{pickle_dir}{TEXT_pickle}', 'rb'))
@@ -213,7 +212,7 @@ class Quora(DataLoader):
                 vectors=GloVe(name='840B', dim=300))
             if not os.path.exists(pickle_dir):
                 os.makedirs(pickle_dir)
-            pickle.dump(self.TEXT, open('{pickle_dir}{TEXT_pickle}', 'wb'))
+            pickle.dump(self.TEXT, open(f'{pickle_dir}{TEXT_pickle}', 'wb'))
 
         self.LABEL.build_vocab(self.train)
 
