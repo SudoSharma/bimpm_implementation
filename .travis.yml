@@ -17,7 +17,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda env create -n testenv python=3.6
+  - conda create -n testenv python=3.6
   - source activate testenv
   - python -m spacy download en
   - pip install -r requirements_cpu.txt
