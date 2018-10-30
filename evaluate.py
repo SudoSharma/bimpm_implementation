@@ -12,7 +12,7 @@ from model.bimpm import BiMPM
 from model.utils import AppData, SNLI, Quora, Sentence, Args
 
 
-def main(experiment: ("use smaller dataset", 'flag', 'e'),
+def main(research: ("use medium dataset", 'flag', 'r'),
          app: ("evaluate user queries from app", 'flag', 'a'),
          model_path,
          batch_size: (None, 'option', None, int) = 64,
@@ -31,8 +31,8 @@ def main(experiment: ("use smaller dataset", 'flag', 'e'),
 
     Parameters
     ----------
-    experiment : bool, flag
-        Whether to run experiments on small dataset (default is False).
+    research : bool, flag
+        Run experiments on medium dataset (default is False).
     app : bool, flag
         Whether to evaluate queries from bimpm app (default is False).
     model_path : str

@@ -15,8 +15,8 @@ from model.utils import SNLI, Quora, Sentence, Args
 
 
 def main(shutdown: ("shutdown system after training", 'flag', 's'),
-         research: ("use medium dataset", 'flag', 'e'),
-         travis: ("use small testing dataset", 'flag', 't')
+         research: ("use medium dataset", 'flag', 'r'),
+         travis: ("use small testing dataset", 'flag', 't'),
          batch_size: (None, 'option', None, int) = 64,
          char_input_size: (None, 'option', None, int) = 20,
          char_hidden_size: (None, 'option', None, int) = 50,
