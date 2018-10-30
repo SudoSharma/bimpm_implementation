@@ -195,14 +195,17 @@ class Quora(DataLoader):
             train_path = 'toy_train.tsv'
             valid_path = 'toy_dev.tsv'
             test_path = 'toy_test.tsv'
+            TEXT_pickle = 'toy_quora_TEXT.pkl'
         if args.travis:
             train_path = 'travis_train.tsv'
             valid_path = 'travis_dev.tsv'
             test_path = 'travis_test.tsv'
+            TEXT_pickle = 'travis_quora_TEXT.pkl'
         else:
             train_path = 'train.tsv'
             valid_path = 'dev.tsv'
             test_path = 'test.tsv'
+            TEXT_pickle = 'quora_TEXT.pkl'
 
         self.train, self.valid, self.eval = data.TabularDataset.splits(
             path=path,
@@ -214,8 +217,6 @@ class Quora(DataLoader):
 
         # Access pickle file for TEXT field, or create it
         pickle_dir = './pickle/'
-        TEXT_pickle = \
-            'quora_toy_TEXT.pkl' if args.research else 'quora_TEXT.pkl'
 
         try:
             self.TEXT = pickle.load(open(f'{pickle_dir}{TEXT_pickle}', 'rb'))
