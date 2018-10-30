@@ -17,7 +17,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -q --file=environment_cpu.yml 
+  - conda create -n sudosharma -q --file=environment_cpu.yml 
   - source activate sudosharma 
 
 script:
