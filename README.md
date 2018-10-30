@@ -29,9 +29,9 @@ Data: [SNLI](https://nlp.stanford.edu/projects/snli/)
 
 # Requirements
 ## Environment
-Please create a new conda environment using the `environment.yml`  or `environment_cpu.yml` file if your development environment doesn't have a GPU. You can change the name of the environment in the `yml` file, but make sure it is the same as specified by the `-n` flag. 
+Please create a new conda environment using the `environment.yml`  or `environment_cpu.yml` file if your development environment doesn't have a GPU. You can change the name of the environment in the `yml` file.
     
-    conda create -n sudosharma --file=environment.yml
+    conda env create -f environment.yml
 
 ## System
 - OS: Ubuntu 16.04 LTS (64 bit)
