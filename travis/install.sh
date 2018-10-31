@@ -34,6 +34,6 @@ popd
 source activate testenv
 
 # Install requirements in our conda environment
-conda install -q -c conda-forge spacy
+conda install --yes -q -c conda-forge spacy
 python -m spacy download en
 pip -q install -r requirements.txt
