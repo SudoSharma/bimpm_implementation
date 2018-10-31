@@ -124,21 +124,11 @@ class SNLI(DataLoader):
         self.train, self.valid, self.eval = datasets.SNLI.splits(
             self.TEXT, self.LABEL)
 
-        # Access pickle file for TEXT field, or create it
-        pickle_dir = './pickle/'
-        TEXT_pickle = 'snli_TEXT.pkl'
-
-        try:
-            self.TEXT = pickle.load(open(f'{pickle_dir}{TEXT_pickle}', 'rb'))
-        except (FileNotFoundError, EOFError):
-            self.TEXT.build_vocab(
-                self.train,
-                self.valid,
-                self.eval,
-                vectors=GloVe(name='840B', dim=300))
-            if not os.path.exists(pickle_dir):
-                os.makedirs(pickle_dir)
-            pickle.dump(self.TEXT, open(f'{pickle_dir}{TEXT_pickle}', 'wb'))
+        self.TEXT.build_vocab(
+            self.train,
+            self.valid,
+            self.eval,
+            vectors=GloVe(name='840B', dim=300))
 
         self.LABEL.build_vocab(self.train)
 
@@ -195,17 +185,14 @@ class Quora(DataLoader):
             train_path = 'toy_train.tsv'
             valid_path = 'toy_dev.tsv'
             test_path = 'toy_test.tsv'
-            TEXT_pickle = 'toy_quora_TEXT.pkl'
         if args.travis:
             train_path = 'travis_train.tsv'
             valid_path = 'travis_dev.tsv'
             test_path = 'travis_test.tsv'
-            TEXT_pickle = 'travis_quora_TEXT.pkl'
         else:
             train_path = 'train.tsv'
             valid_path = 'dev.tsv'
             test_path = 'test.tsv'
-            TEXT_pickle = 'quora_TEXT.pkl'
 
         self.train, self.valid, self.eval = data.TabularDataset.splits(
             path=path,
@@ -215,29 +202,20 @@ class Quora(DataLoader):
             format='tsv',
             fields=self.fields)
 
-        # Access pickle file for TEXT field, or create it
-        pickle_dir = './pickle/'
-
-        try:
-            self.TEXT = pickle.load(open(f'{pickle_dir}{TEXT_pickle}', 'rb'))
-        except (FileNotFoundError, EOFError):
-            self.TEXT.build_vocab(
-                self.train,
-                self.valid,
-                self.eval,
-                vectors=GloVe(name='840B', dim=300))
-            if not os.path.exists(pickle_dir):
-                os.makedirs(pickle_dir)
-            pickle.dump(self.TEXT, open(f'{pickle_dir}{TEXT_pickle}', 'wb'))
+        self.TEXT.build_vocab(
+            self.train,
+            self.valid,
+            self.eval,
+            vectors=GloVe(name='840B', dim=300))
 
         self.LABEL.build_vocab(self.train)
-
-        self.sort_key = lambda x: data.interleave_keys(len(x.q1), len(x.q2))
 
         self.max_word_len = max([len(w) for w in self.TEXT.vocab.itos])
         # Handle <pad> and <unk>
         self.char_vocab = {'': 0}
         self.word_chars = [[0] * self.max_word_len, [0] * self.max_word_len]
+
+        self.sort_key = lambda x: data.interleave_keys(len(x.q1), len(x.q2))
 
         self.train_iter, self.valid_iter, self.eval_iter = \
             data.BucketIterator.splits(
