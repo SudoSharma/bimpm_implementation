@@ -2,7 +2,7 @@ language: python
 
 cache: 
     directories:
-        - /home/travis/download/.vector_cache
+        - /home/travis/build/SudoSharma/bimpm_implementation/.vector_cache
         - /home/travis/.cache/pip
 
 python:
