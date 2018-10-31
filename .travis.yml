@@ -1,5 +1,10 @@
 language: python
 
+cache: 
+    directories:
+        - /home/travis/download/.vector_cache
+        - /home/travis/.cache/pip
+
 python:
   - "3.6"
 
@@ -8,19 +13,6 @@ branches:
         - master
         - develop
 
-install:
-  - sudo apt-get update
-  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - hash -r
-  - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
-  - conda create -q -n testenv python=3.6
-  - source activate testenv
-  - conda install -q -c conda-forge spacy
-  - python -m spacy download en
-  - pip -q install -r requirements.txt
-
+install: source travis/install.sh
 script:
   - python train.py -t 
