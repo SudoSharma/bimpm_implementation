@@ -29,7 +29,7 @@ Data: [SNLI](https://nlp.stanford.edu/projects/snli/)
 
 # Requirements
 ## Environment
-The `setup.sh` script will create an `bimpm` conda environment for the CPU and download all requirements found in the `requirements.txt` file. It requires you to specify the specific distribution of Anaconda you have on your computer or VM, so please be sure to edit that properly in the script. You can run it as such:
+The `setup.sh` script will create an `bimpm` conda environment for the CPU and download all requirements found in the `requirements.txt` file. It requires you to specify the specific distribution of Anaconda you have on your computer or VM, so please be sure to edit that properly in the script. This script also replaces the en-core-web-sm model from spaCy requirement with a direct release download because of the way spaCy handles pip downloads of models. If you try and directly download the requirements.txt file into your environment, you will hit a 'resource not satisfied error'. Therefore, it's best to create a fully build environment by running the setup script as such:
 
     ./setup.sh
 

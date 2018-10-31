@@ -16,8 +16,8 @@ conda create -q -n bimpm python=3.6
 source activate bimpm 
 
 # Handle spacy installation
-conda install -q -c conda-forge spacy
-python -m spacy download en
+sed -i "/en-core/ d" requirements.txt  # Remove model download
+echo "https://github.com/explosion/spacy-models/releases/download/el_core_news_sm-2.1.0a0/el_core_news_sm-2.1.0a0.tar.gz" >> requirements.txt
 
 # Install environment requirements
 echo "Installing environment requirements..."
@@ -26,6 +26,9 @@ if [ "$COMPUTE" == GPU ] ; then
 else
     pip install -q -r requirements.txt
 fi
+
+# link spacy
+python -m spacy link en_core_web_sm en --force
 
 echo "Successfully installed environment!"
 echo "Activate your environment with 'source activate bimpm'."
