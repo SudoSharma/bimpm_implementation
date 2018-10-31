@@ -1,19 +1,19 @@
 #!/bin/bash
 if [ "$1" == --gpu ] ; then
-    echo "Setting up GPU conda environment."
+    echo "Setting up GPU environment..."
     COMPUTE="GPU"
 else
-    echo "Setting up CPU conda environment"
+    echo "Setting up CPU environment..."
     COMPUTE="CPU"
 fi
 
 # Be sure to change the 'miniconda3' to your flavor of Anaconda distribution
 export PATH="$HOME/miniconda3/bin:$PATH"
-echo "Setting up bimpm conda environment..."
+echo "Setting up 'bimpm' conda environment..."
 conda config --set always_yes yes
 conda update -q conda
 conda create -q -n bimpm python=3.6
-conda activate bimpm 
+source activate bimpm 
 
 # Handle spacy installation
 conda install -q -c conda-forge spacy
@@ -26,3 +26,4 @@ if [ "$COMPUTE" == GPU ] ; then
 else
     pip install -q -r requirements.txt
 fi
+echo "Successfull installed environment!"
