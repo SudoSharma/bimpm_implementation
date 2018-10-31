@@ -34,7 +34,7 @@ popd
 source activate testenv
 
 # Install requirements in our conda environment
-# Handle spacy installation
-sed -i "/en-core/ d" requirements.txt  # Remove model download
-echo "https://github.com/explosion/spacy-models/releases/download/el_core_news_sm-2.1.0a0/el_core_news_sm-2.1.0a0.tar.gz" >> requirements.txt
+# Handle spacy installation. Commenting because 'requirements.txt' is manually processed already.
+# sed -i "/en-core/ d" requirements.txt  # Remove model download
+# echo "https://github.com/explosion/spacy-models/releases/download/el_core_news_sm-2.1.0a0/el_core_news_sm-2.1.0a0.tar.gz" >> requirements.txt
 pip -q install -r requirements.txt

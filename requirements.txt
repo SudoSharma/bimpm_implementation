@@ -17,7 +17,6 @@ dill==0.2.8.2
 dj-database-url==0.5.0
 Django==2.1.2
 django-heroku==0.3.1
-en-core-web-sm==2.0.0
 flake8==3.5.0
 Flask==1.0.2
 Flask-RESTful==0.3.6
@@ -76,3 +75,4 @@ Werkzeug==0.14.1
 whitenoise==4.1
 wrapt==1.10.11
 yapf==0.24.0
+https://github.com/explosion/spacy-models/releases/download/el_core_news_sm-2.1.0a0/el_core_news_sm-2.1.0a0.tar.gz
