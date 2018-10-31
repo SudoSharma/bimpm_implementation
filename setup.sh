@@ -26,4 +26,6 @@ if [ "$COMPUTE" == GPU ] ; then
 else
     pip install -q -r requirements.txt
 fi
-echo "Successfull installed environment!"
+
+echo "Successfully installed environment!"
+echo "Activate your environment with 'source activate bimpm'."
