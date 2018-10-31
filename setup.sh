@@ -16,13 +16,13 @@ conda create -q -n bimpm python=3.6
 conda activate bimpm 
 
 # Handle spacy installation
-conda install -c conda-forge spacy
+conda install -q -c conda-forge spacy
 python -m spacy download en
 
 # Install environment requirements
 echo "Installing environment requirements..."
 if [ "$COMPUTE" == GPU ] ; then
-    pip install -r requirements_gpu.txt
+    pip install -q -r requirements_gpu.txt
 else
-    pip install -r requirements.txt
+    pip install -q -r requirements.txt
 fi
