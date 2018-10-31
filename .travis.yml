@@ -1,12 +1,14 @@
+dist: trusty
+sudo: required
+
 language: python
+python:
+  - "3.6"
 
 cache: 
     directories:
         - /home/travis/build/SudoSharma/bimpm_implementation/.vector_cache
         - /home/travis/.cache/pip
-
-python:
-  - "3.6"
 
 branches:
     only:
@@ -14,5 +16,4 @@ branches:
         - develop
 
 install: source travis/install.sh
-script:
-  - python train.py -t 
+script: python train.py -t 
