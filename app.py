@@ -13,7 +13,7 @@ api = Api(app)
 
 # Load model args file, have to create from evaluate.py if not available
 try:
-    model_args = pickle.load(open('./pickle/app_args.pkl', 'rb'))
+    model_args = pickle.load(open('./app_data/args.pkl', 'rb'))
 except FileNotFoundError as e:
     print(e)
     print("No pickle file found for args.",
