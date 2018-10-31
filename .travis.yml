@@ -13,7 +13,6 @@ cache:
 branches:
     only:
         - master
-        - develop
 
 install: source travis/install.sh
 script: python train.py -t 
