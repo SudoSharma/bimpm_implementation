@@ -178,20 +178,16 @@ class Quora(DataLoader):
         self.fields = [('label', self.LABEL), ('q1', self.TEXT),
                        ('q2', self.TEXT), ('id', self.RAW)]
 
-        # Handle research and travis modes
+        # Handle data paths
         path = './travis' if args.travis else './data/quora'
-        if args.research:
-            train_path = 'toy_train.tsv'
-            valid_path = 'toy_dev.tsv'
-            test_path = 'toy_test.tsv'
-        if args.travis:  # Travis overrides research
+        if args.travis:
             train_path = 'travis_train.tsv'
             valid_path = 'travis_dev.tsv'
             test_path = 'travis_test.tsv'
-        if args.app:  # App overrides travis and research
-            train_path = 'train.tsv'
-            valid_path = 'dev.tsv'
-            test_path = 'test.tsv'
+        elif args.research:
+            train_path = 'toy_train.tsv'
+            valid_path = 'toy_dev.tsv'
+            test_path = 'toy_test.tsv'
         else:
             train_path = 'train.tsv'
             valid_path = 'dev.tsv'
