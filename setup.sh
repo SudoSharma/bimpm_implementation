@@ -17,7 +17,7 @@ source activate bimpm
 
 # Handle spacy installation. Commenting these lines out because 'requirements.txt' has already been processed.
 # sed -i "/en-core/ d" requirements.txt  # Remove model download
-# echo "https://github.com/explosion/spacy-models/releases/download/el_core_news_sm-2.1.0a0/el_core_news_sm-2.1.0a0.tar.gz" >> requirements.txt
+# echo "https://github.com/explosion/spacy-models/releases/tag/en_core_web_sm-2.0.0" >> requirements.txt
 
 # Install environment requirements
 echo "Installing environment requirements..."
