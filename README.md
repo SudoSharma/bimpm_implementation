@@ -29,9 +29,13 @@ Data: [SNLI](https://nlp.stanford.edu/projects/snli/)
 
 # Requirements
 ## Environment
-Please create a new conda environment using the `environment.yml`  or `environment_cpu.yml` file if your development environment doesn't have a GPU. You can change the name of the environment in the `yml` file.
-    
-    conda env create -f environment.yml
+The `setup.sh` script will create an `bimpm` conda environment for the CPU and download all requirements found in the `requirements.txt` file. It requires you to specify the specific distribution of Anaconda you have on your computer or VM, so please be sure to edit that properly in the script. You can run it as such:
+
+    ./setup.sh
+
+Note that in order to create a GPU environment, you must run the following command:
+
+    ./setup.sh --gpu
 
 ## System
 - OS: Ubuntu 16.04 LTS (64 bit)
@@ -44,6 +48,7 @@ You'll have to download the Quora data on your own, since I'm not including it i
     $ tree -I __pycache__ -F -n
     .
     ├── app_data/
+    │   ├── args.pkl
     │   └── sample_queries.csv
     ├── app.py
     ├── data/
@@ -54,8 +59,6 @@ You'll have to download the Quora data on your own, since I'm not including it i
     │       ├── toy_test.tsv
     │       ├── toy_train.tsv
     │       └── train.tsv
-    ├── environment_cpu.yml
-    ├── environment.yml
     ├── evaluate.py
     ├── LICENSE.md
     ├── media/
@@ -65,10 +68,22 @@ You'll have to download the Quora data on your own, since I'm not including it i
     │   ├── __init__.py
     │   ├── layers.py
     │   └── utils.py
-    ├── readme_full.md
+    ├── pickle/
+    │   ├── quora_TEXT.pkl
+    │   └── test.pkl
+    ├── Pipfile
+    ├── Procfile
     ├── README.md
+    ├── requirements.txt
+    ├── runs/
+    ├── saved_models/
+    ├── setup.sh*
     ├── train.py
-    └── train.sh*
+    ├── train.sh*
+    └── travis/
+        ├── travis_dev.tsv
+        ├── travis_test.tsv
+        └── travis_train.tsv
 
 Note that there will be other folders created during runtime, so they are not visible here. 
 
@@ -150,19 +165,23 @@ The outputs of this script are a `train.out` file containing any output to stdou
 
     $ python evaluate.py --help
 
-    usage: evaluate.py [-h] [-r] [-a] [-batch-size 64] [-char-input-size 20]
-                       [-char-hidden-size 50] [-data-type quora] [-dropout 0.1]
-                       [-epoch 10] [-hidden-size 100] [-lr 0.001]
-                       [-num-perspectives 20] [-print-interval 500]
-                       [-word-dim 300]
+    usage: evaluate.py [-h] [-s] [-r] [-t] [-a] [-batch-size 64]
+                       [-char-input-size 20] [-char-hidden-size 50]
+                       [-data-type quora] [-dropout 0.1] [-epoch 10]
+                       [-hidden-size 100] [-lr 0.001] [-num-perspectives 20]
+                       [-print-interval 500] [-word-dim 300]
                        model_path
 
     Print the best BiMPM model accuracy for the test set in a cycle.
 
         Parameters
         ----------
+        shutdown : bool, flag
+            Shutdown system after training (default is False).
         research : bool, flag
             Run experiments on medium dataset (default is False).
+        travis : bool, flag
+            Run tests on small dataset (default is False)
         app : bool, flag
             Whether to evaluate queries from bimpm app (default is False).
         model_path : str
@@ -200,7 +219,9 @@ The outputs of this script are a `train.out` file containing any output to stdou
 
     optional arguments:
       -h, --help            show this help message and exit
+      -s, --shutdown        shutdown system after training
       -r, --research        use medium dataset
+      -t, --travis          use small testing dataset
       -a, --app             evaluate user queries from app
       -batch-size 64        [64]
       -char-input-size 20   [20]
