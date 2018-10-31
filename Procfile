@@ -1,1 +1,1 @@
-web: gunicorn bimpm_implementation:app
+web: gunicorn app:app
