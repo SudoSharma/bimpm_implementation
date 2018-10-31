@@ -38,3 +38,4 @@ source activate testenv
 # sed -i "/en-core/ d" requirements.txt  # Remove model download
 # echo "https://github.com/explosion/spacy-models/releases/download/el_core_news_sm-2.1.0a0/el_core_news_sm-2.1.0a0.tar.gz" >> requirements.txt
 pip -q install -r requirements.txt
+python -m spacy link en_core_web_sm en --force
