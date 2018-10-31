@@ -35,5 +35,5 @@ source activate testenv
 
 # Install requirements in our conda environment
 conda install --yes -q -c conda-forge spacy
-sudo python -m spacy download en
+python -m spacy download en
 pip -q install -r requirements.txt
