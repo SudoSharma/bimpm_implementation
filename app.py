@@ -17,7 +17,7 @@ try:
 except FileNotFoundError as e:
     print(e)
     print("No pickle file found for args.",
-          "Please manually run evaluate.py app mode",
+          "Please manually run evaluate.py in app mode",
           "to initialize arguments first.")
     raise
 model_args.device = torch.device('cuda:0' if torch.cuda.
