@@ -83,6 +83,7 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
         args.print_interval = 5
     if args.travis:
         print('Travis mode detected. Adjusting parameters...')
+        args.epoch = 2
         args.batch_size = 2
         args.print_interval = 1
 
