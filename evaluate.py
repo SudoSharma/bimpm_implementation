@@ -12,7 +12,9 @@ from model.bimpm import BiMPM
 from model.utils import AppData, SNLI, Quora, Sentence, Args
 
 
-def main(research: ("use medium dataset", 'flag', 'r'),
+def main(shutdown: ("shutdown system after training", 'flag', 's'),
+         research: ("use medium dataset", 'flag', 'r'),
+         travis: ("use small testing dataset", 'flag', 't'),
          app: ("evaluate user queries from app", 'flag', 'a'),
          model_path,
          batch_size: (None, 'option', None, int) = 64,
@@ -31,8 +33,12 @@ def main(research: ("use medium dataset", 'flag', 'r'),
 
     Parameters
     ----------
+    shutdown : bool, flag
+        Shutdown system after training (default is False).
     research : bool, flag
         Run experiments on medium dataset (default is False).
+    travis : bool, flag
+        Run tests on small dataset (default is False)
     app : bool, flag
         Whether to evaluate queries from bimpm app (default is False).
     model_path : str
@@ -69,6 +75,19 @@ def main(research: ("use medium dataset", 'flag', 'r'),
 
     args.device = torch.device('cuda:0' if torch.cuda.
                                is_available() else 'cpu')
+
+    # Hanlde research and travis mode
+    if (args.research or args.travis) and args.data_type.lower() == 'snli':
+        raise RuntimeError("Invalid dataset size specified for SNLI data.")
+
+    if args.research:
+        print('Research mode detected. Lowering print interval...')
+        args.print_interval = 5
+    if args.travis:
+        print('Travis mode detected. Adjusting parameters...')
+        args.epoch = 2
+        args.batch_size = 2
+        args.print_interval = 1
 
     if app:
         # Load sample queries and model_data for app mode
@@ -114,8 +133,8 @@ def main(research: ("use medium dataset", 'flag', 'r'),
 
     if app:
         # Store args for use in app
-        pickle_dir = './pickle/'
-        args_pickle = 'app_args.pkl'
+        pickle_dir = './app_data/'
+        args_pickle = 'args.pkl'
         if not os.path.exists(pickle_dir):
             os.makedirs(pickle_dir)
         pickle.dump(args, open(f'{pickle_dir}{args_pickle}', 'wb'))
