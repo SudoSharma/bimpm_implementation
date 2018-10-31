@@ -25,7 +25,7 @@ then
     chmod +x miniconda.sh && ./miniconda.sh -b -f
     conda update --yes conda
     echo "Creating environment to run tests in."
-    conda create -n testenv --yes python="$PYTHON_VERSION"
+    conda create -q -n testenv --yes python="$PYTHON_VERSION"
 fi
 cd ..
 popd
@@ -35,5 +35,5 @@ source activate testenv
 
 # Install requirements in our conda environment
 conda install --yes -q -c conda-forge spacy
-python -m spacy download en
+sudo python -m spacy download en
 pip -q install -r requirements.txt
