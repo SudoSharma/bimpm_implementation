@@ -5,7 +5,6 @@ training and evaluation script execution to initialize the BiMPM model.
 """
 
 import os
-import dill as pickle
 from abc import ABC
 
 import torch
