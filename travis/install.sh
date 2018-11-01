@@ -34,8 +34,8 @@ popd
 source activate testenv
 
 # Install requirements in our conda environment
-# Handle spacy installation. Commenting because 'requirements.txt' is manually processed already.
-# sed -i "/en-core/ d" requirements.txt  # Remove model download
-# echo "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.0.0/en_core_web_sm-2.0.0.tar.gz" >> requirements.txt
+sed -i "/en-core/ d" requirements.txt  # Remove model download
 pip -q install -r requirements.txt
+conda install spacy
+pip install "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.0.0/en_core_web_sm-2.0.0.tar.gz"
 python -m spacy link en_core_web_sm en --force
