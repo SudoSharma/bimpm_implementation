@@ -38,4 +38,5 @@ sed -i "/en-core/ d" requirements.txt  # Remove model download
 pip -q install -r requirements.txt
 conda install spacy --yes -q
 pip install "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.0.0/en_core_web_sm-2.0.0.tar.gz"
+conda install pytorch-cpu -c pytorch --yes -q
 python -m spacy link en_core_web_sm en --force

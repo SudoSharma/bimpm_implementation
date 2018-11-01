@@ -37,12 +37,6 @@ Note that in order to create a GPU environment, you must run the following comma
 
     ./setup.sh --gpu
 
-Also note that if you are having difficulties with spaCy, please run the following commands again from the script:
-    
-    conda install spacy
-    pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.0.0/en_core_web_sm-2.0.0.tar.gz
-    python -m spacy link en_core_web_sm en --force
-
 ## System
 - OS: Ubuntu 16.04 LTS (64 bit)
 - GPU: 1 x NVIDIA Tesla P100 

@@ -22,8 +22,10 @@ sed -i "/en-core/ d" requirements.txt  # Remove model download
 echo "Installing environment requirements..."
 if [ "$COMPUTE" == GPU ] ; then
     pip install -q -r requirements_gpu.txt
+    conda install pytorch -c pytorch --yes -q
 else
     pip install -q -r requirements.txt
+    conda install pytorch-cpu -c pytorch --yes -q
 fi
 
 # link spacy
