@@ -15,9 +15,8 @@ conda update -q conda
 conda create -q -n bimpm python=3.6
 source activate bimpm 
 
-# Handle spacy installation. Commenting these lines out because 'requirements.txt' has already been processed.
-# sed -i "/en-core/ d" requirements.txt  # Remove model download
-# echo "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.0.0/en_core_web_sm-2.0.0.tar.gz" >> requirements.txt
+# Remove en_core_sm_md from requirement.
+sed -i "/en-core/ d" requirements.txt  # Remove model download
 
 # Install environment requirements
 echo "Installing environment requirements..."
@@ -28,6 +27,8 @@ else
 fi
 
 # link spacy
+conda install spacy
+pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.0.0/en_core_web_sm-2.0.0.tar.gz
 python -m spacy link en_core_web_sm en --force
 
 echo "Successfully installed environment!"
