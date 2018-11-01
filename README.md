@@ -44,7 +44,6 @@ Note that in order to create a GPU environment, you must run the following comma
 # Instructions
 You'll have to download the Quora data on your own, since I'm not including it in this repository, but SNLI data comes packaged with TorchText, so don't worry about this. Once you've downloaded your data, you'll have to create a directory structure that looks a little bit like this:
 
-    $ sudo apt install tree
     $ tree -I __pycache__ -F -n
     .
     ├── app_data/
