@@ -67,19 +67,14 @@ You'll have to download the Quora data on your own, since I'm not including it i
     │   ├── __init__.py
     │   ├── layers.py
     │   └── utils.py
-    ├── pickle/
-    │   ├── quora_TEXT.pkl
-    │   └── test.pkl
-    ├── Pipfile
-    ├── Procfile
     ├── README.md
-    ├── requirements.txt
     ├── runs/
     ├── saved_models/
     ├── setup.sh*
     ├── train.py
     ├── train.sh*
     └── travis/
+        ├── install.sh*
         ├── travis_dev.tsv
         ├── travis_test.tsv
         └── travis_train.tsv
