@@ -24,7 +24,7 @@ then
     fi
     chmod +x miniconda.sh && ./miniconda.sh -b -f
     conda config --set always_yes yes
-    conda update conda
+    conda update conda -q
     echo "Creating environment to run tests in."
     conda create -q -n testenv python=3.6
 fi
@@ -36,13 +36,13 @@ source activate testenv
 
 # Install requirements in our conda environment
 echo "Installing environment requirements..."
-pip install --upgrade pip
+pip install --upgrade pip -q
 conda install cython -q
 conda install plac -q
 conda install pytorch-cpu -c pytorch -q
-pip install tensorboardX
+pip install tensorboardX -q
 conda install dill -q
-pip install torchtext
+pip install torchtext -q
 conda install spacy -q
-pip install "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.0.0/en_core_web_sm-2.0.0.tar.gz"
+pip install "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.0.0/en_core_web_sm-2.0.0.tar.gz" -q
 python -m spacy link en_core_web_sm en --force
