@@ -2,7 +2,8 @@
 
 import os
 import copy
-from time import gmtime, strftime
+from time import gmtime
+import calendar
 import plac
 
 import torch
@@ -105,7 +106,7 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
     args.word_vocab_size = len(model_data.TEXT.vocab)
     args.class_size = len(model_data.LABEL.vocab)
     args.max_word_len = model_data.max_word_len
-    args.model_time = strftime('%H:%M:%S', gmtime())
+    args.model_time = calendar.timegm(gmtime())
 
     # Store hyperparameters for reproduceability
     if not os.path.exists('research/configs'):

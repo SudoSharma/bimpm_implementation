@@ -1,0 +1,610 @@
+Loading Quora data...
+Starting training...
+  epoch: 1
+
+train_loss:  264.273
+valid_loss:  78.786
+eval_loss:   78.810
+valid_acc:   0.754
+eval_acc:    0.753
+
+
+train_loss:  231.411
+valid_loss:  72.424
+eval_loss:   73.022
+valid_acc:   0.775
+eval_acc:    0.771
+
+
+train_loss:  219.191
+valid_loss:  73.165
+eval_loss:   73.107
+valid_acc:   0.778
+eval_acc:    0.776
+
+
+train_loss:  214.366
+valid_loss:  67.044
+eval_loss:   67.437
+valid_acc:   0.794
+eval_acc:    0.792
+
+
+train_loss:  209.672
+valid_loss:  65.789
+eval_loss:   66.232
+valid_acc:   0.799
+eval_acc:    0.798
+
+
+train_loss:  202.854
+valid_loss:  66.241
+eval_loss:   66.797
+valid_acc:   0.798
+eval_acc:    0.794
+
+
+train_loss:  197.981
+valid_loss:  64.507
+eval_loss:   64.851
+valid_acc:   0.810
+eval_acc:    0.806
+
+
+train_loss:  194.851
+valid_loss:  65.028
+eval_loss:   64.926
+valid_acc:   0.806
+eval_acc:    0.809
+
+
+train_loss:  194.256
+valid_loss:  63.176
+eval_loss:   63.639
+valid_acc:   0.820
+eval_acc:    0.815
+
+
+train_loss:  190.523
+valid_loss:  62.085
+eval_loss:   62.687
+valid_acc:   0.819
+eval_acc:    0.813
+
+
+train_loss:  187.033
+valid_loss:  61.903
+eval_loss:   61.380
+valid_acc:   0.820
+eval_acc:    0.823
+
+
+train_loss:  183.382
+valid_loss:  60.073
+eval_loss:   60.062
+valid_acc:   0.824
+eval_acc:    0.825
+
+  epoch: 2
+
+train_loss:  173.558
+valid_loss:  61.319
+eval_loss:   61.568
+valid_acc:   0.819
+eval_acc:    0.818
+
+
+train_loss:  174.010
+valid_loss:  58.988
+eval_loss:   59.031
+valid_acc:   0.828
+eval_acc:    0.826
+
+
+train_loss:  173.491
+valid_loss:  58.872
+eval_loss:   58.351
+valid_acc:   0.825
+eval_acc:    0.831
+
+
+train_loss:  170.939
+valid_loss:  60.307
+eval_loss:   60.310
+valid_acc:   0.819
+eval_acc:    0.822
+
+
+train_loss:  168.085
+valid_loss:  60.635
+eval_loss:   60.536
+valid_acc:   0.820
+eval_acc:    0.825
+
+
+train_loss:  168.644
+valid_loss:  57.302
+eval_loss:   56.967
+valid_acc:   0.833
+eval_acc:    0.834
+
+
+train_loss:  168.333
+valid_loss:  62.707
+eval_loss:   62.688
+valid_acc:   0.811
+eval_acc:    0.811
+
+
+train_loss:  165.652
+valid_loss:  57.945
+eval_loss:   57.699
+valid_acc:   0.831
+eval_acc:    0.834
+
+
+train_loss:  163.282
+valid_loss:  58.815
+eval_loss:   58.582
+valid_acc:   0.831
+eval_acc:    0.832
+
+
+train_loss:  166.118
+valid_loss:  57.453
+eval_loss:   56.843
+valid_acc:   0.832
+eval_acc:    0.836
+
+
+train_loss:  163.493
+valid_loss:  54.757
+eval_loss:   54.471
+valid_acc:   0.840
+eval_acc:    0.843
+
+
+train_loss:  162.569
+valid_loss:  56.770
+eval_loss:   56.842
+valid_acc:   0.837
+eval_acc:    0.839
+
+  epoch: 3
+
+train_loss:  148.747
+valid_loss:  56.699
+eval_loss:   56.306
+valid_acc:   0.837
+eval_acc:    0.840
+
+
+train_loss:  150.162
+valid_loss:  56.054
+eval_loss:   56.184
+valid_acc:   0.839
+eval_acc:    0.836
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+  epoch: 4
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+  epoch: 5
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+  epoch: 6
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+  epoch: 7
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+  epoch: 8
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
+eval_acc:    0.500
+
+
+train_loss:  nan
+valid_loss:  nan
+eval_loss:   nan
+valid_acc:   0.500
