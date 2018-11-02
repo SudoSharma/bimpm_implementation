@@ -6,6 +6,7 @@ training and evaluation script execution to initialize the BiMPM model.
 
 import os
 from abc import ABC
+import json
 
 import torch
 import torch.autograd
@@ -342,5 +343,15 @@ class Args:
             evaluation script.
 
         """
+        self.args_dict = args_dict
+
         for k, v in args_dict.items():
             setattr(self, k, v)
+
+    def store_params(self):
+        """Store all args into a json file for reproduceability."""
+        pop_keys = ['shutdown', 'research', 'travis', 'print_interval']
+        [self.args_dict.pop(key) for key in pop_keys]
+        with open('./research/configs/args.json', 'w') as f:
+            json.dump(self.args_dict, f)
+

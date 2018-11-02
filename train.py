@@ -107,6 +107,11 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
     args.max_word_len = model_data.max_word_len
     args.model_time = strftime('%H:%M:%S', gmtime())
 
+    # Store hyperparameters for reproduceability
+    if not os.path.exists('research/configs'):
+        os.makedirs('research/configs')
+    args.store_params()
+
     print("Starting training...")
     best_model = train(args, model_data)
 
