@@ -19,8 +19,10 @@ source activate bimpm
 echo "Installing environment requirements..."
 if [ "$COMPUTE" == GPU ] ; then
     conda install pytorch -c pytorch --yes -q
+    pip install tensorflow-gpu
 else
     conda install pytorch-cpu -c pytorch --yes -q
+    pip install tensorflow
 fi
 
 conda install cython -q
