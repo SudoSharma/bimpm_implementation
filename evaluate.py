@@ -82,7 +82,7 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
 
     if args.research:
         print('Research mode detected. Lowering print interval...')
-        args.print_interval = 5
+        args.print_interval = 32
     if args.travis:
         print('Travis mode detected. Adjusting parameters...')
         args.epoch = 2

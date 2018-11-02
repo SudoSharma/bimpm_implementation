@@ -31,4 +31,3 @@ Experimenting with different activation functions.
 ### TanH
 
 ### Swish
-
