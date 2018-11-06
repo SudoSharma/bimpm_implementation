@@ -175,6 +175,8 @@ def train(args, model_data):
         batch_loss = criterion(preds, batch.label)
         train_loss += batch_loss.data.item()
         batch_loss.backward()
+        for p in parameters:
+            p.grad.data = p.grad.data.clamp(-100, 100)  # Clip gradients
         optimizer.step()
 
         if (i + 1) % args.print_interval == 0:
