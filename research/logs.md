@@ -1,15 +1,17 @@
 # Ideas
-My goal here is to get a good feeling for how the network works and what I can do to make it better. I will experiment in new branches, and then combine everything back into 'develop' and then eventually 'master' if the various network experiments prove fruitful.  
 
 ## Sentence Similarity Baseline
-Run: `xp_0.0.sh`
-Configs
+| Run        | Accuracy   | 
+|--------------|:----------:|
+| `xp_0.0` | 84.3 |
+| `xp_0.1` | 00.0 |  
 
 # Experiments 
 ## Architecture 
-ID: `ex_2`
 
 ### Network Weights Initialization
+
+### Batch Normalization
 
 ### Character BiLSTM
 The authors of the paper used a vanilla LSTM for character-level embeddings. Let's see if a BiLSTM does any better. 
@@ -19,7 +21,7 @@ Using GRU cell instead of BiLSTM.
 
 ### Number of Perspectives
 
-### Increased Hidden Layers in CHar LSTM
+### Increased Hidden Layers in Char LSTM
 
 ### Using ULMFiT Vectors instead of GloVe
 
