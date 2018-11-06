@@ -121,8 +121,10 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
 
     if not os.path.exists('saved_models'):
         os.makedirs('saved_models')
-    torch.save(best_model.state_dict(),
-               f'saved_models/bimpm_{args.data_type}_{args.model_time}.pt')
+    if not args.travis:
+        torch.save(
+            best_model.state_dict(),
+            f'saved_models/bimpm_{args.data_type}_{args.model_time}.pt')
 
     print("Finished training...")
 
@@ -157,7 +159,8 @@ def train(args, model_data):
     # Initialize tensorboardx logging
     if not os.path.exists('runs'):
         os.makedirs('runs')
-    writer = SummaryWriter(log_dir='runs/' + args.model_time)
+    if not args.travis:
+        writer = SummaryWriter(log_dir='runs/' + args.model_time)
 
     model.train()
     train_loss, max_valid_acc, max_eval_acc = 0, 0, 0
@@ -190,11 +193,12 @@ def train(args, model_data):
             c = (i + 1) // args.print_interval  # Calculate step
 
             # Update tensorboardx logs
-            writer.add_scalar('loss/train', train_loss, c)
-            writer.add_scalar('loss/valid', valid_loss, c)
-            writer.add_scalar('acc/valid', valid_acc, c)
-            writer.add_scalar('loss/eval', eval_loss, c)
-            writer.add_scalar('acc/eval', eval_acc, c)
+            if not args.travis:
+                writer.add_scalar('loss/train', train_loss, c)
+                writer.add_scalar('loss/valid', valid_loss, c)
+                writer.add_scalar('acc/valid', valid_acc, c)
+                writer.add_scalar('loss/eval', eval_loss, c)
+                writer.add_scalar('acc/eval', eval_acc, c)
 
             print(
                 f'\ntrain_loss:  {train_loss:.3f}\n',
@@ -217,7 +221,8 @@ def train(args, model_data):
         f'\nmax_valid_acc:  {max_valid_acc:.3f}\n',
         f'max_eval_acc:   {max_eval_acc:.3f}\n',
         sep='')
-    writer.close()
+    if not args.travis:
+        writer.close()
 
     return best_model
 

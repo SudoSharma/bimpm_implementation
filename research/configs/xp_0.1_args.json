@@ -1,1 +1,0 @@
-{"word_dim": 300, "num_perspectives": 20, "lr": 0.001, "hidden_size": 100, "epoch": 10, "dropout": 0.1, "data_type": "quora", "char_hidden_size": 50, "char_input_size": 20, "batch_size": 64}
