@@ -18,6 +18,7 @@ from model.utils import SNLI, Quora, Sentence, Args
 def main(shutdown: ("shutdown system after training", 'flag', 's'),
          research: ("use medium dataset", 'flag', 'r'),
          travis: ("use small testing dataset", 'flag', 't'),
+         experiment: ("name of experiment", 'option', 'e', str) = '0.0',
          batch_size: (None, 'option', None, int) = 64,
          char_input_size: (None, 'option', None, int) = 20,
          char_hidden_size: (None, 'option', None, int) = 50,
@@ -39,7 +40,9 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
     research : bool, flag
         Run experiments on medium dataset (default is False).
     travis : bool, flag
-        Run tests on small dataset (default is False)
+        Run tests on small dataset (default is False).
+    experiment : str, optional
+        Name of the current experiment (default is '0.0').
     batch_size : int, optional
         Number of examples in one iteration (default is 64).
     char_input_size : int, optional
@@ -106,7 +109,7 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
     args.word_vocab_size = len(model_data.TEXT.vocab)
     args.class_size = len(model_data.LABEL.vocab)
     args.max_word_len = model_data.max_word_len
-    args.model_time = calendar.timegm(gmtime())
+    args.model_time = str(calendar.timegm(gmtime()))
 
     # Store hyperparameters for reproduceability
     if not os.path.exists('research/configs'):

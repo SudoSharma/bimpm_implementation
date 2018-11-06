@@ -91,12 +91,11 @@ The outputs of this script are a `train.out` file containing any output to stdou
 
 ## Training
 
-    $ python train.py --help
-
-    usage: train.py [-h] [-s] [-r] [-t] [-batch-size 64] [-char-input-size 20]
-                    [-char-hidden-size 50] [-data-type quora] [-dropout 0.1]
-                    [-epoch 10] [-hidden-size 100] [-lr 0.001]
-                    [-num-perspectives 20] [-print-interval 500] [-word-dim 300]
+    usage: train.py [-h] [-s] [-r] [-t] [-e 0.0] [-batch-size 64]
+                    [-char-input-size 20] [-char-hidden-size 50]
+                    [-data-type quora] [-dropout 0.1] [-epoch 10]
+                    [-hidden-size 100] [-lr 0.001] [-num-perspectives 20]
+                    [-print-interval 500] [-word-dim 300]
 
     Train and store the best BiMPM model in a cycle.
 
@@ -107,7 +106,9 @@ The outputs of this script are a `train.out` file containing any output to stdou
         research : bool, flag
             Run experiments on medium dataset (default is False).
         travis : bool, flag
-            Run tests on small dataset (default is False)
+            Run tests on small dataset (default is False).
+        experiment : str, optional
+            Name of the current experiment (default is '0.0').
         batch_size : int, optional
             Number of examples in one iteration (default is 64).
         char_input_size : int, optional
@@ -143,6 +144,8 @@ The outputs of this script are a `train.out` file containing any output to stdou
       -s, --shutdown        shutdown system after training
       -r, --research        use medium dataset
       -t, --travis          use small testing dataset
+      -e 0.0, --experiment 0.0
+                            name of experiment
       -batch-size 64        [64]
       -char-input-size 20   [20]
       -char-hidden-size 50  [50]
