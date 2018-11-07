@@ -693,6 +693,6 @@ class PredictionLayer(nn.Module):
             A PyTorch Tensor of size (batch_size, class_size).
 
         """
-        x = F.tanh(self.hidden_layer(match_vec))
+        x = torch.tanh(self.hidden_layer(match_vec))
 
         return self.output_layer(self.dropout(x))

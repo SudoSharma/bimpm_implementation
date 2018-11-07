@@ -117,7 +117,8 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
     # Store hyperparameters for reproduceability
     if not os.path.exists('research/configs'):
         os.makedirs('research/configs')
-    args.store_params()
+    if not args.travis:
+        args.store_params()
 
     print("Starting training...")
     best_model = train(args, model_data)
