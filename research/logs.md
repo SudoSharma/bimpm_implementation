@@ -3,8 +3,8 @@
 ## Sentence Similarity Baseline
 | Run        | Accuracy   | 
 |--------------|:----------:|
-| `xp_0.0` | 84.3 |
-| `xp_0.1` | 00.0 |  
+| 0.0 | 84.3 |
+| 0.1 | 00.0 |  
 
 # Experiments 
 ## Architecture 

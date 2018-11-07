@@ -19,6 +19,7 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
          research: ("use medium dataset", 'flag', 'r'),
          travis: ("use small testing dataset", 'flag', 't'),
          experiment: ("name of experiment", 'option', 'e', str) = '0.0',
+         grad_clip: (None, 'option', None, int) = 10,
          batch_size: (None, 'option', None, int) = 64,
          char_input_size: (None, 'option', None, int) = 20,
          char_hidden_size: (None, 'option', None, int) = 50,
@@ -43,6 +44,8 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
         Run tests on small dataset (default is False).
     experiment : str, optional
         Name of the current experiment (default is '0.0').
+    grad_clip : int, optional
+        Amount by which to clip the gradient (default is 10).
     batch_size : int, optional
         Number of examples in one iteration (default is 64).
     char_input_size : int, optional
@@ -182,7 +185,8 @@ def train(args, model_data):
         train_loss += batch_loss.data.item()
         batch_loss.backward()
         for p in parameters:
-            p.grad.data = p.grad.data.clamp(-100, 100)  # Clip gradients
+            # Clip gradients
+            p.grad.data = p.grad.data.clamp(-args.grad_clip, args.grad_clip)
         optimizer.step()
 
         if (i + 1) % args.print_interval == 0:

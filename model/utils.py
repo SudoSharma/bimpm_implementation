@@ -351,9 +351,6 @@ class Args:
 
     def store_params(self):
         """Store all args into a json file for reproduceability."""
-        pop_keys = [
-            'experiment', 'shutdown', 'research', 'travis', 'print_interval'
-        ]
-        [self.args_dict.pop(key) for key in pop_keys]
-        with open(f'./research/configs/xp_{self.experiment}_args.json', 'w') as f:
+        with open(f'./research/configs/xp_{self.experiment}_args.json',
+                  'w') as f:
             json.dump(self.args_dict, f)

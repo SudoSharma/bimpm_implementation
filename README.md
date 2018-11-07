@@ -91,7 +91,7 @@ The outputs of this script are a `train.out` file containing any output to stdou
 
 ## Training
 
-    usage: train.py [-h] [-s] [-r] [-t] [-e 0.0] [-batch-size 64]
+    usage: train.py [-h] [-s] [-r] [-t] [-e 0.0] [-grad-clip 10] [-batch-size 64]
                     [-char-input-size 20] [-char-hidden-size 50]
                     [-data-type quora] [-dropout 0.1] [-epoch 10]
                     [-hidden-size 100] [-lr 0.001] [-num-perspectives 20]
@@ -109,6 +109,8 @@ The outputs of this script are a `train.out` file containing any output to stdou
             Run tests on small dataset (default is False).
         experiment : str, optional
             Name of the current experiment (default is '0.0').
+        grad_clip : int, optional
+            Amount by which to clip the gradient (default is 10).
         batch_size : int, optional
             Number of examples in one iteration (default is 64).
         char_input_size : int, optional
@@ -131,8 +133,7 @@ The outputs of this script are a `train.out` file containing any output to stdou
             How often to write to tensorboard (default is 500).
         word_dim : int, optional
             Size of word embeddings (default is 300).
-
-        Raises
+Raises
         ------
         RuntimeError
             If any data source other than SNLI or Quora is requested.
@@ -146,6 +147,7 @@ The outputs of this script are a `train.out` file containing any output to stdou
       -t, --travis          use small testing dataset
       -e 0.0, --experiment 0.0
                             name of experiment
+      -grad-clip 10         [10]
       -batch-size 64        [64]
       -char-input-size 20   [20]
       -char-hidden-size 50  [50]
