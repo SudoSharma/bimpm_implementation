@@ -19,7 +19,7 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
          research: ("use medium dataset", 'flag', 'r'),
          travis: ("use small testing dataset", 'flag', 't'),
          experiment: ("name of experiment", 'option', 'e', str) = '0.0',
-         grad_clip: (None, 'option', None, int) = 10,
+         grad_clip: (None, 'option', None, int) = 100,
          batch_size: (None, 'option', None, int) = 64,
          char_input_size: (None, 'option', None, int) = 20,
          char_hidden_size: (None, 'option', None, int) = 50,
@@ -45,7 +45,7 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
     experiment : str, optional
         Name of the current experiment (default is '0.0').
     grad_clip : int, optional
-        Amount by which to clip the gradient (default is 10).
+        Amount by which to clip the gradient (default is 100).
     batch_size : int, optional
         Number of examples in one iteration (default is 64).
     char_input_size : int, optional
