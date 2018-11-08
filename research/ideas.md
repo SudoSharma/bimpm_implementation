@@ -6,7 +6,8 @@
 ### Increased Hidden Layers in Char LSTM
 
 ## Architecture
-### Character BiLSTM
-### GRU
+
 ### Batch Normalization
-### ULMFiT Vectors
+### SGDR
+### GRU
+### Character BiLSTM
