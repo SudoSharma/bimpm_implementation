@@ -131,7 +131,8 @@ The outputs of this script are a `train.out` file containing any output to stdou
             How often to write to tensorboard (default is 500).
         word_dim : int, optional
             Size of word embeddings (default is 300).
-Raises
+
+        Raises
         ------
         RuntimeError
             If any data source other than SNLI or Quora is requested.
