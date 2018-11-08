@@ -185,10 +185,6 @@ class Quora(DataLoader):
             train_path = 'travis_train.tsv'
             valid_path = 'travis_dev.tsv'
             test_path = 'travis_test.tsv'
-        elif args.research:
-            train_path = 'toy_train.tsv'
-            valid_path = 'toy_dev.tsv'
-            test_path = 'toy_test.tsv'
         else:
             train_path = 'train.tsv'
             valid_path = 'dev.tsv'

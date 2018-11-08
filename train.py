@@ -16,7 +16,6 @@ from model.utils import SNLI, Quora, Sentence, Args
 
 
 def main(shutdown: ("shutdown system after training", 'flag', 's'),
-         research: ("use medium dataset", 'flag', 'r'),
          travis: ("use small testing dataset", 'flag', 't'),
          experiment: ("name of experiment", 'option', 'e', str) = '0.0',
          grad_clip: (None, 'option', None, int) = 100,
@@ -38,8 +37,6 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
     ----------
     shutdown : bool, flag
         Shutdown system after training (default is False).
-    research : bool, flag
-        Run experiments on medium dataset (default is False).
     travis : bool, flag
         Run tests on small dataset (default is False).
     experiment : str, optional
@@ -83,13 +80,10 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
 
     args.app = False  # Disable app mode for training
 
-    # Handle research and travis mode
-    if (args.research or args.travis) and args.data_type.lower() == 'snli':
+    # Handle travis mode
+    if args.travis and args.data_type.lower() == 'snli':
         raise RuntimeError("Invalid dataset size specified for SNLI data.")
 
-    if args.research:
-        print('Research mode detected. Lowering print interval...')
-        args.print_interval = 5
     if args.travis:
         print('Travis mode detected. Adjusting parameters...')
         args.epoch = 2

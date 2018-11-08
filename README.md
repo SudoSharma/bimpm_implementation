@@ -91,7 +91,7 @@ The outputs of this script are a `train.out` file containing any output to stdou
 
 ## Training
 
-    usage: train.py [-h] [-s] [-r] [-t] [-e 0.0] [-grad-clip 100] [-batch-size 64]
+    usage: train.py [-h] [-s] [-t] [-e 0.0] [-grad-clip 100] [-batch-size 64]
                     [-char-input-size 20] [-char-hidden-size 50]
                     [-data-type quora] [-dropout 0.1] [-epoch 10]
                     [-hidden-size 100] [-lr 0.001] [-num-perspectives 20]
@@ -103,8 +103,6 @@ The outputs of this script are a `train.out` file containing any output to stdou
         ----------
         shutdown : bool, flag
             Shutdown system after training (default is False).
-        research : bool, flag
-            Run experiments on medium dataset (default is False).
         travis : bool, flag
             Run tests on small dataset (default is False).
         experiment : str, optional
@@ -143,7 +141,6 @@ Raises
     optional arguments:
       -h, --help            show this help message and exit
       -s, --shutdown        shutdown system after training
-      -r, --research        use medium dataset
       -t, --travis          use small testing dataset
       -e 0.0, --experiment 0.0
                             name of experiment
@@ -164,7 +161,7 @@ Raises
 
     $ python evaluate.py --help
 
-    usage: evaluate.py [-h] [-s] [-r] [-t] [-a] [-batch-size 64]
+    usage: evaluate.py [-h] [-s] [-t] [-a] [-batch-size 64]
                        [-char-input-size 20] [-char-hidden-size 50]
                        [-data-type quora] [-dropout 0.1] [-epoch 10]
                        [-hidden-size 100] [-lr 0.001] [-num-perspectives 20]
@@ -177,8 +174,6 @@ Raises
         ----------
         shutdown : bool, flag
             Shutdown system after training (default is False).
-        research : bool, flag
-            Run experiments on medium dataset (default is False).
         travis : bool, flag
             Run tests on small dataset (default is False)
         app : bool, flag
@@ -219,7 +214,6 @@ Raises
     optional arguments:
       -h, --help            show this help message and exit
       -s, --shutdown        shutdown system after training
-      -r, --research        use medium dataset
       -t, --travis          use small testing dataset
       -a, --app             evaluate user queries from app
       -batch-size 64        [64]

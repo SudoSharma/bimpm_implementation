@@ -13,7 +13,6 @@ from model.utils import AppData, SNLI, Quora, Sentence, Args
 
 
 def main(shutdown: ("shutdown system after training", 'flag', 's'),
-         research: ("use medium dataset", 'flag', 'r'),
          travis: ("use small testing dataset", 'flag', 't'),
          app: ("evaluate user queries from app", 'flag', 'a'),
          model_path,
@@ -35,8 +34,6 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
     ----------
     shutdown : bool, flag
         Shutdown system after training (default is False).
-    research : bool, flag
-        Run experiments on medium dataset (default is False).
     travis : bool, flag
         Run tests on small dataset (default is False)
     app : bool, flag
@@ -76,13 +73,10 @@ def main(shutdown: ("shutdown system after training", 'flag', 's'),
     args.device = torch.device('cuda:0' if torch.cuda.
                                is_available() else 'cpu')
 
-    # Hanlde research and travis mode
-    if (args.research or args.travis) and args.data_type.lower() == 'snli':
+    # Hanlde travis mode
+    if args.travis and args.data_type.lower() == 'snli':
         raise RuntimeError("Invalid dataset size specified for SNLI data.")
 
-    if args.research:
-        print('Research mode detected. Lowering print interval...')
-        args.print_interval = 32
     if args.travis:
         print('Travis mode detected. Adjusting parameters...')
         args.epoch = 2
