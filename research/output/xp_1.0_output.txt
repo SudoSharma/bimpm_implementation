@@ -1,0 +1,568 @@
+Loading Quora data...
+Starting training...
+  epoch: 1
+
+train_loss:  265.357
+valid_loss:  100.473
+eval_loss:   100.811
+valid_acc:   0.568
+eval_acc:    0.564
+
+
+train_loss:  232.368
+valid_loss:  71.549
+eval_loss:   72.407
+valid_acc:   0.779
+eval_acc:    0.774
+
+
+train_loss:  222.611
+valid_loss:  67.797
+eval_loss:   68.447
+valid_acc:   0.792
+eval_acc:    0.791
+
+
+train_loss:  215.094
+valid_loss:  68.087
+eval_loss:   68.559
+valid_acc:   0.792
+eval_acc:    0.786
+
+
+train_loss:  205.052
+valid_loss:  63.265
+eval_loss:   63.748
+valid_acc:   0.811
+eval_acc:    0.807
+
+
+train_loss:  200.939
+valid_loss:  64.406
+eval_loss:   64.998
+valid_acc:   0.804
+eval_acc:    0.804
+
+
+train_loss:  198.817
+valid_loss:  67.969
+eval_loss:   68.032
+valid_acc:   0.806
+eval_acc:    0.803
+
+
+train_loss:  194.285
+valid_loss:  61.344
+eval_loss:   61.828
+valid_acc:   0.820
+eval_acc:    0.819
+
+
+train_loss:  189.434
+valid_loss:  61.656
+eval_loss:   62.095
+valid_acc:   0.816
+eval_acc:    0.815
+
+
+train_loss:  188.882
+valid_loss:  61.953
+eval_loss:   63.065
+valid_acc:   0.817
+eval_acc:    0.814
+
+
+train_loss:  187.067
+valid_loss:  59.447
+eval_loss:   60.197
+valid_acc:   0.831
+eval_acc:    0.822
+
+
+train_loss:  182.254
+valid_loss:  62.182
+eval_loss:   62.810
+valid_acc:   0.823
+eval_acc:    0.823
+
+  epoch: 2
+
+train_loss:  171.194
+valid_loss:  58.685
+eval_loss:   59.103
+valid_acc:   0.834
+eval_acc:    0.831
+
+
+train_loss:  172.287
+valid_loss:  57.162
+eval_loss:   57.618
+valid_acc:   0.836
+eval_acc:    0.836
+
+
+train_loss:  170.043
+valid_loss:  59.717
+eval_loss:   60.586
+valid_acc:   0.836
+eval_acc:    0.828
+
+
+train_loss:  170.013
+valid_loss:  58.124
+eval_loss:   58.988
+valid_acc:   0.833
+eval_acc:    0.828
+
+
+train_loss:  170.167
+valid_loss:  58.438
+eval_loss:   59.229
+valid_acc:   0.826
+eval_acc:    0.824
+
+
+train_loss:  170.243
+valid_loss:  58.208
+eval_loss:   58.411
+valid_acc:   0.832
+eval_acc:    0.832
+
+
+train_loss:  170.246
+valid_loss:  57.566
+eval_loss:   58.391
+valid_acc:   0.835
+eval_acc:    0.831
+
+
+train_loss:  169.145
+valid_loss:  58.432
+eval_loss:   59.022
+valid_acc:   0.830
+eval_acc:    0.828
+
+
+train_loss:  166.362
+valid_loss:  57.289
+eval_loss:   57.598
+valid_acc:   0.839
+eval_acc:    0.838
+
+
+train_loss:  167.287
+valid_loss:  58.564
+eval_loss:   59.444
+valid_acc:   0.831
+eval_acc:    0.828
+
+
+train_loss:  165.522
+valid_loss:  55.773
+eval_loss:   56.779
+valid_acc:   0.835
+eval_acc:    0.834
+
+
+train_loss:  165.003
+valid_loss:  54.317
+eval_loss:   55.243
+valid_acc:   0.847
+eval_acc:    0.845
+
+  epoch: 3
+
+train_loss:  153.458
+valid_loss:  55.230
+eval_loss:   55.940
+valid_acc:   0.840
+eval_acc:    0.840
+
+
+train_loss:  151.536
+valid_loss:  54.597
+eval_loss:   55.132
+valid_acc:   0.840
+eval_acc:    0.844
+
+
+train_loss:  153.911
+valid_loss:  56.767
+eval_loss:   56.878
+valid_acc:   0.836
+eval_acc:    0.844
+
+
+train_loss:  153.970
+valid_loss:  56.661
+eval_loss:   56.872
+valid_acc:   0.836
+eval_acc:    0.838
+
+
+train_loss:  151.982
+valid_loss:  55.082
+eval_loss:   55.401
+valid_acc:   0.841
+eval_acc:    0.843
+
+
+train_loss:  151.739
+valid_loss:  54.635
+eval_loss:   55.046
+valid_acc:   0.844
+eval_acc:    0.847
+
+
+train_loss:  153.500
+valid_loss:  53.792
+eval_loss:   54.181
+valid_acc:   0.845
+eval_acc:    0.849
+
+
+train_loss:  156.180
+valid_loss:  56.000
+eval_loss:   56.218
+valid_acc:   0.845
+eval_acc:    0.847
+
+
+train_loss:  151.490
+valid_loss:  53.511
+eval_loss:   54.060
+valid_acc:   0.847
+eval_acc:    0.845
+
+
+train_loss:  153.618
+valid_loss:  53.588
+eval_loss:   53.963
+valid_acc:   0.848
+eval_acc:    0.850
+
+
+train_loss:  154.501
+valid_loss:  53.782
+eval_loss:   53.631
+valid_acc:   0.850
+eval_acc:    0.851
+
+
+train_loss:  152.834
+valid_loss:  56.101
+eval_loss:   55.936
+valid_acc:   0.842
+eval_acc:    0.842
+
+  epoch: 4
+
+train_loss:  137.729
+valid_loss:  56.649
+eval_loss:   55.960
+valid_acc:   0.843
+eval_acc:    0.845
+
+
+train_loss:  140.468
+valid_loss:  53.318
+eval_loss:   53.291
+valid_acc:   0.845
+eval_acc:    0.851
+
+
+train_loss:  140.564
+valid_loss:  55.495
+eval_loss:   56.185
+valid_acc:   0.845
+eval_acc:    0.846
+
+
+train_loss:  140.950
+valid_loss:  54.809
+eval_loss:   55.650
+valid_acc:   0.846
+eval_acc:    0.845
+
+
+train_loss:  143.010
+valid_loss:  54.021
+eval_loss:   54.685
+valid_acc:   0.846
+eval_acc:    0.846
+
+
+train_loss:  142.207
+valid_loss:  53.528
+eval_loss:   53.972
+valid_acc:   0.850
+eval_acc:    0.850
+
+
+train_loss:  141.921
+valid_loss:  53.307
+eval_loss:   53.830
+valid_acc:   0.845
+eval_acc:    0.847
+
+
+train_loss:  141.225
+valid_loss:  54.680
+eval_loss:   55.162
+valid_acc:   0.845
+eval_acc:    0.847
+
+
+train_loss:  142.749
+valid_loss:  54.769
+eval_loss:   55.557
+valid_acc:   0.845
+eval_acc:    0.846
+
+
+train_loss:  143.317
+valid_loss:  54.829
+eval_loss:   54.794
+valid_acc:   0.844
+eval_acc:    0.845
+
+
+train_loss:  142.011
+valid_loss:  56.518
+eval_loss:   56.898
+valid_acc:   0.841
+eval_acc:    0.841
+
+
+train_loss:  143.099
+valid_loss:  52.742
+eval_loss:   52.798
+valid_acc:   0.851
+eval_acc:    0.856
+
+  epoch: 5
+
+train_loss:  127.466
+valid_loss:  57.963
+eval_loss:   57.939
+valid_acc:   0.834
+eval_acc:    0.837
+
+
+train_loss:  134.113
+valid_loss:  54.491
+eval_loss:   55.758
+valid_acc:   0.847
+eval_acc:    0.847
+
+
+train_loss:  129.914
+valid_loss:  53.771
+eval_loss:   54.717
+valid_acc:   0.849
+eval_acc:    0.848
+
+
+train_loss:  131.524
+valid_loss:  55.901
+eval_loss:   56.823
+valid_acc:   0.843
+eval_acc:    0.839
+
+
+train_loss:  135.555
+valid_loss:  55.254
+eval_loss:   55.745
+valid_acc:   0.844
+eval_acc:    0.840
+
+
+train_loss:  132.581
+valid_loss:  54.201
+eval_loss:   54.871
+valid_acc:   0.850
+eval_acc:    0.842
+
+
+train_loss:  134.732
+valid_loss:  54.540
+eval_loss:   55.460
+valid_acc:   0.850
+eval_acc:    0.845
+
+
+train_loss:  135.198
+valid_loss:  54.936
+eval_loss:   55.260
+valid_acc:   0.849
+eval_acc:    0.846
+
+
+train_loss:  134.245
+valid_loss:  51.465
+eval_loss:   51.413
+valid_acc:   0.856
+eval_acc:    0.856
+
+
+train_loss:  134.896
+valid_loss:  57.537
+eval_loss:   57.560
+valid_acc:   0.837
+eval_acc:    0.844
+
+
+train_loss:  135.891
+valid_loss:  55.332
+eval_loss:   54.925
+valid_acc:   0.842
+eval_acc:    0.843
+
+
+train_loss:  135.070
+valid_loss:  52.624
+eval_loss:   52.475
+valid_acc:   0.851
+eval_acc:    0.854
+
+  epoch: 6
+
+train_loss:  122.290
+valid_loss:  54.883
+eval_loss:   55.509
+valid_acc:   0.845
+eval_acc:    0.843
+
+
+train_loss:  123.183
+valid_loss:  55.266
+eval_loss:   56.327
+valid_acc:   0.848
+eval_acc:    0.846
+
+
+train_loss:  123.368
+valid_loss:  53.783
+eval_loss:   53.245
+valid_acc:   0.850
+eval_acc:    0.854
+
+
+train_loss:  126.407
+valid_loss:  55.618
+eval_loss:   54.685
+valid_acc:   0.841
+eval_acc:    0.847
+
+
+train_loss:  124.148
+valid_loss:  54.857
+eval_loss:   54.562
+valid_acc:   0.844
+eval_acc:    0.845
+
+
+train_loss:  126.052
+valid_loss:  52.754
+eval_loss:   51.963
+valid_acc:   0.853
+eval_acc:    0.859
+
+
+train_loss:  129.775
+valid_loss:  57.784
+eval_loss:   57.741
+valid_acc:   0.839
+eval_acc:    0.842
+
+
+train_loss:  127.740
+valid_loss:  55.299
+eval_loss:   55.839
+valid_acc:   0.844
+eval_acc:    0.846
+
+
+train_loss:  128.533
+valid_loss:  52.167
+eval_loss:   52.314
+valid_acc:   0.855
+eval_acc:    0.856
+
+
+train_loss:  127.400
+valid_loss:  54.215
+eval_loss:   54.279
+valid_acc:   0.852
+eval_acc:    0.851
+
+
+train_loss:  125.680
+valid_loss:  55.628
+eval_loss:   55.553
+valid_acc:   0.847
+eval_acc:    0.848
+
+
+train_loss:  129.681
+valid_loss:  56.359
+eval_loss:   56.285
+valid_acc:   0.847
+eval_acc:    0.850
+
+  epoch: 7
+
+train_loss:  116.280
+valid_loss:  58.128
+eval_loss:   57.313
+valid_acc:   0.847
+eval_acc:    0.849
+
+
+train_loss:  117.223
+valid_loss:  54.828
+eval_loss:   55.331
+valid_acc:   0.846
+eval_acc:    0.850
+
+
+train_loss:  118.168
+valid_loss:  53.892
+eval_loss:   53.847
+valid_acc:   0.851
+eval_acc:    0.854
+
+
+train_loss:  121.118
+valid_loss:  54.332
+eval_loss:   55.060
+valid_acc:   0.850
+eval_acc:    0.848
+
+
+train_loss:  120.414
+valid_loss:  52.632
+eval_loss:   52.987
+valid_acc:   0.855
+eval_acc:    0.854
+
+
+train_loss:  120.988
+valid_loss:  55.674
+eval_loss:   56.768
+valid_acc:   0.847
+eval_acc:    0.842
+
+
+train_loss:  119.425
+valid_loss:  53.216
+eval_loss:   53.867
+valid_acc:   0.850
+eval_acc:    0.852
+
+
+train_loss:  122.176
+valid_loss:  53.898
+eval_loss:   54.451
+valid_acc:   0.851
+eval_acc:    0.851
