@@ -16,7 +16,7 @@ Data: [Quora](https://drive.google.com/file/d/0B0PlTAo--BnaQWlsZl9FZ3l1c28/view)
 | Models        | Accuracy   | 
 |--------------|:----------:|
 | Original Baseline | 88.2 |
-| **Reimplementation** | **85.9** |  
+| **Reimplementation** | **86.7** |  
 
 ## Natural Language Inference
 Data: [SNLI](https://nlp.stanford.edu/projects/snli/)
