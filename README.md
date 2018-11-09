@@ -24,7 +24,7 @@ Data: [SNLI](https://nlp.stanford.edu/projects/snli/)
 | Models        |  Accuracy   | 
 |--------------|:----------:|
 | Original Baseline	| 86.9 |    
-| **Reimplementation** | **85.1** |  
+| **Reimplementation** | **85.2** |  
 
 
 # Requirements
