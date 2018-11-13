@@ -10,6 +10,8 @@ This is a PyTorch implementation of the Bilateral Multi-Perspective Matching for
 </p>
 
 # Performance 
+## Experiments
+You can check out my experiments and notes in this [research log](https://docs.google.com/spreadsheets/d/1UqBz1QnXBHKpaYxcI38w2EzEXhXgYLEy6qiaKFdFePw/edit#gid=0). 
 ## Sentence Similarity
 Data: [Quora](https://drive.google.com/file/d/0B0PlTAo--BnaQWlsZl9FZ3l1c28/view) 
 
@@ -25,9 +27,6 @@ Data: [SNLI](https://nlp.stanford.edu/projects/snli/)
 |--------------|:----------:|
 | Original Baseline	| 86.9 |    
 | **Reimplementation** | **85.2** |  
-
-# Experiments
-You can check out my experiments and notes in this [research log](https://docs.google.com/spreadsheets/d/1UqBz1QnXBHKpaYxcI38w2EzEXhXgYLEy6qiaKFdFePw/edit#gid=0). 
 
 # Requirements
 ## Environment
