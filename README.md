@@ -26,6 +26,8 @@ Data: [SNLI](https://nlp.stanford.edu/projects/snli/)
 | Original Baseline	| 86.9 |    
 | **Reimplementation** | **85.2** |  
 
+# Experiments
+You can check out my experiments and notes in this [research log](https://docs.google.com/spreadsheets/d/1UqBz1QnXBHKpaYxcI38w2EzEXhXgYLEy6qiaKFdFePw/edit#gid=0). 
 
 # Requirements
 ## Environment
