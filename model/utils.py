@@ -340,7 +340,10 @@ class Args:
 
         """
         self.args_dict = args_dict
-        self.experiment = args_dict['experiment']
+        try:
+            self.experiment = args_dict['experiment']
+        except KeyError:
+            print("Preparing model for inference...")
 
         for k, v in args_dict.items():
             setattr(self, k, v)
