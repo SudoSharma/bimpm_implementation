@@ -39,6 +39,7 @@ pip install --upgrade pip -q
 conda install pytorch-cpu -c pytorch -q
 conda install cython -q
 conda install plac -q
+pip install tensorboardX
 conda install dill -q
 pip install torchtext -q
 conda install spacy -q
