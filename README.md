@@ -49,7 +49,6 @@ You'll have to download the Quora data on your own, since I'm not including it i
     ├── app_data/
     │   ├── args.pkl
     │   └── sample_queries.csv
-    ├── app.py
     ├── data/
     │   └── quora/
     │       ├── dev.tsv
@@ -68,18 +67,32 @@ You'll have to download the Quora data on your own, since I'm not including it i
     │   ├── layers.py
     │   └── utils.py
     ├── README.md
+    ├── research/
+    │   ├── configs/
+    │   │   ├── xp_0.0_args.json
+    │   │   ├── xp_0.1_args.json
+    │   │   ├── xp_0.2_args.json
+    │   │   ├── xp_1.0_args.json
+    │   │   └── xp_2.0_args.json
+    │   ├── ideas.md
+    │   └── output/
+    │       ├── xp_0.0_output.txt
+    │       ├── xp_0.1_output.txt
+    │       ├── xp_0.2_output.txt
+    │       ├── xp_1.0_output.txt
+    │       └── xp_2.0_output.txt
     ├── runs/
     ├── saved_models/
     ├── setup.sh*
     ├── train.py
     ├── train.sh*
     └── travis/
-        ├── install.sh*
-        ├── travis_dev.tsv
-        ├── travis_test.tsv
-        └── travis_train.tsv
+        ├── install.sh*
+        ├── travis_dev.tsv
+        ├── travis_test.tsv
+        └── travis_train.tsv
 
-Note that there will be other folders created during runtime, so they are not visible here. 
+Note that the above tree includes a few additional folders you will have to create once you clone the repository. 
 
 To train the model with default parameters, you can execute the **train.sh** shell script as such:
 
