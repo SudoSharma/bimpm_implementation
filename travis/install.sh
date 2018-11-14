@@ -15,10 +15,8 @@ pushd .
 cd
 mkdir -p download
 cd download
-if [[ ! -f /home/travis/miniconda3/bin/activate ]]
-then
-    if [[ ! -f miniconda.sh ]]
-    then
+if [[ ! -f /home/travis/miniconda3/bin/activate ]]; then
+    if [[ ! -f miniconda.sh ]]; then 
         wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
              -O miniconda.sh
     fi
@@ -36,11 +34,11 @@ source activate testenv
 
 # Install requirements in our conda environment
 echo "Installing environment requirements..."
+
 pip install --upgrade pip -q
+conda install pytorch-cpu -c pytorch -q
 conda install cython -q
 conda install plac -q
-conda install pytorch-cpu -c pytorch -q
-pip install tensorboardX -q
 conda install dill -q
 pip install torchtext -q
 conda install spacy -q

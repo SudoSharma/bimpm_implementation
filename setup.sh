@@ -8,7 +8,8 @@ else
 fi
 
 # Be sure to change the 'miniconda3' to your flavor of Anaconda distribution
-export PATH="$HOME/miniconda3/bin:$PATH"
+export CONDA="miniconda3"
+export PATH="$HOME/$CONDA/bin:$PATH"
 echo "Setting up 'bimpm' conda environment..."
 conda config --set always_yes yes
 conda update -q conda
@@ -16,6 +17,8 @@ conda create -q -n bimpm python=3.6
 source activate bimpm 
 
 # Install environment requirements
+pip install --upgrade pip
+
 echo "Installing environment requirements..."
 if [ "$COMPUTE" == GPU ] ; then
     conda install pytorch -c pytorch --yes -q
@@ -27,7 +30,6 @@ fi
 
 conda install cython -q
 conda install plac -q
-pip install --upgrade pip
 pip install tensorboardX
 conda install dill -q
 pip install torchtext
